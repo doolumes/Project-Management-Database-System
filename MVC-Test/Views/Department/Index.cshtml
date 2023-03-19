@@ -1,0 +1,45 @@
+﻿@{
+    //Layout = null;
+    ViewBag.Title = "Department Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.DepartmentView
+
+
+<html>
+<div class="text-center">
+    <h1 class="display-4">Current Departments</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Supervisor ID</th>
+            <th>Number of Employees</th>
+        </tr>
+        <tr>
+            <td>@Model.ID</td>
+            <td>Test Department</td>
+            <td>-1</td>
+            <td>-1</td>
+        </tr>
+
+        @{
+            
+            foreach (DepartmentTemplate dept in Model.Departments)
+            {
+            <tr>
+            <td>@dept.ID</td>
+            <td>@dept.Name</td>
+            <td>@dept.SupervisorID</td>
+            <td>@dept.Number_Of_Employees</td>
+            </tr>
+            }
+            
+        }
+    </table>
+
+</div>
+
+</html>
