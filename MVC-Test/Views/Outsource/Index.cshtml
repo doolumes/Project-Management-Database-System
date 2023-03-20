@@ -1,0 +1,43 @@
+﻿@{
+    //Layout = null;
+    ViewBag.Title = "Outsource Page";
+}
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.OutsourceView
+
+<html>
+<div class="text-center">
+    <h1 class="display-4">Outsourc</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Outsource ID</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>Job</th>
+            <th>Task ID</th>
+        </tr>
+        <tr>
+
+        @{
+
+            foreach (OutsourceTemplate dept in Model.Outsource)
+            {
+                <tr>
+                    <td>@dept.Name</td>
+                    <td>@dept.Outsource_ID</td>
+                    <td>@dept.Email</td>
+                    <td>@dept.Phone_number</td>
+                    <td>@dept.Job</td>
+                    <td>@dept.Task_ID</td>
+                </tr>
+            }
+
+        }
+    </table>
+
+</div>
+
+</html>
