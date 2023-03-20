@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 
-namespace Group6Application.Model
+namespace Group6Application.Models
 {
     public class OutsourceTemplate
     {

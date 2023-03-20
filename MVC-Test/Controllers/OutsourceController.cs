@@ -15,7 +15,6 @@ namespace MVC_Test.Controllers
         public ActionResult Index()
         {
             string viewPath = "Views/Outsource/Index.cshtml";
-
             OutsourceView viewModel = new OutsourceView()
             {
                 Outsource = new List<OutsourceTemplate>()
