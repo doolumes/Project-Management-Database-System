@@ -7,6 +7,24 @@
 @using Group6Application.Models
 @model Group6Application.Models.DepartmentView
 
+<script>
+
+    ready(function () {
+        $("#addDepartmentRedirect").click(function () {
+            $('#submittingModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            })
+            addDepartmentRedirect();
+        });
+    });
+
+    function addDepartmentRedirect() {
+        Response.Redirect(@Url.Action("AddDepartment", "Department"))
+
+    }
+</script>
+
 
 <html>
 <div class="text-center">
@@ -17,12 +35,6 @@
             <th>Name</th>
             <th>Supervisor ID</th>
             <th>Number of Employees</th>
-        </tr>
-        <tr>
-            <td>@Model.ID</td>
-            <td>Test Department</td>
-            <td>-1</td>
-            <td>-1</td>
         </tr>
 
         @{
@@ -39,7 +51,9 @@
             
         }
     </table>
-
+    <a href="@Url.Action("AddDepartment", "Department")">
+        <button>Add Department</button>
+    </a>
 </div>
 
 </html>

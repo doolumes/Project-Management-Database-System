@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "Add Department Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.DepartmentView
+
+<script>
+
+    ready(function() {
+        $("#submit").click(function(){
+            $('#submittingModal').modal({
+                backdrop:'static',
+                keyboard: false
+            })
+            submit();
+        });
+    });
+
+    function pageValid(page){
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects ="";
+
+        $("").each(function(){
+            var inputID = "#" + $(this).attr("id");
+            if ( $(inputId).attr("required") & $(inputId).is("input") )
+            {
+                if ( ($inputId).val().length == 0 ){ // empty input
+
+                    $(inpudId + "RequiredAlert").show();
+                    invalidObjects++;
+                    listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
+                }
+                else {
+                    $(inpudId + "RequiredAlert").hide();
+                }
+
+                if ( ($inputId).is("select")){
+                    if ( $($inputId).val() == ""){
+                        $(inpudId + "RequiredAlert").show();
+                        invalidObjects++;
+                        listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
+                    }
+                    else {
+                        $(inpudId + "RequiredAlert").hide();
+                    }
+                }
+            }
+        });
+
+        if (invalidObjects == 0){
+            pageValid = true;
+        }
+        return pageValid;
+    }
+
+    function submit(){
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddDepartment")", // must match function name in controller
+            data:{
+                Name: $('#name').val(),
+                SupervisorID: $('#supervisorID').val(),
+            },
+            dataType:"text",
+            error: function(msg){
+                $("#submittingModal").modal("toggle");
+                $(".modal-backdrop").remove();
+                $("#errorModal").modal();
+            },
+            success: function(data){
+                var json = $.parseJSON(data);
+                if (json.submissionResult){
+                    // confirmation modal
+                }
+                else {
+                    $("#submittingModal").modal("toggle");
+                    $(".modal-backdrop").remove();
+                    $("#errorModal").modal();
+                }
+            }
+        });
+    }
+</script>
+
+<html>
+    <head>
+        <link rel="stylesheet" href="~/css/bootstrap.css">
+    </head>
+
+<div class="text-center">
+    <h1 class="display-4">Current Departments</h1>
+
+
+    <form>
+        <h3>Department Information</h3>
+
+        <label for="name">Department Name</label>
+        <input type="text" id="name" name="name" required />
+        <span id="nameRequiredAlert" class="collapse required">Required Field</span>
+        <br />
+        <label for="supervisorID">Supervisor ID</label>
+        <select id="supervisorID" name="supervisorID" required>
+            <option value="">Please Select</option>
+            @{
+                foreach(SelectListItem id in Model.SupervisorIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Text</option>
+                    }
+                    
+                }
+            }
+        </select>
+        <span id="supervisorIDRequiredAlert" class="collapse required">Required Field</span>
+
+    </form>
+
+</div>
+
+</html>

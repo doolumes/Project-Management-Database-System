@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Group6Application.Models
 {
@@ -16,7 +16,7 @@ namespace Group6Application.Models
     public class DepartmentView
     {
         public List<DepartmentTemplate> Departments = new List<DepartmentTemplate>();
-        public int? ID { get; set; }
+        public List<SelectListItem> SupervisorIDs { get; set; }
     }
   
 }
