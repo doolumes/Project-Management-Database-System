@@ -1,0 +1,77 @@
+﻿@model MVC_Test.Models.TaskModel
+@{
+
+}
+@using MVC_Test.Controllers
+@using Group6Application.Models;
+<style type="text/css">
+    th {
+        padding: 0 15px;
+    }
+    td{
+        padding: 0 15px;
+    }
+    input {display: inline;}
+</style>
+<body>
+    @using (Html.BeginForm())
+    {
+        <form id="taskForm" method="post">
+            <table>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Task Name</th>
+                    <th>Task Description</th>
+                    <th>CheckPoint</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Assignee</th>
+                </tr>
+                <tr>
+                    <td><input type="number" value=@Model.ID readonly></input></td>
+                    <td><input name="taskName" type="text" value=@Model.Name></input></td>
+                    <td><input name="taskDescription" type="text" value=@Model.Description></input></td>
+                    <td>
+                        <select name="TaskCheckPointID">
+                            @{
+                                foreach (int checkID in TaskController.getCheckpoints())
+                                {
+                                    CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
+                                    if (checkID == Model.CheckpointID)
+                                    {
+                                        <option value=@checkID selected>@checkpoint.Name</option>
+                                        continue;
+                                    }
+                                    <option value=@checkID>@checkpoint.Name</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td><input name="taskStart" type="datetime" value=@Model.Start></input></td>
+                    <td><input name="taskDue" type="datetime" value=@Model.Due></input></td>
+                    <td>
+                        <select name="taskAssignee" name="TaskAssignee">
+                            @{
+                                foreach (int assigneeID in TaskController.getAssignees())
+                                {
+                                    EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
+                                    string fullName = employee.FirstName + " " + employee.LastName;
+                                    if (assigneeID == Model.Assignee)
+                                    {
+                                        <option value=@assigneeID selected>@fullName</option>
+                                        continue;
+                                    }
+                                    <option value=@assigneeID>@fullName</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Submit">
+        </form>
+    }
+    <asp:label id="myLabel" runat="server" />
+    <button>Cancel</button>
+
+</body>
