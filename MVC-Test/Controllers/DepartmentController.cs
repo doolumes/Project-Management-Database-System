@@ -40,7 +40,7 @@ namespace Group6Application.Controllers
             {
                 try
                 {
-                    command.CommandText = sqlQuery;
+                    command.CommandText = sqlQuery.ToString();
                     NpgsqlDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
@@ -68,7 +68,6 @@ namespace Group6Application.Controllers
                     conn.Close();
                 }
                 
-
             }
 
             return View(viewPath, viewModel);
@@ -106,19 +105,43 @@ namespace Group6Application.Controllers
         {
             bool submissionResult = false;
             string errorMessage = "";
-            try
-            {
-                
-            }
-            catch{
 
-            }
-            finally
+            // SQL
+            string sqlQuery = $"INSERT INTO \"Department\"(\"Name\",\"Number_of_Employees\",\"SupervisorID\") VALUES (@Name,@Number_of_Employees,@SupervisorID);";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
-                
-            }
-            // Connect to sql database here and input data
-            
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@Name", Name);
+                    command.Parameters.AddWithValue("@Number_of_Employees", 0);
+                    // Supervisor ID can be NULL, if it is replace it with DBnull
+                    command.Parameters.AddWithValue("@SupervisorID", (string.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : SupervisorID);
+                    command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
+                    
+                    sqlTransaction.Commit();
+                    submissionResult = true;
+                }
+                catch (Exception e)
+                {
+                    // error catch here
+                    errorMessage = e.ToString();
+                    sqlTransaction.Rollback();
+                    //errorMessage = "We experienced an error while adding to database";
+                    Console.WriteLine(e.ToString());
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
 
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }

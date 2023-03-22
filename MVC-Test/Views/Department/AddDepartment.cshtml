@@ -5,10 +5,16 @@
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models
 @model Group6Application.Models.DepartmentView
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
 
 <script>
 
-    ready(function() {
+    $(document).ready(function() {
         $("#submit").click(function(){
             $('#submittingModal').modal({
                 backdrop:'static',
@@ -59,7 +65,7 @@
     function submit(){
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddDepartment")", // must match function name in controller
+            url: "@Url.Action("AddDepartmentDB")", // must match function name in controller
             data:{
                 Name: $('#name').val(),
                 SupervisorID: $('#supervisorID').val(),
@@ -72,8 +78,8 @@
             },
             success: function(data){
                 var json = $.parseJSON(data);
-                if (json.submissionResult){
-                    // confirmation modal
+                if (json.submissionResult){ // Submission is true
+                    $("#confirmationModal").modal();
                 }
                 else {
                     $("#submittingModal").modal("toggle");
@@ -86,38 +92,84 @@
 </script>
 
 <html>
-    <head>
-        <link rel="stylesheet" href="~/css/bootstrap.css">
-    </head>
+    
 
 <div class="text-center">
-    <h1 class="display-4">Current Departments</h1>
+    <h1>Current Departments</h1>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-md-2 ">
 
+        <form>
+            <h3>Department Information</h3>
 
-    <form>
-        <h3>Department Information</h3>
-
-        <label for="name">Department Name</label>
-        <input type="text" id="name" name="name" required />
-        <span id="nameRequiredAlert" class="collapse required">Required Field</span>
-        <br />
-        <label for="supervisorID">Supervisor ID</label>
-        <select id="supervisorID" name="supervisorID" required>
-            <option value="">Please Select</option>
-            @{
-                foreach(SelectListItem id in Model.SupervisorIDs)
-                {
-                    if (!String.IsNullOrEmpty(id.Text))
+            <label for="name">Department Name</label>
+            <input type="text" id="name" name="name" required />
+            <span id="nameRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+            <label for="supervisorID">Supervisor ID</label>
+            <select id="supervisorID" name="supervisorID" required>
+                <option value="">Please Select</option>
+                @{
+                    foreach (SelectListItem id in Model.SupervisorIDs)
                     {
-                        <option value="@id.Value">@id.Text</option>
-                    }
-                    
-                }
-            }
-        </select>
-        <span id="supervisorIDRequiredAlert" class="collapse required">Required Field</span>
+                        if (!String.IsNullOrEmpty(id.Text))
+                        {
+                            <option value="@id.Value">@id.Text</option>
+                        }
 
-    </form>
+                    }
+                }
+            </select>
+
+            <div class="col-md-3">
+                <p>
+                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                </p>
+            </div>
+        </form>
+
+    </div>
+</div>
+    
+<div id="submittingModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
+        </div>
+    </div>
+
+</div>
+
+<div id="errorModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
+        </div>
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+<div id="confirmationModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
+        </div>
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
 
 </div>
 
