@@ -9,13 +9,19 @@ using System.Data;
 using System.Net;
 using System.Data.SqlClient;
 using System.Data;
-
+using Npgsql;
+using MVC_Test.Models;
+using System.Threading.Tasks;
+using System.Xml;
 
 
 namespace Group6Application.Controllers
 {
+
     public class DepartmentController : Controller
     {
+        private static string _connectionString = "Server=20.150.147.106;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
+
         [Route("Department")]
         public ActionResult Index()
         {
@@ -24,22 +30,47 @@ namespace Group6Application.Controllers
             DepartmentView viewModel = new DepartmentView()
             {
                 Departments = new List<DepartmentTemplate>()
-                {
-                    
-                    new DepartmentTemplate {
-                    ID = 1,
-                    Name= "Test Backend",
-                    Number_Of_Employees=1,
-                    SupervisorID="10"
-                    },
-                }
             };
+            // SQL
+            string sqlQuery = $"SELECT * FROM \"Department\";";
+            NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
 
-            string connectionString = "Server=20.150.147.106;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
-            SqlConnection sql = new SqlConnection(connectionString); ;
-            sql.Open();
-            //https://www.guru99.com/insert-update-delete-asp-net.html
-            SqlCommand command;
+            using (NpgsqlCommand command = new NpgsqlCommand("", conn))
+            {
+                try
+                {
+                    command.CommandText = sqlQuery;
+                    NpgsqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        DepartmentTemplate dept = new()
+                        {
+                            ID = (int)dataReader["ID"],
+                            Name = dataReader["Name"].ToString(),
+                            Number_of_Employees = (int)dataReader["Number_of_Employees"],
+                        };
+                        // possible null values
+                        if (dataReader["SupervisorID"] != null )
+                        {
+                            dept.SupervisorID = dataReader["SupervisorID"].ToString();
+                        }
+
+                        viewModel.Departments.Add(dept);
+                    }
+                }
+                catch
+                {
+                    // error catch here
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                
+
+            }
+
             return View(viewPath, viewModel);
         }
 
@@ -75,8 +106,19 @@ namespace Group6Application.Controllers
         {
             bool submissionResult = false;
             string errorMessage = "";
+            try
+            {
+                
+            }
+            catch{
 
+            }
+            finally
+            {
+                
+            }
             // Connect to sql database here and input data
+            
 
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }

@@ -1,4 +1,4 @@
-﻿using Group6Application.Models;
+﻿    using Group6Application.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC_Test.Models;
