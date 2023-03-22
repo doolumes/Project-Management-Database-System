@@ -19,19 +19,18 @@ namespace MVC_Test.Controllers
             return View(GetTaskModel(taskID));
         }
 
+        //Get Task based on task id
         public TaskModel GetTaskModel(int taskID) {
-            //TODO: Add SQL command to pull in the info from the SQL server
             TaskModel taskModel = new TaskModel() {ID = taskID};
 
-            //string sqlQuery = $"SELECT * FROM \"Task\" WHERE \"ID\"={taskID};";
-            string sqlQuery = "SELECT * FROM \"Task\";";
+            string sqlQuery = $"SELECT * FROM \"Task\" WHERE \"ID\"=@tskid;";
             NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
             using (NpgsqlCommand command = new NpgsqlCommand("", conn))
             {
                 command.CommandText = sqlQuery;
-                //command.Parameters.AddWithValue("tskID", taskID);
+                command.Parameters.AddWithValue("tskid", taskID);
                 NpgsqlDataReader dataReader = command.ExecuteReader();
                 while (dataReader.Read())
                 {
@@ -49,8 +48,8 @@ namespace MVC_Test.Controllers
             return taskModel;
         }
 
+        //Get employee based on employee id
         public static EmployeeTemplate getAssignee(int assigneeID) {
-            //TODO: Add SQL command to pull in employee info based on ID
             EmployeeTemplate employeeTemplate = new EmployeeTemplate() {
                 ID = assigneeID,
             };
@@ -73,9 +72,9 @@ namespace MVC_Test.Controllers
             return employeeTemplate;
         }
 
+        //Get checkpoint based on checkpoint id
         public static CheckpointModel getCheckpoint(int checkpointID)
         {
-            //TODO: ADD SQL Command to pull checkpint infor from ID
             CheckpointModel checkpointModel = new CheckpointModel() { ID = checkpointID };
             string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ID\"=@chkID;";
             NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
@@ -95,7 +94,6 @@ namespace MVC_Test.Controllers
 
         //Gets a list of all checkpoints
         public static List<int> getCheckpoints() {
-            //TODO: Add SQL command to pull all avaialbale checkpoints
             List<int> lst = new List<int>();
             string sqlQuery = "SELECT * FROM \"Checkpoint\";";
             NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
@@ -111,7 +109,6 @@ namespace MVC_Test.Controllers
 
         //Gets a list of all Employees
         public static List<int> getAssignees() {
-            //TODO: Add SQL command to pull all employees
             List<int> lst = new List<int>();
             string sqlQuery = "SELECT * FROM \"Employee\";";
             NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
