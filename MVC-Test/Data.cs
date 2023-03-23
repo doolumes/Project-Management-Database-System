@@ -8,10 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Group6Application.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Data;
 using System.Net;
 using System.Data.SqlClient;
-using System.Data;
 using Npgsql;
 using MVC_Test.Models;
 using System.Threading.Tasks;
@@ -123,7 +121,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Employee\" WHERE \"Department_ID\"=@DeptID";
+                string sqlQuery = "SELECT * FROM \"Employee\" WHERE \"DepartmentID\"=@DeptID";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;

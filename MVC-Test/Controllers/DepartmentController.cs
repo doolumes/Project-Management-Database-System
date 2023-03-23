@@ -168,6 +168,19 @@ namespace Group6Application.Controllers
                 viewModel.Projects.Add(project);
             }
 
+            DataTable employees = Data.Employees(viewModel.ID);
+            foreach (DataRow row in employees.Rows)
+            {
+                EmployeeTemplate employee = new()
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    FirstName = row["FirstName"].ToString(),
+                    LastName = row["LastName"].ToString(),
+                };
+
+                viewModel.Employees.Add(employee);
+            }
+
             return View(viewPath, viewModel);
         }
     }
