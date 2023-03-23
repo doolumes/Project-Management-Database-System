@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "View Department Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@using Group6Application.Model
+@model Group6Application.Models.DepartmentTemplate
+
+<script>
+
+    ready(function () {
+        $("#addDepartmentRedirect").click(function () {
+            $('#submittingModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            })
+            addDepartmentRedirect();
+        });
+    });
+
+    function addDepartmentRedirect() {
+        Response.Redirect(@Url.Action("AddDepartment", "Department"))
+
+    }
+</script>
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+</head>
+<div class="text-center">
+    <div class="row">
+        <div class="col-4">
+            <h2>Employees</h2>
+            <ul>
+                @foreach (EmployeeTemplate employee in Model.Employees)
+                {
+                    <li>@employee.FirstName @employee.LastName</li>
+                }
+                
+            </ul>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1><strong>@(Model.Name)</strong> Department </h1>
+                </div>
+                
+                @if (String.IsNullOrEmpty(Model.SupervisorID) == false)
+                {
+                    <div class="col-md-6">
+                        <h3>Supervisor ID</h3>
+                        <p>@(Model.SupervisorID)</p>
+                    </div>
+                }
+
+
+                <div class="col-md-6">
+                    <h3>Number Of Employees</h3>
+                    <p>@Model.Number_of_Employees</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h3>Department ID</h3>
+                    <p>@Model.ID</p>
+                </div>
+            </div>
+
+            <div class="row">
+                
+                <div class="col-md-12">
+                    <h2>Projects</h2>
+                </div>
+
+                
+                <table>
+                    <div class="col-md-12">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>View Project</th>
+                        </tr>
+
+                        @{
+
+                            foreach (Project project in Model.Projects)
+                            {
+                                <tr>
+                                    <td>@project.ID</td>
+                                    <td>@project.Name</td>
+                                    <td>@project.Status</td>
+                                    <td>@project.Description</td>
+                                    <td>@project.StartDate.ToString("HH:mm")</td>
+                                    <td>@project.DueDate.ToString("HH:mm")</td>
+
+                                    <td><a href="/Project/View?id=@(project.ID)">View @project.Name</a></td>
+                                </tr>
+
+                            }
+
+                        }
+                    </div>
+                </table>
+                
+            </div>
+        </div>
+            
+
+    </div>
+    
+</div>
+
+</html>

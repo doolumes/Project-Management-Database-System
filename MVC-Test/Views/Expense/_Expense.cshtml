@@ -1,0 +1,32 @@
+﻿@model Group6Application.Models.ExpenseView
+@using Group6Application.Models
+<div class="text-center">
+    <h3 class="display-4">Expenses</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Cost</th>
+        </tr>
+
+        @{
+            
+            foreach (Expense expense in Model.Expenses)
+            {
+            <tr>
+                <td>@expense.ExpenseID</td>
+                <td>@expense.Name</td>
+                <td>@expense.Description</td>
+                <td>@expense.Cost</td>
+            </tr>
+            }
+            
+        }
+    </table>
+    <a href="@Url.Action("AddExpense", "Project")">
+        <button>Add Expense</button>
+    </a>
+</div>
+
+</html>

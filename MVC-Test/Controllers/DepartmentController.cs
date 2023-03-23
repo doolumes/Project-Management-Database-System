@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Group6Application.Models;
+using Group6Application.Model;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using System.Net;
@@ -31,50 +32,26 @@ namespace Group6Application.Controllers
             {
                 Departments = new List<DepartmentTemplate>()
             };
-            // SQL
-            string sqlQuery = $"SELECT * FROM \"Department\";";
-            NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
-            conn.Open();
+            
+            // Add datatable
+            DataTable datatable = Data.Departments();
 
-            using (NpgsqlCommand command = new NpgsqlCommand("", conn))
+            foreach (DataRow row in datatable.Rows)
             {
-                try
+                DepartmentTemplate deptartment = new DepartmentTemplate()
                 {
-                    command.CommandText = sqlQuery.ToString();
-                    NpgsqlDataReader dataReader = command.ExecuteReader();
-                    while (dataReader.Read())
-                    {
-                        DepartmentTemplate dept = new()
-                        {
-                            ID = (int)dataReader["ID"],
-                            Name = dataReader["Name"].ToString(),
-                            Number_of_Employees = (int)dataReader["Number_of_Employees"],
-                        };
-                        // possible null values
-                        if (dataReader["SupervisorID"] != null )
-                        {
-                            dept.SupervisorID = dataReader["SupervisorID"].ToString();
-                        }
-
-                        viewModel.Departments.Add(dept);
-                    }
-                }
-                catch
-                {
-                    // error catch here
-                }
-                finally
-                {
-                    conn.Close();
-                }
-                
+                    ID = (int)row["ID"],
+                    Name = row["Name"].ToString(),
+                    Number_of_Employees = (int)row["Number_of_Employees"],
+                    SupervisorID = row["SupervisorID"].ToString()  // doesn't matter if this can be null or not
+                };
+                viewModel.Departments.Add(deptartment);
             }
-
+            
             return View(viewPath, viewModel);
         }
 
         [Route("Department/Add")]
-
         public ActionResult AddDepartment()
         {
             /*
@@ -88,15 +65,15 @@ namespace Group6Application.Controllers
             */
             string viewPath = "Views/Department/AddDepartment.cshtml";
             DepartmentView viewModel = new();
-            List<SelectListItem> supervisorIDs = new List<SelectListItem>();
+            List<SelectListItem> employeeIDs = new List<SelectListItem>();
 
             
-             foreach( DataRow row in Data.SupervisorIDs().Rows)
+             foreach(DataRow row in Data.EmployeeIDs().Rows)
              {
-                supervisorIDs.Add(new SelectListItem() { Value =row["ID"].ToString(), Text = row["Name"].ToString() });
+                employeeIDs.Add(new SelectListItem() { Value =row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString())});
              }
              
-            viewModel.SupervisorIDs = supervisorIDs;
+            viewModel.EmployeeIDs = employeeIDs;
 
             return PartialView(viewPath, viewModel);
         }
@@ -132,10 +109,8 @@ namespace Group6Application.Controllers
                 catch (Exception e)
                 {
                     // error catch here
-                    errorMessage = e.ToString();
                     sqlTransaction.Rollback();
-                    //errorMessage = "We experienced an error while adding to database";
-                    Console.WriteLine(e.ToString());
+                    errorMessage = "We experienced an error while adding to database";
                 }
                 finally
                 {
@@ -146,5 +121,54 @@ namespace Group6Application.Controllers
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
 
+        [Route("Department/View")]
+        public ActionResult ViewDepartment()
+        {
+            string viewPath = "Views/Department/ViewDepartment.cshtml";
+
+            if (string.IsNullOrEmpty( Request.Query["id"] ))
+            {
+                Response.Redirect("/Department"); // if no id passed, redirect back to department
+                return null; 
+            }
+            string id_temp = Request.Query["id"].ToString();
+            int id = Convert.ToInt32(id_temp);
+
+            DataTable datatable = Data.Department(id);
+
+            if (datatable.Rows.Count == 0)
+            {
+                Response.Redirect("/Department"); // if not found in database, redirect back to department
+                return null;
+            }
+
+            DepartmentTemplate viewModel = new DepartmentTemplate() { 
+                ID = (int)datatable.Rows[0]["ID"],
+                Name = datatable.Rows[0]["Name"].ToString(),
+                Number_of_Employees = (int)datatable.Rows[0]["Number_of_Employees"],
+                SupervisorID = datatable.Rows[0]["SupervisorID"].ToString(),  // doesn't matter if this can be null or not
+                Employees = new(),
+                Projects = new()
+            };
+
+            DataTable projects = Data.Projects(viewModel.ID);
+            foreach (DataRow row in projects.Rows)
+            {
+                Project project = new()
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Name = row["Name"].ToString(),
+                    Description = row["Description"].ToString(),
+                    Status = row["Status"].ToString(),
+                    //StartDate = Convert.ToDateTime(row["StartDate"]),
+                    //EndDate = Convert.ToDateTime(row["EndDate"]),
+
+                };
+
+                viewModel.Projects.Add(project);
+            }
+
+            return View(viewPath, viewModel);
+        }
     }
 }

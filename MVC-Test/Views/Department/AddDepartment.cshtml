@@ -93,45 +93,50 @@
 
 <html>
     
+    <div class="row text-center">
+        <div class="col-md-12">
+            <h1>Current Departments</h1>
+        </div>
 
-<div class="text-center">
-    <h1>Current Departments</h1>
-</div>
-<div class="row">
-    <div class="col-md-8 offset-md-2 ">
+        <div class="col-md-12">
 
-        <form>
-            <h3>Department Information</h3>
+        </div>
+   </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2 ">
 
-            <label for="name">Department Name</label>
-            <input type="text" id="name" name="name" required />
-            <span id="nameRequiredAlert" class="collapse required">Required Field</span>
-            <br />
-            <label for="supervisorID">Supervisor ID</label>
-            <select id="supervisorID" name="supervisorID" required>
-                <option value="">Please Select</option>
-                @{
-                    foreach (SelectListItem id in Model.SupervisorIDs)
-                    {
-                        if (!String.IsNullOrEmpty(id.Text))
+            <form>
+                <h3 class="">Department Information</h3>
+
+                <label for="name">Department Name</label>
+                <input type="text" id="name" name="name" required />
+                <span id="nameRequiredAlert" class="collapse required">Required Field</span>
+                <br />
+                <label for="supervisorID">Select a supervisor for this department</label>
+                <select id="supervisorID" name="supervisorID" required>
+                    <option value="">Please Select</option>
+                    @{
+                        foreach (SelectListItem id in Model.EmployeeIDs)
                         {
-                            <option value="@id.Value">@id.Text</option>
+                            if (!String.IsNullOrEmpty(id.Text))
+                            {
+                                <option value="@id.Value">@id.Text</option>
+                            }
+
                         }
-
                     }
-                }
-            </select>
+                </select>
 
-            <div class="col-md-3">
-                <p>
-                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
-                </p>
-            </div>
-        </form>
+                <div class="col-md-3">
+                    <p>
+                        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                    </p>
+                </div>
+            </form>
 
+        </div>
     </div>
-</div>
-    
+  
 <div id="submittingModal" class="modal fade" tabindex="-1">
 
     <div class="modal-dialog" role="document">
