@@ -12,7 +12,7 @@ namespace Group6Application.Controllers
 {
     public class EmployeeController : Controller
     {
-        private static string _connectionString = "Server=20.150.147.106;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
+        private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
 
         [Route("Employee")]
 
@@ -43,28 +43,30 @@ namespace Group6Application.Controllers
                             ID = (int)dataReader["ID"],
                             Address = dataReader["Address"].ToString(),
                             Wage = (double)dataReader["Wage"],
-                            Department_ID = (int)dataReader["DepartmentID"],
                             FirstName = dataReader["FirstName"].ToString(),
                             LastName = dataReader["LastName"].ToString(),
                         };
-
-                        if (dataReader["PhoneNumber"] != null)
+                        if (dataReader["DepartmentID"] != null && dataReader["DepartmentID"] != DBNull.Value)
+                        {
+                            employees.Department_ID = (int)dataReader["DepartmentID"];
+                        }
+                        if (dataReader["PhoneNumber"] != null && dataReader["PhoneNumber"] != DBNull.Value)
                         {
                             employees.Phone_Number = dataReader["PhoneNumber"].ToString();
                         }
-                        if (dataReader["Email"] != null)
+                        if (dataReader["Email"] != null && dataReader["Email"] != DBNull.Value)
                         {
                             employees.Email = dataReader["Email"].ToString();
                         }
-                        if (dataReader["Title"] != null)
+                        if (dataReader["Title"] != null && dataReader["Title"] != DBNull.Value)
                         {
                             employees.Title = dataReader["Title"].ToString();
                         }
-                        if (dataReader["StartDate"] != null)
+                        if (dataReader["StartDate"] != null && dataReader["StartDate"] != DBNull.Value)
                         {
-                            employees.Start_Date = (DateTime)dataReader["Start_Date"];
+                            employees.Start_Date = (DateTime)dataReader["StartDate"];
                         }
-                        if (dataReader["SupervisorID"] != null)
+                        if (dataReader["SupervisorID"] != null && dataReader["SupervisorID"] != DBNull.Value)
                         {
                             employees.Supervisor_ID = (int)dataReader["SupervisorID"];
                         }

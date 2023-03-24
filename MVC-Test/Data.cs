@@ -20,7 +20,7 @@ namespace Group6Application
 {
     public class Data
     {
-        private static string _connectionString = "Server=20.150.147.106;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
+        private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
 
         // returns supervisor IDs for all departments
         public static DataTable EmployeeIDs() 

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using System.Net;
 using System.Data.SqlClient;
-using System.Data;
 using Npgsql;
 using MVC_Test.Models;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace Group6Application.Controllers
 
     public class DepartmentController : Controller
     {
-        private static string _connectionString = "Server=20.150.147.106;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
+        private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
 
         [Route("Department")]
         public ActionResult Index()
