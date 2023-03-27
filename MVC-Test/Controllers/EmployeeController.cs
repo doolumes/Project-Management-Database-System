@@ -140,30 +140,43 @@ namespace Group6Application.Controllers
             return View(viewPath, viewModel);
         }
 
-        [Route("Employee/Add")]
-        public ActionResult AddEmplyee(int ID, string FirstName, string LastName, string Phone_Number, int Supervisor_ID, int Department_ID, DateTime Start_Date, double Wage, string Email, string Address, string Title)
+        public void AddEmplyeeDB(EmployeeTemplate add)
         {
-            string viewPath = "Views/Employee/Add.cshtml";
+           
             string sqlQuery = $"INSERT INTO \"Employee\"(\"ID\",\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@ID,@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
             NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            using (NpgsqlCommand command = new NpgsqlCommand(sqlQuery, conn))
+            using (NpgsqlCommand command = new NpgsqlCommand("", conn))
             {
-                command.Parameters.AddWithValue("@Id",ID);
-                command.Parameters.AddWithValue("@Address", (string.IsNullOrEmpty(Address)) ? (object)DBNull.Value : Address);
-                command.Parameters.AddWithValue("@Wage", Wage);
-                command.Parameters.AddWithValue("@FirstName", FirstName);
-                command.Parameters.AddWithValue("@LastName", LastName);
-                command.Parameters.AddWithValue("@DepartmentID", Department_ID);
-                command.Parameters.AddWithValue("@PhoneNumber", (string.IsNullOrEmpty(Phone_Number)) ? (object)DBNull.Value : Phone_Number);
-                command.Parameters.AddWithValue("@Email", (string.IsNullOrEmpty(Email)) ? (object)DBNull.Value : Email);
-                command.Parameters.AddWithValue("@Title", (string.IsNullOrEmpty(Title)) ? (object)DBNull.Value : Title);
-                command.Parameters.AddWithValue("@StartDate", Start_Date);
-                command.Parameters.AddWithValue("@SupervisorID", Supervisor_ID);
+                command.Parameters.AddWithValue("@Id",add.ID);
+                command.Parameters.AddWithValue("@Address", add.Address);
+                command.Parameters.AddWithValue("@Wage", add.Wage);
+                command.Parameters.AddWithValue("@FirstName", add.FirstName);
+                command.Parameters.AddWithValue("@LastName", add.LastName);
+                command.Parameters.AddWithValue("@DepartmentID", add.Department_ID);
+                command.Parameters.AddWithValue("@PhoneNumber", add.Phone_Number);
+                command.Parameters.AddWithValue("@Email", add.Email);
+                command.Parameters.AddWithValue("@Title", add.Title);
+                command.Parameters.AddWithValue("@StartDate", add.Start_Date);
+                command.Parameters.AddWithValue("@SupervisorID", add.Supervisor_ID);
                 command.ExecuteNonQuery();
             }
-            return View(viewPath);
+        }
+        [Route("Employee/Add")]
+        public ActionResult AddEmplyee(EmployeeTemplate adddb)
+        {
+            string viewPath = "Views/Employee/Add.cshtml";
+            try
+            {
+                var dm = new EmployeeController();
+                dm.AddEmplyeeDB(adddb);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return PartialView(viewPath);
+            }
         }
 
         /*[Route("Employee/Delete")]
