@@ -205,7 +205,7 @@ namespace Group6Application.Controllers
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"UPDATE \"Department\" SET\"deleted\"=@deleted WHERE \"ID\"=@id;";
+            string sqlQuery = $"UPDATE \"Department\" SET\"deleted\"=@deleted, \"SupervisorID\"=@SupervisorID WHERE \"ID\"=@id;";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -220,6 +220,8 @@ namespace Group6Application.Controllers
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@id", id);
                     command.Parameters.AddWithValue("@deleted", true);
+                    command.Parameters.AddWithValue("@SupervisorID", DBNull.Value);
+
                     command.ExecuteNonQuery();
                     sqlTransaction.Commit();
                     submissionResult = true;
@@ -308,8 +310,8 @@ namespace Group6Application.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                //try
-                //{
+                try
+                {
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@Name", Name);
@@ -322,8 +324,7 @@ namespace Group6Application.Controllers
 
                     sqlTransaction.Commit();
                     submissionResult = true;
-                //}
-                try { }
+                }
                 catch (Exception e)
                 {
                     // error catch here
