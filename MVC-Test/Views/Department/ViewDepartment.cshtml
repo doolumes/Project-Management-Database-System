@@ -80,8 +80,6 @@
                             <th>Name</th>
                             <th>Status</th>
                             <th>Description</th>
-                            <th>Start Date</th>
-                            <th>Due Date</th>
                             <th>View Project</th>
                         </tr>
             
@@ -92,8 +90,6 @@
                                 <td>@project.Name</td>
                                 <td>@project.Status</td>
                                 <td>@project.Description</td>
-                                <td>@project.StartDate.ToString("HH:mm")</td>
-                                <td>@project.DueDate.ToString("HH:mm")</td>
 
                                 <td><a href="/Project/View?id=@(project.ID)">View @project.Name</a></td>
                             </tr>
@@ -103,8 +99,21 @@
                     </div>
                 </table>
                 <p></p>
-                <a href="/Department/Delete?id=@Model.ID"><button>Delete Department</button></a>
-                <a href="/Department/Update?id=@Model.ID"><button>Update Department</button></a>
+                <div  class="row">
+                    <div class="col-md-4">
+                        <a href="/Department/Delete?id=@Model.ID"><button>Delete Department</button></a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a href="/Department/Update?id=@Model.ID"><button>Update Department</button></a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a href="/Department"><button>Return</button></a>
+                    </div>
+                </div>
+                
+                
 
 
                 
