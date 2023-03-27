@@ -1,4 +1,55 @@
-﻿@page
-@model MVC_Test.Views.Employee.AddModel
-@{
-}
+﻿<!-- No Model needed , we are passing data to backend.  Not recieving anything-->
+
+<script>
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            $('#submittingModal').modal({
+                //backdrop:'static',
+                //keyboard: false
+            })
+            submit();
+        });
+    });
+  
+    // Use AddDepartment as example of how to build this function out
+    function submit() {
+        /*
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddDepartmentDB")", // must match function name in controller
+            data: {
+                Name: $('#name').val(), // passes data from input fields on page $('#name') looks for input with id="name"
+                SupervisorID: $('#supervisorID').val(), 
+            },
+            dataType: "text",
+            error: function (msg) {
+                $("#submittingModal").modal("toggle"); // for these modals, copy from very bottom of AddDepartment page
+                $(".modal-backdrop").remove();
+                $("#errorModal").modal();
+            },
+            success: function (data) {
+                var json = $.parseJSON(data);
+                if (json.submissionResult) { // Submission is true
+                    $("#confirmationModal").modal();
+                }
+                else {
+                    $("#submittingModal").modal("toggle");
+                    $(".modal-backdrop").remove();
+                    $("#errorModal").modal();
+                }
+            }
+        });
+        */
+    }
+</script>
+
+<html>
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                <!-- Enter input fields here-->
+            </form>
+        </div>
+    </div>
+    
+</html>

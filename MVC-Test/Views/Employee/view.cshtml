@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models;
-@model Group6Application.Models.EmployeeView
+@model Group6Application.Models.EmployeeTemplate
 
 <html>
 <head>
@@ -30,22 +30,19 @@
 
             @{
 
-                foreach (EmployeeTemplate employee in Model.Employee)
-                {
-                <tr>
-                    <th>@employee.ID</th>
-                    <th>@employee.FirstName</th>
-                    <th>@employee.LastName</th>
-                    <th>@employee.Phone_Number</th>
-                    <th>@employee.Supervisor_ID</th>
-                    <th>@employee.Department_ID</th>
-                    <th>@employee.Start_Date</th>
-                    <th>@employee.Wage</th>
-                    <th>@employee.Email</th>
-                    <th>@employee.Address</th>
-                    <th>@employee.Title</th>
-                </tr>
-                }
+            <tr>
+                <th>@Model.ID</th>
+                <th>@Model.FirstName</th>
+                <th>@Model.LastName</th>
+                <th>@Model.Phone_Number</th>
+                <th>@Model.Supervisor_ID</th>
+                <th>@Model.Department_ID</th>
+                <th>@Model.Start_Date</th>
+                <th>@Model.Wage</th>
+                <th>@Model.Email</th>
+                <th>@Model.Address</th>
+                <th>@Model.Title</th>
+            </tr>
 
             }
     </table>
