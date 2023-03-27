@@ -1,10 +1,11 @@
 ﻿@{
-    ViewBag.Title = "Add Department Page";
+    ViewBag.Title = "Delete Department Page";
 }
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Model
 @using Group6Application.Models
-@model Group6Application.Models.DepartmentView
+@model Group6Application.Models.DepartmentTemplate
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
     <script src="~/js/jquery-3.6.4.min.js"></script>
@@ -20,7 +21,22 @@
                 //backdrop:'static',
                 //keyboard: false
             })
-            submit();
+            var noDependencies = false;
+            var modelDepenencies = "@Model.NoDependencies";
+
+            if (modelDepenencies == "True"){
+                noDependencies = true;
+            }
+
+            console.log("Dependencies?: " + noDependencies);
+
+            if (noDependencies){
+                submit();
+            }
+            else {
+                window.Alert("Please remove all dependencies to delete this department");
+            }
+            
         });
     });
 
@@ -65,10 +81,9 @@
     function submit(){
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddDepartmentDB")", // must match function name in controller
+            url: "@Url.Action("DeleteDepartmentDB")", // must match function name in controller
             data:{
-                Name: $('#name').val(),
-                SupervisorID: $('#supervisorID').val(),
+                id:@Model.ID
             },
             dataType:"text",
             error: function(msg){
@@ -95,7 +110,7 @@
     
     <div class="row text-center">
         <div class="col-md-12">
-            <h1>Current Departments</h1>
+            <h1>@Model.Name Department</h1>
         </div>
 
         <div class="col-md-12">
@@ -106,30 +121,62 @@
         <div class="col-md-8 offset-md-2 ">
 
             <form>
-                <h3 class="">Department Information</h3>
+                <h3>Dependents</h3>
+                <p><strong>Must delete all the following dependents to delete department. Ask admin for further support or questions.</strong></p>
 
-                <label for="name">Department Name</label>
-                <input type="text" id="name" name="name" required />
-                <span id="nameRequiredAlert" class="collapse required">Required Field</span>
-                <br />
-                <label for="supervisorID">Select a supervisor for this department</label>
-                <select id="supervisorID" name="supervisorID" required>
-                    <option value="">Unassigned</option>
-                    @{
-                        foreach (SelectListItem id in Model.EmployeeIDs)
+                <h3>Projects</h3>
+                <p><strong>Please remove all projects from this department:</strong></p>
+                @if(Model.Projects.Count > 0)
+                {
+                    <table>
+                        <thead>
+                        <th>Project</th>
+                        <th>Project Page</th>
+                        </thead>
+                        @foreach (Project project in Model.Projects)
                         {
-                            if (!String.IsNullOrEmpty(id.Text))
-                            {
-                                <option value="@id.Value">@id.Text</option>
-                            }
-
+                            <li>@project.Name</li>
+                            <li><a href="/Project/Delete?id=@(project.ID)">Delete Project</a></li>
                         }
-                    }
-                </select>
+
+                </table>
+                }
+                else
+                {
+                    <p>There are no project dependencies.</p>
+                }
+
+                <br />
+
+                <h3>Employees</h3>
+                <p><strong>Please reassign all employees in this department:</strong></p>
+                @if(Model.Employees.Count > 0)
+                {
+                    <table>
+                        <thead>
+                        <th>Name</th>
+                        <th>Employee Page</th>
+                        </thead>
+                        @foreach (EmployeeTemplate employee in Model.Employees)
+                        {
+                            <li>@employee.FirstName @employee.LastName</li>
+                            <li><a href="/Employee/Delete?id=@(employee.ID)">Delete Employee</a></li>
+                        }
+
+                    </table>
+                }
+                else
+                {
+                    <p>There are no employee depenencies.</p>
+                }
+            
+                <br />
+                <br />
+
 
                 <div class="col-md-3">
                     <p>
-                        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                        <button type="button" id="submit" name="submit" class="btn-block">Delete Department</button>
                     </p>
                 </div>
             </form>
@@ -147,7 +194,7 @@
             <p>Form is being submitted</p>
         </div>
         <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
-    
+
     </div>
 
 </div>

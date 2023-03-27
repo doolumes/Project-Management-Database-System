@@ -1,10 +1,10 @@
 ﻿@{
-    ViewBag.Title = "Add Department Page";
+    ViewBag.Title = "Update Department Page";
 }
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models
-@model Group6Application.Models.DepartmentView
+@model Group6Application.Models.UpdateDepartmentView
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
     <script src="~/js/jquery-3.6.4.min.js"></script>
@@ -24,51 +24,14 @@
         });
     });
 
-    function pageValid(page){
-        var pageValid = false;
-        var invalidObjects = 0;
-        var listOfInvalidObjects ="";
-
-        $("").each(function(){
-            var inputID = "#" + $(this).attr("id");
-            if ( $(inputId).attr("required") & $(inputId).is("input") )
-            {
-                if ( ($inputId).val().length == 0 ){ // empty input
-
-                    $(inpudId + "RequiredAlert").show();
-                    invalidObjects++;
-                    listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
-                }
-                else {
-                    $(inpudId + "RequiredAlert").hide();
-                }
-
-                if ( ($inputId).is("select")){
-                    if ( $($inputId).val() == ""){
-                        $(inpudId + "RequiredAlert").show();
-                        invalidObjects++;
-                        listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
-                    }
-                    else {
-                        $(inpudId + "RequiredAlert").hide();
-                    }
-                }
-            }
-        });
-
-        if (invalidObjects == 0){
-            pageValid = true;
-        }
-        return pageValid;
-    }
-
     function submit(){
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddDepartmentDB")", // must match function name in controller
+            url: "@Url.Action("UpdateDepartmentDB")", // must match function name in controller
             data:{
                 Name: $('#name').val(),
                 SupervisorID: $('#supervisorID').val(),
+                id: @Model.Department.ID,
             },
             dataType:"text",
             error: function(msg){
@@ -109,22 +72,29 @@
                 <h3 class="">Department Information</h3>
 
                 <label for="name">Department Name</label>
-                <input type="text" id="name" name="name" required />
+                <input type="text" id="name" name="name" value="@Model.Department.Name" required />
                 <span id="nameRequiredAlert" class="collapse required">Required Field</span>
                 <br />
                 <label for="supervisorID">Select a supervisor for this department</label>
                 <select id="supervisorID" name="supervisorID" required>
                     <option value="">Unassigned</option>
-                    @{
-                        foreach (SelectListItem id in Model.EmployeeIDs)
+                @{
+                    foreach (SelectListItem id in Model.EmployeeIDs)
+                    {
+                        if (!String.IsNullOrEmpty(id.Text))
                         {
-                            if (!String.IsNullOrEmpty(id.Text))
+                            if (id.Value.ToString() == Model.Department.SupervisorID)
+                            {
+                                <option value="@id.Value" selected>@id.Text</option>
+                            }
+                            else
                             {
                                 <option value="@id.Value">@id.Text</option>
                             }
-
                         }
+
                     }
+                }
                 </select>
 
                 <div class="col-md-3">
@@ -147,7 +117,7 @@
             <p>Form is being submitted</p>
         </div>
         <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
-    
+
     </div>
 
 </div>
