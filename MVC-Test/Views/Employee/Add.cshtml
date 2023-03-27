@@ -13,13 +13,22 @@
   
     // Use AddDepartment as example of how to build this function out
     function submit() {
-        /*
+        
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddDepartmentDB")", // must match function name in controller
+            url: "@Url.Action("AddEmplyee")", // must match function name in controller
             data: {
-                Name: $('#name').val(), // passes data from input fields on page $('#name') looks for input with id="name"
-                SupervisorID: $('#supervisorID').val(), 
+                Id: $('#Id').val(), // passes data from input fields on page $('#name') looks for input with id="name"
+                Address: $('#Address').val(),
+                Wage: $('#Wage').val(),
+                FirstName: $('#FirstName').val(),
+                LastName: $('#LastName').val(),
+                DepartmentID: $('#DepartmentID').val(),
+                PhoneNumber: $('#PhoneNumber').val(),
+                Email: $('#Email').val(),
+                Title: $('#Title').val(),
+                StartDate: $('#StartDate').val(),
+                SupervisorID: $('#SupervisorID').val(),
             },
             dataType: "text",
             error: function (msg) {
@@ -39,17 +48,97 @@
                 }
             }
         });
-        */
+        
     }
 </script>
 
 <html>
-    <div class="row">
-        <div class="col-md-12">
-            <form>
-                <!-- Enter input fields here-->
-            </form>
+<div class="row text-center">
+    <div class="col-md-12">
+        <h1>Add Employee</h1>
+    </div>
+
+    <div class="col-md-12">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-md-2 ">
+
+        <form>
+            <h3 class="">Employee Information</h3>
+
+            <label for="Id">Id</label>
+            <input type="text" id="Id" name="Id" required />
+            <label for="Address">Address</label>
+            <input type="text" id="Address" name="Address" required />
+            <label for="Wage">Wage</label>
+            <input type="text" id="Wage" name="Wage" required />
+            <label for="FirstName">FirstName</label>
+            <input type="text" id="FirstName" name="FirstName" required />
+            <label for="LastName">LastName</label>
+            <input type="text" id="LastName" name="LastName" required />
+            <label for="DepartmentID">DepartmentID</label>
+            <input type="text" id="DepartmentID" name="DepartmentID" required />
+            <label for="PhoneNumber">PhoneNumber</label>
+            <input type="text" id="PhoneNumber" name="PhoneNumber" required />
+            <label for="Email">Email</label>
+            <input type="text" id="Email" name="Email" required />
+            <label for="Title">Title</label>
+            <input type="text" id="Title" name="Title" required />
+            <label for="StartDate">StartDate</label>
+            <input type="text" id="StartDate" name="StartDate" required />
+            <label for="SupervisorID">SupervisorID</label>
+            <input type="text" id="SupervisorID" name="SupervisorID" required />
+
+            <div class="col-md-3">
+                <p>
+                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                </p>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div id="submittingModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
         </div>
     </div>
+
+</div>
+
+<div id="errorModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
+        </div>
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+<div id="confirmationModal" class="modal fade" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
+        </div>
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
     
 </html>
