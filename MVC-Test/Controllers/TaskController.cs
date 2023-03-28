@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC_Test.Models;
 using Npgsql;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace MVC_Test.Controllers
 {
@@ -16,7 +19,100 @@ namespace MVC_Test.Controllers
         private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
         public IActionResult Index(int taskID)
         {
+            //Check if the provided ID exists
+
+            NpgsqlConnection connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+
+            string query = "SELECT COUNT(*) FROM \"Task\" WHERE \"ID\"=@id";
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+            command.Parameters.AddWithValue("@id", taskID);
+            int count = Convert.ToInt32(command.ExecuteScalar());
+            if (count <= 0) {
+                return Content("This Task ID does not exist!");
+            }
+            connection.Close();
             return View(GetTaskModel(taskID));
+        }
+
+        public ActionResult Add() {
+            return View();
+        }
+
+        public ActionResult AddTask(string taskName, string description = "", string checkPointID = null, string startDate = "", string dueDate = "", string assignee=null) {
+            
+            string sqlCommand = "INSERT INTO \"Task\" (\"Name\",\"Description\",\"CheckpointID\",\"Start\",\"Due\",\"Assignee\") VALUES (@name,@description,@checkpointid,@startdate,@duedate,@assignee) RETURNING \"ID\";";
+            int ckID = 0;
+            int assign = 0;
+            if (string.IsNullOrEmpty(description)) {
+                description = "NULL";
+            }
+            if (string.IsNullOrEmpty(startDate)) {
+                startDate = "NULL";
+            }
+            if (string.IsNullOrEmpty(dueDate)) {
+                dueDate = "NULL";
+            }
+            if (string.IsNullOrEmpty(checkPointID))
+            {
+                checkPointID = "NULL";
+            }
+            else {
+                ckID = Int32.Parse(checkPointID);
+            }
+            if (string.IsNullOrEmpty(assignee))
+            {
+                assignee = "NULL";
+            }
+            else {
+                assign = Convert.ToInt32(assignee);
+            }
+            NpgsqlConnection connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+            NpgsqlCommand command = new NpgsqlCommand(sqlCommand, connection);
+            command.Parameters.AddWithValue("@name", taskName);
+            command.Parameters.AddWithValue("@description", description);
+
+            if (ckID > 0)
+            {
+                command.Parameters.AddWithValue("@checkpointid", ckID);
+            }
+            else {
+                command.Parameters.AddWithValue("@checkpointid", checkPointID);
+            }
+            if (assign > 0)
+            {
+                command.Parameters.AddWithValue("@assignee", assign);
+            }
+            else {
+                command.Parameters.AddWithValue("@assignee", assignee);
+            }
+            if (startDate == "NULL")
+            {
+                command.Parameters.AddWithValue("@startdate", DBNull.Value);
+            }
+            else {
+                DateTime sdate = DateTime.ParseExact(startDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                command.Parameters.AddWithValue("@startdate", sdate);
+            }
+            if (dueDate == "NULL")
+            {
+                command.Parameters.AddWithValue("@duedate", DBNull.Value);
+            }
+            else {
+                DateTime ddate = DateTime.ParseExact(dueDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                command.Parameters.AddWithValue("@duedate", ddate);
+            }
+            try {
+                int insertedID = (int)command.ExecuteScalar();
+                connection.Close();
+                return Json(new { submissionResult = true, message = "Success", id = insertedID });
+            }catch (NpgsqlException e)
+            {
+                connection.Close();
+                return Json(new { submissionResult = false, message = "Failed" });
+            }
+
         }
 
         //Get Task based on task id
