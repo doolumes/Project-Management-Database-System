@@ -59,7 +59,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Department\" WHERE \"ID\"=@ID";
+                string sqlQuery = "SELECT * FROM \"Department\" WHERE \"ID\"=@ID AND \"deleted\"=@deleted";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -71,6 +71,8 @@ namespace Group6Application
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@ID", id);
+                    command.Parameters.AddWithValue("@deleted", false);
+
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
                     sqlDataAdapter.Fill(datatable);
@@ -90,7 +92,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Department\"";
+                string sqlQuery = "SELECT * FROM \"Department\" WHERE \"deleted\"=@deleted";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -101,6 +103,8 @@ namespace Group6Application
                 {
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@deleted", false);
+
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
                     sqlDataAdapter.Fill(datatable);

@@ -13,6 +13,7 @@ namespace Group6Application.Models
         public int? Number_of_Employees { get; set; }
         public string? Name { get; set; }
         public string? SupervisorID { get; set; }
+        public bool NoDependencies { get; set; }
 
         public List<Project> Projects = new List<Project>();
         public List <EmployeeTemplate> Employees = new List<EmployeeTemplate>();
@@ -23,5 +24,11 @@ namespace Group6Application.Models
         public List<DepartmentTemplate> Departments = new List<DepartmentTemplate>();
         public List<SelectListItem> EmployeeIDs { get; set; }
     }
-  
+
+    public class UpdateDepartmentView
+    {
+        public DepartmentTemplate Department = new();
+        public List<SelectListItem> EmployeeIDs { get; set; }
+    }
+
 }

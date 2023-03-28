@@ -21,7 +21,6 @@
 
     function addDepartmentRedirect() {
         Response.Redirect(@Url.Action("AddDepartment", "Department"))
-
     }
 </script>
 
@@ -37,7 +36,7 @@
             <ul style="list-style-type: none">
                 @foreach (EmployeeTemplate employee in Model.Employees)
                 {
-                    <li>@employee.FirstName @employee.LastName</li>
+                    <a href="/Employee/View?id=@employee.ID"><li>@employee.FirstName @employee.LastName</li></a>
                 }
                 
             </ul>
@@ -48,14 +47,13 @@
                     <h1><strong>@(Model.Name)</strong> Department </h1>
                 </div>
                 
-                @if (String.IsNullOrEmpty(Model.SupervisorID) == false)
+                @if (!String.IsNullOrEmpty(Model.SupervisorID))
                 {
                     <div class="col-md-6">
                         <h3>Supervisor ID</h3>
                         <p>@(Model.SupervisorID)</p>
                     </div>
                 }
-
 
                 <div class="col-md-6">
                     <h3>Number Of Employees</h3>
@@ -69,46 +67,58 @@
             </div>
 
             <div class="row">
-                
+
                 <div class="col-md-12">
                     <h2>Projects</h2>
                 </div>
 
                 
                 <table>
-                    <div class="col-md-12>
+                    <div class="col-md-12">
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
                             <th>Status</th>
                             <th>Description</th>
-                            <th>Start Date</th>
-                            <th>Due Date</th>
                             <th>View Project</th>
                         </tr>
+            
+                        @foreach (Project project in Model.Projects)
+                        {
+                            <tr>
+                                <td>@project.ID</td>
+                                <td>@project.Name</td>
+                                <td>@project.Status</td>
+                                <td>@project.Description</td>
 
-                        @{
-
-                            foreach (Project project in Model.Projects)
-                            {
-                                <tr>
-                                    <td>@project.ID</td>
-                                    <td>@project.Name</td>
-                                    <td>@project.Status</td>
-                                    <td>@project.Description</td>
-                                    <td>@project.StartDate.ToString("HH:mm")</td>
-                                    <td>@project.DueDate.ToString("HH:mm")</td>
-
-                                    <td><a href="/Project/View?id=@(project.ID)">View @project.Name</a></td>
-                                </tr>
-
-                            }
+                                <td><a href="/Project/View?id=@(project.ID)">View @project.Name</a></td>
+                            </tr>
 
                         }
+
                     </div>
                 </table>
+                <p></p>
+                <div  class="row">
+                    <div class="col-md-4">
+                        <a href="/Department/Delete?id=@Model.ID"><button>Delete Department</button></a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a href="/Department/Update?id=@Model.ID"><button>Update Department</button></a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a href="/Department"><button>Return</button></a>
+                    </div>
+                </div>
+                
+                
+
+
                 
             </div>
+
         </div>
             
 

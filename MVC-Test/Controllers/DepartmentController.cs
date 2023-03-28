@@ -37,14 +37,14 @@ namespace Group6Application.Controllers
 
             foreach (DataRow row in datatable.Rows)
             {
-                DepartmentTemplate deptartment = new DepartmentTemplate()
+                DepartmentTemplate department = new DepartmentTemplate()
                 {
                     ID = (int)row["ID"],
                     Name = row["Name"].ToString(),
-                    Number_of_Employees = (int)row["Number_of_Employees"],
-                    SupervisorID = row["SupervisorID"].ToString()  // doesn't matter if this can be null or not
+                    SupervisorID = row["SupervisorID"].ToString(),  // doesn't matter if this can be null or not
                 };
-                viewModel.Departments.Add(deptartment);
+                department.Number_of_Employees = Data.Employees(department.ID).Rows.Count;
+                viewModel.Departments.Add(department);
             }
             
             return View(viewPath, viewModel);
@@ -99,7 +99,7 @@ namespace Group6Application.Controllers
                     command.Parameters.AddWithValue("@Name", Name);
                     command.Parameters.AddWithValue("@Number_of_Employees", 0);
                     // Supervisor ID can be NULL, if it is replace it with DBnull
-                    command.Parameters.AddWithValue("@SupervisorID", (string.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : SupervisorID);
+                    command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
                     
                     sqlTransaction.Commit();
@@ -120,31 +120,41 @@ namespace Group6Application.Controllers
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
 
-        [Route("Department/View")]
-        public ActionResult ViewDepartment()
+        [Route("Department/Delete")]
+        public ActionResult DeleteDepartment()
         {
-            string viewPath = "Views/Department/ViewDepartment.cshtml";
-
-            if (string.IsNullOrEmpty( Request.Query["id"] ))
+            string viewPath = "Views/Department/DeleteDepartment.cshtml";
+            /*
+            string userRole = Request.Cookies["Name"].Value;
+            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
             {
-                Response.Redirect("/Department"); // if no id passed, redirect back to department
-                return null; 
+                bool submissionResult = false;
+                string errorMessage = "User does not have permission to view this page";
+                return Json(new { submissionResult = submissionResult, message = errorMessage });
+            }
+            */
+            if (string.IsNullOrEmpty(Request.Query["id"]))
+            {
+                Response.Redirect("/Department"); // if not found in database, redirect back to department
+                return Index();
             }
             string id_temp = Request.Query["id"].ToString();
             int id = Convert.ToInt32(id_temp);
+
 
             DataTable datatable = Data.Department(id);
 
             if (datatable.Rows.Count == 0)
             {
                 Response.Redirect("/Department"); // if not found in database, redirect back to department
-                return null;
+                return Index();
             }
 
-            DepartmentTemplate viewModel = new DepartmentTemplate() { 
+            DepartmentTemplate viewModel = new DepartmentTemplate()
+            {
                 ID = (int)datatable.Rows[0]["ID"],
                 Name = datatable.Rows[0]["Name"].ToString(),
-                Number_of_Employees = (int)datatable.Rows[0]["Number_of_Employees"],
+                Number_of_Employees = 0,
                 SupervisorID = datatable.Rows[0]["SupervisorID"].ToString(),  // doesn't matter if this can be null or not
                 Employees = new(),
                 Projects = new()
@@ -178,6 +188,218 @@ namespace Group6Application.Controllers
                 };
 
                 viewModel.Employees.Add(employee);
+                viewModel.Number_of_Employees++;
+            }
+
+            if (viewModel.Employees.Count == 0 && viewModel.Projects.Count == 0)
+                viewModel.NoDependencies = true;
+            else viewModel.NoDependencies = false;
+
+
+            return PartialView(viewPath, viewModel);
+        }
+
+        public ActionResult DeleteDepartmentDB(int id)
+        {
+            bool submissionResult = false;
+            string errorMessage = "";
+
+            // SQL
+            string sqlQuery = $"UPDATE \"Department\" SET\"deleted\"=@deleted, \"SupervisorID\"=@SupervisorID WHERE \"ID\"=@id;";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                //try
+                //{
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@deleted", true);
+                    command.Parameters.AddWithValue("@SupervisorID", DBNull.Value);
+
+                    command.ExecuteNonQuery();
+                    sqlTransaction.Commit();
+                    submissionResult = true;
+                //}
+                try { }
+                catch (Exception e)
+                {
+                    // error catch here
+                    sqlTransaction.Rollback();
+                    errorMessage = "We experienced an error while accessing the database";
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
+
+            return Json(new { submissionResult = submissionResult, message = errorMessage });
+        }
+
+        [Route("Department/Update")]
+        public ActionResult UpdateDepartment()
+        {
+            /*
+            string userRole = Request.Cookies["Name"].Value;
+            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
+            {
+                bool submissionResult = false;
+                string errorMessage = "User does not have permission to view this page";
+                return Json(new { submissionResult = submissionResult, message = errorMessage });
+            }
+            */
+            if (string.IsNullOrEmpty(Request.Query["id"]))
+            {
+                Response.Redirect("/Department");
+                return Index();
+            }
+            string id_temp = Request.Query["id"].ToString();
+            int id = Convert.ToInt32(id_temp);
+
+            DataTable deptTable = Data.Department(id);
+
+            if (deptTable.Rows.Count == 0) 
+            {
+                Response.Redirect("/Department"); // if not found in database, redirect back to department
+                return Index();
+            }
+
+            DepartmentTemplate department = new DepartmentTemplate()
+            {
+                ID = (int)deptTable.Rows[0]["ID"],
+                Name = deptTable.Rows[0]["Name"].ToString(),
+                Number_of_Employees = 0,
+                SupervisorID = deptTable.Rows[0]["SupervisorID"].ToString(),  // doesn't matter if this can be null or not
+                Employees = new(),
+                Projects = new()
+            };
+
+            string viewPath = "Views/Department/UpdateDepartment.cshtml";
+            UpdateDepartmentView viewModel = new() { Department=department};
+            List<SelectListItem> employeeIDs = new List<SelectListItem>();
+
+
+            foreach (DataRow row in Data.EmployeeIDs().Rows)
+            {
+                employeeIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString()) });
+            }
+
+            viewModel.EmployeeIDs = employeeIDs;
+
+            return PartialView(viewPath, viewModel);
+        }
+
+        public ActionResult UpdateDepartmentDB(string Name, string SupervisorID, int id)
+        {
+            bool submissionResult = false;
+            string errorMessage = "";
+
+            // SQL
+            string sqlQuery = $"UPDATE \"Department\" SET \"Name\"=@Name,\"SupervisorID\"=@SupervisorID WHERE \"ID\"=@ID;";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@Name", Name);
+                    command.Parameters.AddWithValue("@Number_of_Employees", 0);
+                    command.Parameters.AddWithValue("@ID", id);
+
+                    // Supervisor ID can be NULL, if it is replace it with DBnull
+                    command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)    ) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
+                    command.ExecuteNonQuery();
+
+                    sqlTransaction.Commit();
+                    submissionResult = true;
+                }
+                catch (Exception e)
+                {
+                    // error catch here
+                    sqlTransaction.Rollback();
+                    errorMessage = "We experienced an error while adding to database";
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
+
+            return Json(new { submissionResult = submissionResult, message = errorMessage });
+        }
+
+
+        [Route("Department/View")]
+        public ActionResult ViewDepartment()
+        {
+            string viewPath = "Views/Department/ViewDepartment.cshtml";
+
+            if (string.IsNullOrEmpty( Request.Query["id"] ))
+            {
+                Response.Redirect("/Department"); // if no id passed, redirect back to department
+                return null; 
+            }
+            string id_temp = Request.Query["id"].ToString();
+            int id = Convert.ToInt32(id_temp);
+
+            DataTable datatable = Data.Department(id);
+
+            if (datatable.Rows.Count == 0)
+            {
+                Response.Redirect("/Department"); // if not found in database, redirect back to department
+                return null;
+            }
+
+            DepartmentTemplate viewModel = new DepartmentTemplate() { 
+                ID = (int)datatable.Rows[0]["ID"],
+                Name = datatable.Rows[0]["Name"].ToString(),
+                Number_of_Employees = 0,
+                SupervisorID = datatable.Rows[0]["SupervisorID"].ToString(),  // doesn't matter if this can be null or not
+                Employees = new(),
+                Projects = new()
+            };
+
+            DataTable projects = Data.Projects(viewModel.ID);
+            foreach (DataRow row in projects.Rows)
+            {
+                Project project = new()
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Name = row["Name"].ToString(),
+                    Description = row["Description"].ToString(),
+                    Status = row["Status"].ToString(),
+                    //StartDate = Convert.ToDateTime(row["StartDate"]),
+                    //EndDate = Convert.ToDateTime(row["EndDate"]),
+
+                };
+
+                viewModel.Projects.Add(project);
+            }
+
+            DataTable employees = Data.Employees(viewModel.ID);
+            foreach (DataRow row in employees.Rows)
+            {
+                EmployeeTemplate employee = new()
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    FirstName = row["FirstName"].ToString(),
+                    LastName = row["LastName"].ToString(),
+                };
+
+                viewModel.Employees.Add(employee);
+                viewModel.Number_of_Employees++;
             }
 
             return View(viewPath, viewModel);
