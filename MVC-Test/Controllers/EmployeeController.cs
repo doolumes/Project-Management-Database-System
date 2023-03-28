@@ -173,13 +173,13 @@ namespace Group6Application.Controllers
             return PartialView(viewPath, viewModel);
         }
 
-        public ActionResult AddEmplyeeDB(int ID, string Address, int Wage, string FirstName, string LastName, int Department_ID, string Phone_Number, string Email, string Title, string Start_Date, int Supervisor_ID)
+        public ActionResult AddEmplyeeDB(string Address, int Wage, string FirstName, string LastName, int DepartmentID, string PhoneNumber, string Email, string Title, string StartDate, int SupervisorID)
         {
             bool submissionResult = false;
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"INSERT INTO \"Employee\"(\"ID\",\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@ID,@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
+            string sqlQuery = $"INSERT INTO \"Employee\"(\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -188,26 +188,27 @@ namespace Group6Application.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                try
-                {
+                //try
+                //{
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
 
-                    command.Parameters.AddWithValue("@Id", ID);
                     command.Parameters.AddWithValue("@Address", Address);
                     command.Parameters.AddWithValue("@Wage", Wage);
                     command.Parameters.AddWithValue("@FirstName", FirstName);
                     command.Parameters.AddWithValue("@LastName", LastName);
-                    command.Parameters.AddWithValue("@DepartmentID", Department_ID);
-                    command.Parameters.AddWithValue("@PhoneNumber", Phone_Number);
+                    command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
+                    command.Parameters.AddWithValue("@PhoneNumber", NpgsqlTypes.NpgsqlDbType.Varchar, PhoneNumber);
                     command.Parameters.AddWithValue("@Email", Email);
                     command.Parameters.AddWithValue("@Title", Title);
-                    command.Parameters.AddWithValue("@StartDate", Start_Date);
-                    command.Parameters.AddWithValue("@SupervisorID", Supervisor_ID);
+                    command.Parameters.AddWithValue("@StartDate", NpgsqlTypes.NpgsqlDbType.Varchar, StartDate);
+                    command.Parameters.AddWithValue("@SupervisorID", SupervisorID==0? DBNull.Value: SupervisorID); // check for null
+                    command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 
                     sqlTransaction.Commit();
                     submissionResult = true;
-                }
+                //}
+                try { }
                 catch (Exception e)
                 {
                     // error catch here

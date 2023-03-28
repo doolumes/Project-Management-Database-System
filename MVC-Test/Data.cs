@@ -14,6 +14,7 @@ using Npgsql;
 using MVC_Test.Models;
 using System.Threading.Tasks;
 using System.Xml;
+using Group6Application.Model;
 
 
 namespace Group6Application
@@ -305,7 +306,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Department\"";
+                string sqlQuery = "SELECT * FROM \"Department\" WHERE \"deleted\"=@deleted";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -316,6 +317,8 @@ namespace Group6Application
                 {
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@deleted", false);
+
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
                     sqlDataAdapter.Fill(datatable);
