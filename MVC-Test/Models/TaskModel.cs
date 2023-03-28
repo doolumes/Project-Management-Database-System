@@ -10,5 +10,6 @@
         public DateTime? Due { get; set; }
         public int CheckpointID { get; set; }
         public int Assignee { get; set; }
+        public int ProjectID { get; set; }
     }
 }
