@@ -1,6 +1,7 @@
 ﻿using Group6Application.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MVC_Test.Models;
 using Npgsql;
 using System.Collections.Generic;
@@ -27,67 +28,48 @@ namespace Group6Application.Controllers
                 Employee = new List<EmployeeTemplate>()
             };
 
-            string sqlQuery = $"SELECT * FROM \"Employee\";";
-            NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
-            conn.Open();
+            DataTable datatable = Data.Employees();
 
-            using (NpgsqlCommand command = new NpgsqlCommand("", conn))
+            foreach (DataRow row in datatable.Rows)
             {
-
-                try
+                EmployeeTemplate employees = new EmployeeTemplate()
                 {
-                    command.CommandText = sqlQuery.ToString();
-                    NpgsqlDataReader dataReader = command.ExecuteReader();
-                    while (dataReader.Read())
-                    {
-                        EmployeeTemplate employees = new EmployeeTemplate()
-                        {
-                            ID = (int)dataReader["ID"],
-                            Address = dataReader["Address"].ToString(),
-                            Wage = (double)dataReader["Wage"],
-                            FirstName = dataReader["FirstName"].ToString(),
-                            LastName = dataReader["LastName"].ToString(),
-                        };
-                        if (dataReader["DepartmentID"] != null && dataReader["DepartmentID"] != DBNull.Value)
-                        {
-                            employees.Department_ID = (int)dataReader["DepartmentID"];
-                        }
-                        if (dataReader["PhoneNumber"] != null && dataReader["PhoneNumber"] != DBNull.Value)
-                        {
-                            employees.Phone_Number = dataReader["PhoneNumber"].ToString();
-                        }
-                        if (dataReader["Email"] != null && dataReader["Email"] != DBNull.Value)
-                        {
-                            employees.Email = dataReader["Email"].ToString();
-                        }
-                        if (dataReader["Title"] != null && dataReader["Title"] != DBNull.Value)
-                        {
-                            employees.Title = dataReader["Title"].ToString();
-                        }
-                        if (dataReader["StartDate"] != null && dataReader["StartDate"] != DBNull.Value)
-                        {
-                            employees.Start_Date = (DateTime)dataReader["StartDate"];
-                        }
-                        if (dataReader["SupervisorID"] != null && dataReader["SupervisorID"] != DBNull.Value)
-                        {
-                            employees.Supervisor_ID = (int)dataReader["SupervisorID"];
-                        }
-                        viewModel.Employee.Add(employees);
-                    }
-                }
-                catch
+                    ID = (int)row["ID"],
+                    Address = row["Address"].ToString(),
+                    Wage = (double)row["Wage"],
+                    FirstName = row["FirstName"].ToString(),
+                    LastName = row["LastName"].ToString(),
+                };
+                if (row["DepartmentID"] != null && row["DepartmentID"] != DBNull.Value)
                 {
-
+                    employees.Department_ID = (int)row["DepartmentID"];
                 }
-                finally
+                if (row["PhoneNumber"] != null && row["PhoneNumber"] != DBNull.Value)
                 {
-                    conn.Close();
+                    employees.Phone_Number = row["PhoneNumber"].ToString();
                 }
+                if (row["Email"] != null && row["Email"] != DBNull.Value)
+                {
+                    employees.Email = row["Email"].ToString();
+                }
+                if (row["Title"] != null && row["Title"] != DBNull.Value)
+                {
+                    employees.Title = row["Title"].ToString();
+                }
+                if (row["StartDate"] != null && row["StartDate"] != DBNull.Value)
+                {
+                    employees.Start_Date = (string)row["StartDate"];
+                }
+                if (row["SupervisorID"] != null && row["SupervisorID"] != DBNull.Value)
+                {
+                    employees.Supervisor_ID = (int)row["SupervisorID"];
+                }
+                viewModel.Employee.Add(employees);
             }
             return View(viewPath, viewModel);
         }
 
-        [Route("Employee/View")]
+        /*[Route("Employee/View")]
         public ActionResult ViewEmplyee()
         {
             string viewPath = "Views/Employee/View.cshtml";
@@ -138,9 +120,9 @@ namespace Group6Application.Controllers
                 }
             }
             return View(viewPath, viewModel);
-        }
+        }*/
 
-        public void AddEmplyeeDB(EmployeeTemplate add)
+       /*public void AddEmplyeeDB(EmployeeTemplate add)
         {
            
             string sqlQuery = $"INSERT INTO \"Employee\"(\"ID\",\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@ID,@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
@@ -162,21 +144,83 @@ namespace Group6Application.Controllers
                 command.Parameters.AddWithValue("@SupervisorID", add.Supervisor_ID);
                 command.ExecuteNonQuery();
             }
-        }
+        }*/
         [Route("Employee/Add")]
-        public ActionResult AddEmplyee(EmployeeTemplate adddb)
+        public ActionResult AddEmplyee()
         {
             string viewPath = "Views/Employee/Add.cshtml";
-            try
+            EmployeeView viewModel = new();
+            List<SelectListItem> DepartmentID = new List<SelectListItem>();
+
+
+            foreach (DataRow row in Data.DepartmentID_data().Rows)
             {
-                var dm = new EmployeeController();
-                dm.AddEmplyeeDB(adddb);
-                return RedirectToAction("Index");
+                DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString())});
             }
-            catch
+
+            viewModel.DepartmentIDs = DepartmentID;
+
+            List<SelectListItem> employeeIDs = new List<SelectListItem>();
+
+
+            foreach (DataRow row in Data.EmployeeIDs().Rows)
             {
-                return PartialView(viewPath);
+                employeeIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString()) });
             }
+
+            viewModel.EmployeeIDs = employeeIDs;
+
+            return PartialView(viewPath, viewModel);
+        }
+
+        public ActionResult AddEmplyeeDB(int ID, string Address, int Wage, string FirstName, string LastName, int Department_ID, string Phone_Number, string Email, string Title, string Start_Date, int Supervisor_ID)
+        {
+            bool submissionResult = false;
+            string errorMessage = "";
+
+            // SQL
+            string sqlQuery = $"INSERT INTO \"Employee\"(\"ID\",\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@ID,@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+
+                    command.Parameters.AddWithValue("@Id", ID);
+                    command.Parameters.AddWithValue("@Address", Address);
+                    command.Parameters.AddWithValue("@Wage", Wage);
+                    command.Parameters.AddWithValue("@FirstName", FirstName);
+                    command.Parameters.AddWithValue("@LastName", LastName);
+                    command.Parameters.AddWithValue("@DepartmentID", Department_ID);
+                    command.Parameters.AddWithValue("@PhoneNumber", Phone_Number);
+                    command.Parameters.AddWithValue("@Email", Email);
+                    command.Parameters.AddWithValue("@Title", Title);
+                    command.Parameters.AddWithValue("@StartDate", Start_Date);
+                    command.Parameters.AddWithValue("@SupervisorID", Supervisor_ID);
+
+                    sqlTransaction.Commit();
+                    submissionResult = true;
+                }
+                catch (Exception e)
+                {
+                    // error catch here
+                    sqlTransaction.Rollback();
+                    errorMessage = "We experienced an error while adding to database";
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
+
+            return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
 
         /*[Route("Employee/Delete")]

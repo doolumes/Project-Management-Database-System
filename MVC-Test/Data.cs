@@ -23,7 +23,7 @@ namespace Group6Application
         private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
 
         // returns supervisor IDs for all departments
-        public static DataTable EmployeeIDs() 
+        public static DataTable EmployeeIDs()
         {
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
@@ -299,6 +299,34 @@ namespace Group6Application
             };
         }
 
-        //
+        //returns all info from Department
+        public static DataTable DepartmentID_data()
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Department\"";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
     }
 }
