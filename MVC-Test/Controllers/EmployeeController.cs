@@ -200,7 +200,7 @@ namespace Group6Application.Controllers
                     command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
                     command.Parameters.AddWithValue("@PhoneNumber", NpgsqlTypes.NpgsqlDbType.Varchar, PhoneNumber);
                     command.Parameters.AddWithValue("@Email", Email);
-                    command.Parameters.AddWithValue("@Title", Title);
+                    command.Parameters.AddWithValue("@Title", String.IsNullOrEmpty(Title)?DBNull.Value: Title);
                     command.Parameters.AddWithValue("@StartDate", NpgsqlTypes.NpgsqlDbType.Varchar, StartDate);
                     command.Parameters.AddWithValue("@SupervisorID", SupervisorID==0? DBNull.Value: SupervisorID); // check for null
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
