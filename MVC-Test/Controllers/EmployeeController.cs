@@ -122,29 +122,6 @@ namespace Group6Application.Controllers
             return View(viewPath, viewModel);
         }*/
 
-       /*public void AddEmplyeeDB(EmployeeTemplate add)
-        {
-           
-            string sqlQuery = $"INSERT INTO \"Employee\"(\"ID\",\"Address\",\"Wage\",\"FirstName\",\"LastName\",\"DepartmentID\",\"PhoneNumber\",\"Email\",\"Title\",\"StartDate\",\"SupervisorID\") VALUES (@ID,@Address,@Wage,@FirstName,@LastName,@DepartmentID,@PhoneNumber,@Email,@Title,@StartDate,@SupervisorID);";
-            NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
-            conn.Open();
-
-            using (NpgsqlCommand command = new NpgsqlCommand("", conn))
-            {
-                command.Parameters.AddWithValue("@Id",add.ID);
-                command.Parameters.AddWithValue("@Address", add.Address);
-                command.Parameters.AddWithValue("@Wage", add.Wage);
-                command.Parameters.AddWithValue("@FirstName", add.FirstName);
-                command.Parameters.AddWithValue("@LastName", add.LastName);
-                command.Parameters.AddWithValue("@DepartmentID", add.Department_ID);
-                command.Parameters.AddWithValue("@PhoneNumber", add.Phone_Number);
-                command.Parameters.AddWithValue("@Email", add.Email);
-                command.Parameters.AddWithValue("@Title", add.Title);
-                command.Parameters.AddWithValue("@StartDate", add.Start_Date);
-                command.Parameters.AddWithValue("@SupervisorID", add.Supervisor_ID);
-                command.ExecuteNonQuery();
-            }
-        }*/
         [Route("Employee/Add")]
         public ActionResult AddEmplyee()
         {
@@ -193,14 +170,14 @@ namespace Group6Application.Controllers
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
 
-                    command.Parameters.AddWithValue("@Address", Address);
+                    command.Parameters.AddWithValue("@Address", String.IsNullOrEmpty(Address) ? DBNull.Value : Address);
                     command.Parameters.AddWithValue("@Wage", Wage);
                     command.Parameters.AddWithValue("@FirstName", FirstName);
                     command.Parameters.AddWithValue("@LastName", LastName);
                     command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
-                    command.Parameters.AddWithValue("@PhoneNumber", NpgsqlTypes.NpgsqlDbType.Varchar, PhoneNumber);
+                    command.Parameters.AddWithValue("@PhoneNumber", NpgsqlTypes.NpgsqlDbType.Varchar, String.IsNullOrEmpty(PhoneNumber) ? DBNull.Value : PhoneNumber);
                     command.Parameters.AddWithValue("@Email", Email);
-                    command.Parameters.AddWithValue("@Title", String.IsNullOrEmpty(Title)?DBNull.Value: Title);
+                    command.Parameters.AddWithValue("@Title", Title);
                     command.Parameters.AddWithValue("@StartDate", NpgsqlTypes.NpgsqlDbType.Varchar, StartDate);
                     command.Parameters.AddWithValue("@SupervisorID", SupervisorID==0? DBNull.Value: SupervisorID); // check for null
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
@@ -224,18 +201,60 @@ namespace Group6Application.Controllers
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
 
-        /*[Route("Employee/Delete")]
+        [Route("Employee/Delete")]
         public ActionResult DeleteEmplyee(int id)
         {
             string viewPath = "Views/Employee/Delete.cshtml";
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            EmployeeView viewModel = new();
+            List<SelectListItem> employeeIDs = new List<SelectListItem>();
+
+
+            foreach (DataRow row in Data.EmployeeIDs().Rows)
             {
-                string sqlQuery = $"DELETE FROM \"Employee\" WHERE \"ID\" = @id;";
-                command.Parameters.AddWithValue("@Id", id);
-                command.ExecuteNonQuery();
+                employeeIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString()) });
             }
-            return View(viewPath);
-        }*/
+
+            viewModel.EmployeeIDs = employeeIDs;
+
+            return PartialView(viewPath, viewModel);
+        }
+        public ActionResult DeleteEmplyeeDB(int id)
+        {
+            bool submissionResult = false;
+            string errorMessage = "";
+            string sqlQuery = $"DELETE FROM \"Employee\" WHERE \"ID\"=@id;";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                //try
+                //{
+                command.CommandText = sqlQuery.ToString();
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("@id", id);
+
+                command.ExecuteNonQuery();
+                sqlTransaction.Commit();
+                submissionResult = true;
+                //}
+                try { }
+                catch (Exception e)
+                {
+                    // error catch here
+                    sqlTransaction.Rollback();
+                    errorMessage = "We experienced an error while accessing the database";
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
+
+            return Json(new { submissionResult = submissionResult, message = errorMessage });
+        }
     }
 }
