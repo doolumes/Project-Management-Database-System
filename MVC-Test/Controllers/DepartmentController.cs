@@ -133,11 +133,14 @@ namespace Group6Application.Controllers
                 return Json(new { submissionResult = submissionResult, message = errorMessage });
             }
             */
+
             if (string.IsNullOrEmpty(Request.Query["id"]))
             {
                 Response.Redirect("/Department"); // if not found in database, redirect back to department
-                return Index();
+                return RedirectToAction("Index", "Department");
+
             }
+
             string id_temp = Request.Query["id"].ToString();
             int id = Convert.ToInt32(id_temp);
 
@@ -147,7 +150,7 @@ namespace Group6Application.Controllers
             if (datatable.Rows.Count == 0)
             {
                 Response.Redirect("/Department"); // if not found in database, redirect back to department
-                return Index();
+                return RedirectToAction("Index", "Department");
             }
 
             DepartmentTemplate viewModel = new DepartmentTemplate()
@@ -257,7 +260,7 @@ namespace Group6Application.Controllers
             if (string.IsNullOrEmpty(Request.Query["id"]))
             {
                 Response.Redirect("/Department");
-                return Index();
+                return RedirectToAction("Index", "Department");
             }
             string id_temp = Request.Query["id"].ToString();
             int id = Convert.ToInt32(id_temp);
@@ -267,7 +270,7 @@ namespace Group6Application.Controllers
             if (deptTable.Rows.Count == 0) 
             {
                 Response.Redirect("/Department"); // if not found in database, redirect back to department
-                return Index();
+                return RedirectToAction("Index", "Department");
             }
 
             DepartmentTemplate department = new DepartmentTemplate()
@@ -349,7 +352,9 @@ namespace Group6Application.Controllers
             if (string.IsNullOrEmpty( Request.Query["id"] ))
             {
                 Response.Redirect("/Department"); // if no id passed, redirect back to department
-                return null; 
+                return RedirectToAction("Index", "Department");
+
+
             }
             string id_temp = Request.Query["id"].ToString();
             int id = Convert.ToInt32(id_temp);
@@ -359,7 +364,8 @@ namespace Group6Application.Controllers
             if (datatable.Rows.Count == 0)
             {
                 Response.Redirect("/Department"); // if not found in database, redirect back to department
-                return null;
+                return RedirectToAction("Index", "Department");
+
             }
 
             DepartmentTemplate viewModel = new DepartmentTemplate() { 

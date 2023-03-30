@@ -25,6 +25,8 @@ namespace Group6Application.Controllers
         [Route("/")]
         public ActionResult Index()
         {
+            Response.Redirect("/Department"); // set department as home
+
             int userID=2; // ADD LOGIN VALIDATION to get this
             string viewPath = "Views/Home/Index.cshtml";
             
