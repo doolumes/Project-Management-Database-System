@@ -30,4 +30,11 @@ namespace Group6Application.Models
         public List<SelectListItem> DepartmentIDs { get; set; }
         public List<SelectListItem> EmployeeIDs { get; set; }
     }
+
+    public class UpdateEmplyeeView
+    {
+        public EmployeeTemplate Employee_up = new();
+        public List<SelectListItem> DepartmentIDs { get; set; }
+        public List<SelectListItem> EmployeeIDs { get; set; }
+    }
 }

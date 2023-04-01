@@ -69,58 +69,63 @@ namespace Group6Application.Controllers
             return View(viewPath, viewModel);
         }
 
-        /*[Route("Employee/View")]
+       
+        [Route("Employee/View")]
         public ActionResult ViewEmplyee()
         {
             string viewPath = "Views/Employee/View.cshtml";
 
             if (string.IsNullOrEmpty(Request.Query["id"]))
             {
-                Response.Redirect("/Department"); // if no id passed, redirect back to department
-                return null;
+                Response.Redirect("/Employee"); // if no id passed, redirect back to department
+                return RedirectToAction("Index", "Employee");
             }
             string id_temp = Request.Query["id"].ToString();
             int id = Convert.ToInt32(id_temp);
 
-            EmployeeTemplate viewModel = new EmployeeTemplate();
-
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            DataTable datatable = Data.Employees_id(id);
+            if (datatable.Rows.Count == 0)
             {
-                string sqlQuery = $"SELECT * FROM \"Employee\" WHERE \"ID\" = @id;";
-                command.Parameters.AddWithValue("@Id", id);
-                SqlDataReader dataReader = command.ExecuteReader();
-                while (dataReader.Read())
-                {
-
-                    if (dataReader["DepartmentID"] != null && dataReader["DepartmentID"] != DBNull.Value)
-                    {
-                        viewModel.Department_ID = (int)dataReader["DepartmentID"];
-                    }
-                    if (dataReader["PhoneNumber"] != null && dataReader["PhoneNumber"] != DBNull.Value)
-                    {
-                        viewModel.Phone_Number = dataReader["PhoneNumber"].ToString();
-                    }
-                    if (dataReader["Email"] != null && dataReader["Email"] != DBNull.Value)
-                    {
-                        viewModel.Email = dataReader["Email"].ToString();
-                    }
-                    if (dataReader["Title"] != null && dataReader["Title"] != DBNull.Value)
-                    {
-                        viewModel.Title = dataReader["Title"].ToString();
-                    }
-                    if (dataReader["StartDate"] != null && dataReader["StartDate"] != DBNull.Value)
-                    {
-                        viewModel.Start_Date = (DateTime)dataReader["StartDate"];
-                    }
-                    if (dataReader["SupervisorID"] != null && dataReader["SupervisorID"] != DBNull.Value)
-                    {
-                        viewModel.Supervisor_ID = (int)dataReader["SupervisorID"];
-                    }
-                }
+                Response.Redirect("/Employee"); // if no id passed, redirect back to department
+                return RedirectToAction("Index", "Employee");
             }
-            return View(viewPath, viewModel);
-        }*/
+
+            EmployeeTemplate employees = new EmployeeTemplate()
+            {
+                ID = (int)datatable.Rows[0]["ID"],
+                Address = datatable.Rows[0]["Address"].ToString(),
+                Wage = (double)datatable.Rows[0]["Wage"],
+                FirstName = datatable.Rows[0]["FirstName"].ToString(),
+                LastName = datatable.Rows[0]["LastName"].ToString(),
+            };
+            if (datatable.Rows[0]["DepartmentID"] != null && datatable.Rows[0]["DepartmentID"] != DBNull.Value)
+            {
+                employees.Department_ID = (int)datatable.Rows[0]["DepartmentID"];
+            }
+            if (datatable.Rows[0]["PhoneNumber"] != null && datatable.Rows[0]["PhoneNumber"] != DBNull.Value)
+            {
+                employees.Phone_Number = datatable.Rows[0]["PhoneNumber"].ToString();
+            }
+            if (datatable.Rows[0]["Email"] != null && datatable.Rows[0]["Email"] != DBNull.Value)
+            {
+                employees.Email = datatable.Rows[0]["Email"].ToString();
+            }
+            if (datatable.Rows[0]["Title"] != null && datatable.Rows[0]["Title"] != DBNull.Value)
+            {
+                employees.Title = datatable.Rows[0]["Title"].ToString();
+            }
+            if (datatable.Rows[0]["StartDate"] != null && datatable.Rows[0]["StartDate"] != DBNull.Value)
+            {
+                employees.Start_Date = (string)datatable.Rows[0]["StartDate"];
+            }
+            if (datatable.Rows[0]["SupervisorID"] != null && datatable.Rows[0]["SupervisorID"] != DBNull.Value)
+            {
+                employees.Supervisor_ID = (int)datatable.Rows[0]["SupervisorID"];
+            }
+
+        return View(viewPath, employees);
+    }
+
 
         [Route("Employee/Add")]
         public ActionResult AddEmplyee()
@@ -247,6 +252,128 @@ namespace Group6Application.Controllers
                     // error catch here
                     sqlTransaction.Rollback();
                     errorMessage = "We experienced an error while accessing the database";
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            };
+
+            return Json(new { submissionResult = submissionResult, message = errorMessage });
+        }
+
+        [Route("Employee/Update")]
+        public ActionResult UpdateEmployee()
+        {
+            if (string.IsNullOrEmpty(Request.Query["id"]))
+            {
+                Response.Redirect("/Employee"); // if no id passed, redirect back to department
+                return RedirectToAction("Index", "Employee");
+            }
+            string id_temp = Request.Query["id"].ToString();
+            int id = Convert.ToInt32(id_temp);
+
+            DataTable datatable = Data.Employees_id(id);
+            if (datatable.Rows.Count == 0)
+            {
+                Response.Redirect("/Employee"); // if no id passed, redirect back to department
+                return RedirectToAction("Index", "Employee");
+            }
+
+            EmployeeTemplate employees = new EmployeeTemplate()
+            {
+                ID = (int)datatable.Rows[0]["ID"],
+                Address = datatable.Rows[0]["Address"].ToString(),
+                Wage = (double)datatable.Rows[0]["Wage"],
+                FirstName = datatable.Rows[0]["FirstName"].ToString(),
+                LastName = datatable.Rows[0]["LastName"].ToString(),
+            };
+            if (datatable.Rows[0]["DepartmentID"] != null && datatable.Rows[0]["DepartmentID"] != DBNull.Value)
+            {
+                employees.Department_ID = (int)datatable.Rows[0]["DepartmentID"];
+            }
+            if (datatable.Rows[0]["PhoneNumber"] != null && datatable.Rows[0]["PhoneNumber"] != DBNull.Value)
+            {
+                employees.Phone_Number = datatable.Rows[0]["PhoneNumber"].ToString();
+            }
+            if (datatable.Rows[0]["Email"] != null && datatable.Rows[0]["Email"] != DBNull.Value)
+            {
+                employees.Email = datatable.Rows[0]["Email"].ToString();
+            }
+            if (datatable.Rows[0]["Title"] != null && datatable.Rows[0]["Title"] != DBNull.Value)
+            {
+                employees.Title = datatable.Rows[0]["Title"].ToString();
+            }
+            if (datatable.Rows[0]["StartDate"] != null && datatable.Rows[0]["StartDate"] != DBNull.Value)
+            {
+                employees.Start_Date = (string)datatable.Rows[0]["StartDate"];
+            }
+            if (datatable.Rows[0]["SupervisorID"] != null && datatable.Rows[0]["SupervisorID"] != DBNull.Value)
+            {
+                employees.Supervisor_ID = (int)datatable.Rows[0]["SupervisorID"];
+            }
+
+            string viewPath = "Views/Employee/update.cshtml";
+            UpdateEmplyeeView viewModel = new() {Employee_up = employees};
+            List<SelectListItem> DepartmentID = new List<SelectListItem>();
+            List<SelectListItem> employeeIDs = new List<SelectListItem>();
+
+            foreach (DataRow row in Data.DepartmentID_data().Rows)
+            {
+                DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString()) });
+            }
+            viewModel.DepartmentIDs = DepartmentID;
+
+            foreach (DataRow row in Data.EmployeeIDs().Rows)
+            {
+                employeeIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString()) });
+            }
+            viewModel.EmployeeIDs = employeeIDs;
+
+            return PartialView(viewPath, viewModel);
+        }
+
+        public ActionResult UpdateEmplyeeDB(int id, string Address, int Wage, string FirstName, string LastName, int DepartmentID, string PhoneNumber, string Email, string Title, string StartDate, string SupervisorID)
+        {
+            bool submissionResult = false;
+            string errorMessage = "";
+
+            // SQL
+            string sqlQuery = $"UPDATE \"Employee\" SET \"Address\"=@Address,\"Wage\"=@Wage,\"FirstName\"=@FirstName,\"LastName\"=@LastName,\"DepartmentID\"=@DepartmentID,\"PhoneNumber\"=@PhoneNumber,\"Email\"=@Email,\"Title\"=@Title,\"StartDate\"=@StartDate,\"SupervisorID\"=@SupervisorID WHERE \"ID\"=@ID;;";
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                command.CommandText = sqlQuery.ToString();
+                command.Parameters.Clear();
+
+                command.Parameters.AddWithValue("@ID", id);
+                command.Parameters.AddWithValue("@Address", String.IsNullOrEmpty(Address) ? DBNull.Value : Address);
+                command.Parameters.AddWithValue("@Wage", Wage);
+                command.Parameters.AddWithValue("@FirstName", FirstName);
+                command.Parameters.AddWithValue("@LastName", LastName);
+                command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
+                command.Parameters.AddWithValue("@PhoneNumber", NpgsqlTypes.NpgsqlDbType.Varchar, String.IsNullOrEmpty(PhoneNumber) ? DBNull.Value : PhoneNumber);
+                command.Parameters.AddWithValue("@Email", Email);
+                command.Parameters.AddWithValue("@Title", Title);
+                command.Parameters.AddWithValue("@StartDate", NpgsqlTypes.NpgsqlDbType.Varchar, StartDate);
+                command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID)); // check for null
+                command.ExecuteNonQuery();
+
+                sqlTransaction.Commit();
+                submissionResult = true;
+                }
+                catch (Exception e)
+                {
+                    // error catch here
+                    sqlTransaction.Rollback();
+                    errorMessage = "We experienced an error while adding to database";
                 }
                 finally
                 {
