@@ -7,6 +7,8 @@
 @model Group6Application.Models.DepartmentView
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
     <script src="~/js/jquery-3.6.4.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
 
@@ -16,45 +18,32 @@
 
     $(document).ready(function() {
         $("#submit").click(function(){
-            $('#submittingModal').modal({
-                //backdrop:'static',
-                //keyboard: false
-            })
-            submit();
+            $('#submittingModal').modal('show');
+            if (pageValid()){  
+                submit();
+            }
+            else{
+                $('#submittingModal').modal('hide');
+            }
+            
         });
     });
 
-    function pageValid(page){
+    function pageValid(){
         var pageValid = false;
         var invalidObjects = 0;
         var listOfInvalidObjects ="";
+    
+        // Do for each required input
+        var inputID = "#name";
+        if ( $(inputID).val().length == 0 ){
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else{
+            $(inputID + "RequiredAlert").hide();
+        }
 
-        $("").each(function(){
-            var inputID = "#" + $(this).attr("id");
-            if ( $(inputId).attr("required") & $(inputId).is("input") )
-            {
-                if ( ($inputId).val().length == 0 ){ // empty input
-
-                    $(inpudId + "RequiredAlert").show();
-                    invalidObjects++;
-                    listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
-                }
-                else {
-                    $(inpudId + "RequiredAlert").hide();
-                }
-
-                if ( ($inputId).is("select")){
-                    if ( $($inputId).val() == ""){
-                        $(inpudId + "RequiredAlert").show();
-                        invalidObjects++;
-                        listOfInvalidObjects = listOfInvalidObjects + ", " + inpudId;
-                    }
-                    else {
-                        $(inpudId + "RequiredAlert").hide();
-                    }
-                }
-            }
-        });
 
         if (invalidObjects == 0){
             pageValid = true;
@@ -72,18 +61,17 @@
             },
             dataType:"text",
             error: function(msg){
-                $("#submittingModal").modal("toggle");
+                $("#submittingModal").modal('hide');
                 $(".modal-backdrop").remove();
                 $("#errorModal").modal();
             },
             success: function(data){
+                $("#submittingModal").modal('hide');
                 var json = $.parseJSON(data);
                 if (json.submissionResult){ // Submission is true
                     $("#confirmationModal").modal();
                 }
                 else {
-                    $("#submittingModal").modal("toggle");
-                    $(".modal-backdrop").remove();
                     $("#errorModal").modal();
                 }
             }
@@ -139,7 +127,7 @@
         </div>
     </div>
   
-<div id="submittingModal" class="modal fade" tabindex="-1">
+<div id="submittingModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -148,13 +136,12 @@
         <div class="modal-body">
             <p>Form is being submitted</p>
         </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
     
     </div>
 
 </div>
 
-<div id="errorModal" class="modal fade" tabindex="-1">
+<div id="errorModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -168,7 +155,7 @@
 
 </div>
 
-<div id="confirmationModal" class="modal fade" tabindex="-1">
+<div id="confirmationModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">

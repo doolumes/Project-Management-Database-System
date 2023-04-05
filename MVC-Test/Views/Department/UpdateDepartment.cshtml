@@ -7,6 +7,8 @@
 @model Group6Application.Models.UpdateDepartmentView
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
     <script src="~/js/jquery-3.6.4.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
 
@@ -16,13 +18,38 @@
 
     $(document).ready(function() {
         $("#submit").click(function(){
-            $('#submittingModal').modal({
-                //backdrop:'static',
-                //keyboard: false
-            })
-            submit();
+            $('#submittingModal').modal('show');
+            if (pageValid()){  
+                submit();
+            }
+            else{
+                $('#submittingModal').modal('hide');
+            }
         });
     });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#name";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+        return pageValid;
+    }
+
 
     function submit(){
         $.ajax({
@@ -35,17 +62,17 @@
             },
             dataType:"text",
             error: function(msg){
-                $("#submittingModal").modal("toggle");
+                $('#submittingModal').modal('hide');
                 $(".modal-backdrop").remove();
                 $("#errorModal").modal();
             },
             success: function(data){
+                $('#submittingModal').modal('hide');
                 var json = $.parseJSON(data);
                 if (json.submissionResult){ // Submission is true
                     $("#confirmationModal").modal();
                 }
                 else {
-                    $("#submittingModal").modal("toggle");
                     $(".modal-backdrop").remove();
                     $("#errorModal").modal();
                 }
@@ -116,7 +143,6 @@
         <div class="modal-body">
             <p>Form is being submitted</p>
         </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
 
     </div>
 
