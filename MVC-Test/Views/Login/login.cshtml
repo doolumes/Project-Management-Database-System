@@ -1,0 +1,22 @@
+﻿@{
+	ViewBag.Title = "Login";
+}
+
+<h1>Login</h1>
+<div class="clear-loading spinner">
+	<span></span>
+<div class="wls-login box box--big">
+	<!-- form starts here -->
+	<form action="Verify" method="post">
+		<div class="agile-field-txt">
+			<label><i class="fa fa-user" aria-hidden="true"></i> Username </label>
+				<input type="text" name="Username" placeholder="Enter User Name" required="" />
+		</div>
+		<div class="agile-field-txt">
+			<label><i class="fa fa-unlock-alt" aria-hidden="true"></i> password </label>
+				<input type="password" name="Password" placeholder="Enter Password" required="" id="myInput" />
+		</div>
+		<input type="submit" value="LOGIN">
+	</form>
+	</div>
+</div>
