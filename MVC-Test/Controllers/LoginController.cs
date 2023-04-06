@@ -1,4 +1,9 @@
-﻿using Group6Application.Models;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Group6Application.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,11 +32,10 @@ namespace Group6Application.Controllers
         }
 
         void connectionString()
-        {
-            con.ConnectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
+            {
         }
 		[Route("Verify")]
-		public ActionResult Verify(Account acc)
+        public ActionResult Verify(Account acc)
         {
 			string viewPath = "Views/Employee/Index.cshtml";
 			string viewPath2 = "Views/Login/login.cshtml";
@@ -41,15 +45,18 @@ namespace Group6Application.Controllers
             com.CommandText = "SELECT * FROM \"Authentication\" WHERE \"Username\"='"+acc.Username+"' AND \"Password\"='"+acc.Password+"' ";
             dr = com.ExecuteReader();
             if(dr.Read())
-            {
+                {
 				con.Close();
                 return View(viewPath);
-            }
-            else
-            {
+                }
+                else
+                {
 				con.Close();
                 return View(viewPath2);
             }
         }
     }
 }
+
+
+
