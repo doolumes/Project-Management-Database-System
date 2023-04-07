@@ -1,6 +1,10 @@
 ﻿@{
 	ViewBag.Title = "Login";
 }
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models;
+@model Group6Application.Models.Account
 
 <h1>Login</h1>
 <div class="clear-loading spinner">
@@ -18,5 +22,8 @@
 		</div>
 		<input type="submit" value="LOGIN">
 	</form>
+		<a class="text-center" href="@Url.Action("register", "Login")">
+			<button>Register</button>
+		</a>
 	</div>
 </div>
