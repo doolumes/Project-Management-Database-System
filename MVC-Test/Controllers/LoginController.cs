@@ -16,45 +16,36 @@ using System.Data.SqlClient;
 using System.Net;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Reflection.Metadata;
 
 namespace Group6Application.Controllers
 {
     public class LoginController : Controller
     {
-        SqlConnection con = new SqlConnection();
-        SqlCommand com = new SqlCommand();
-        SqlDataReader dr;
+		private static string _connectionString = "Server=20.124.84.12;Port=5432;Database=Group6-PMS;User Id=postgres;Password=KHf37p@&R2hf2l";
         [Route("Login")]
         public ActionResult Login()
         {
             string viewPath = "Views/Login/login.cshtml";
             return View(viewPath);
         }
-
-        void connectionString()
-            {
-        }
 		[Route("Verify")]
-        public ActionResult Verify(Account acc)
+		public ActionResult Verify(string Username, string Password)
         {
-			string viewPath = "Views/Employee/Index.cshtml";
-			string viewPath2 = "Views/Login/login.cshtml";
-			connectionString();
-            con.Open();
-            com.Connection = con;
-            com.CommandText = "SELECT * FROM \"Authentication\" WHERE \"Username\"='"+acc.Username+"' AND \"Password\"='"+acc.Password+"' ";
-            dr = com.ExecuteReader();
-            if(dr.Read())
-                {
-				con.Close();
-                return View(viewPath);
-                }
-                else
-                {
-				con.Close();
-                return View(viewPath2);
-            }
-        }
+			string username = Username;
+			string password = Password;
+			DataTable datatable = Data.login(username, password);
+			if (datatable.Rows.Count == 0)
+			{
+				Response.Redirect("/Login"); // if no id passed, redirect back to department
+				return RedirectToAction("Login", "Login");
+			}
+			else
+			{
+				Response.Redirect("/Employee"); // if no id passed, redirect back to department
+				return RedirectToAction("Index", "Employee");
+			}
+		}
     }
 }
 

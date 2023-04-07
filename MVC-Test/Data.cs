@@ -492,5 +492,36 @@ namespace Group6Application
                 return datatable;
             };
         }
-    }
+
+		public static DataTable login(string Username, string Password)
+		{
+			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+			{
+				DataTable datatable = new DataTable();
+				string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password;";
+				conn.Open();
+				NpgsqlCommand command = new NpgsqlCommand("", conn);
+				NpgsqlTransaction sqlTransaction;
+				sqlTransaction = conn.BeginTransaction();
+				command.Transaction = sqlTransaction;
+
+				try
+				{
+					command.CommandText = sqlQuery.ToString();
+					command.Parameters.Clear();
+					command.Parameters.AddWithValue("@Username", Username);
+					command.Parameters.AddWithValue("@Password", Password);
+
+					NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+					sqlDataAdapter.Fill(datatable);
+
+				}
+				finally
+				{
+					conn.Close();
+				}
+				return datatable;
+			};
+		}
+	}
 }
