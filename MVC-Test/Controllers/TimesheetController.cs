@@ -41,6 +41,8 @@ namespace Group6Application.Controllers
                 projectIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = row["Name"].ToString() });
             }
 
+            viewModel.ProjectIDs = projectIDs;
+
             // Add datatable
             DataTable datatable = Data.Timesheets(workerID);
 
