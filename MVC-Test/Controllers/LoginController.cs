@@ -29,12 +29,14 @@ namespace Group6Application.Controllers
 			string viewPath = "Views/Login/login.cshtml";
 			return View(viewPath);
 		}
+
 		[Route("Verify")]
-		public ActionResult Verify(string Username, string Password)
+		public ActionResult Verify(string Username, string Password, string Role)
 		{
 			string username = Username;
 			string password = Password;
-			DataTable datatable = Data.login(username, password);
+			string role = Role;
+			DataTable datatable = Data.login(username, password, role);
 			if (datatable.Rows.Count == 0)
 			{
 				Response.Redirect("/Login"); // if no id passed, redirect back to department
@@ -42,6 +44,7 @@ namespace Group6Application.Controllers
 			}
 			else
 			{
+				Response.Cookies.Append("key", role);
 				Response.Redirect("/Employee"); // if no id passed, redirect back to department
 				return RedirectToAction("Index", "Employee");
 			}
@@ -51,13 +54,24 @@ namespace Group6Application.Controllers
 		public ActionResult Register()
 		{
 			string viewPath = "Views/Login/register.cshtml";
-			return View(viewPath);
+			Account viewModel = new();
+			List<SelectListItem> employeeIDs = new List<SelectListItem>();
+
+
+			foreach (DataRow row in Data.EmployeeIDs().Rows)
+			{
+				employeeIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["FirstName"].ToString() + ' ' + row["LastName"].ToString()) });
+			}
+
+			viewModel.EmployeeIDs = employeeIDs;
+
+			return PartialView(viewPath, viewModel);
 		}
-		public ActionResult Register_DB(string Username, string Password)
+		public ActionResult Register_DB(string Username, string Password, string Role)
 		{
 			bool submissionResult = false;
 			string errorMessage = "";
-			string sqlQuery = $"INSERT INTO \"Authentication\"(\"Username\",\"Password\") VALUES (@Username,@Password);";
+			string sqlQuery = $"INSERT INTO \"Authentication\"(\"Username\",\"Password\",\"Role\" ) VALUES (@Username,@Password,@Role);";
 			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
 			{
 				conn.Open();
@@ -71,6 +85,7 @@ namespace Group6Application.Controllers
 
 				command.Parameters.AddWithValue("@Username", Username);
 				command.Parameters.AddWithValue("@Password", Password);
+				command.Parameters.AddWithValue("@Role", Role);
 				command.ExecuteNonQuery();
 				sqlTransaction.Commit();
 				submissionResult = true;

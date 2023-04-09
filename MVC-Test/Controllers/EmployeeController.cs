@@ -152,7 +152,16 @@ namespace Group6Application.Controllers
 
             viewModel.EmployeeIDs = employeeIDs;
 
-            return PartialView(viewPath, viewModel);
+            var cookie = Request.Cookies["key"];
+            if (cookie == "Manger")
+            {
+				return PartialView(viewPath, viewModel);
+			}
+            else
+            {
+				Response.Redirect("/Login"); 
+				return RedirectToAction("Login", "Login");
+			}
         }
 
         public ActionResult AddEmplyeeDB(string Address, int Wage, string FirstName, string LastName, int DepartmentID, string PhoneNumber, string Email, string Title, string StartDate, int SupervisorID)

@@ -493,12 +493,12 @@ namespace Group6Application
             };
         }
 
-		public static DataTable login(string Username, string Password)
+		public static DataTable login(string Username, string Password, string Role)
 		{
 			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
 			{
 				DataTable datatable = new DataTable();
-				string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password;";
+				string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password AND \"Role\"=@Role;";
 				conn.Open();
 				NpgsqlCommand command = new NpgsqlCommand("", conn);
 				NpgsqlTransaction sqlTransaction;
@@ -511,8 +511,9 @@ namespace Group6Application
 					command.Parameters.Clear();
 					command.Parameters.AddWithValue("@Username", Username);
 					command.Parameters.AddWithValue("@Password", Password);
+                    command.Parameters.AddWithValue("@Role", Role);
 
-					NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
 					sqlDataAdapter.Fill(datatable);
 
 				}
