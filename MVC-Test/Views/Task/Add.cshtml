@@ -55,7 +55,7 @@
     <form id="taskForm" method="post">
         <table>
             <tr>
-                <th>Task Name</th>
+                <th>Task Name*</th>
                 <th>Task Description</th>
                 <th>CheckPoint</th>
                 <th>Start Date</th>
@@ -63,7 +63,7 @@
                 <th>Assignee</th>
             </tr>
             <tr>
-            <td><input id="taskName" name="taskName" type="text"></input></td>
+            <td><input id="taskName" name="taskName" type="text" required></input></td>
             <td><input id="taskDescription" name="taskDescription" type="text"></input></td>
                 <td>
                 <select id="TaskCheckPointID" name="TaskCheckPointID">
@@ -94,7 +94,7 @@
                 </td>
             </tr>
         </table>
-    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+    <input type="submit" id="submit" name="submit" class="btn-block">Submit</input>
     </form>
 <div id="submittingModal" class="modal fade" tabindex="-1">
 

@@ -40,7 +40,9 @@ namespace MVC_Test.Controllers
         }
 
         public ActionResult AddTask(string taskName, string description = "", string checkPointID = null, string startDate = "", string dueDate = "", string assignee=null) {
-            
+            if (string.IsNullOrEmpty(taskName)) {
+                return Json(new { submissionResult = false, message = "Task Name is required!" });
+            }
             string sqlCommand = "INSERT INTO \"Task\" (\"Name\",\"Description\",\"CheckpointID\",\"Start\",\"Due\",\"Assignee\") VALUES (@name,@description,@checkpointid,@startdate,@duedate,@assignee) RETURNING \"ID\";";
             int ckID = 0;
             int assign = 0;
