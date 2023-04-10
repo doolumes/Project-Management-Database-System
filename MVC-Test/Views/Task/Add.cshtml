@@ -110,7 +110,7 @@
 
         <label for="taskDue">Due Date</label>
         <input id="taskDue" name="taskDue" type="date" />
-        <select id="taskAssignee" name="taskAssignee TaskAssignee">
+        <select id="taskAssignee" name="taskAssignee">
                 <option value="" selected>Please select...</option>
                 @{
                     foreach (int assigneeID in TaskController.getAssignees())
