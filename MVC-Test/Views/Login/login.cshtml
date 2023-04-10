@@ -1,0 +1,36 @@
+﻿@{
+	ViewBag.Title = "Login";
+}
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models;
+@model Group6Application.Models.Account
+
+<h1>Login</h1>
+<div class="clear-loading spinner">
+	<span></span>
+<div class="wls-login box box--big">
+	<!-- form starts here -->
+	<form action="Verify" method="post">
+		<div class="agile-field-txt">
+			<label><i class="fa fa-user" aria-hidden="true"></i> Username </label>
+				<input type="text" name="Username" placeholder="Enter User Name" required="" />
+		</div>
+		<div class="agile-field-txt">
+			<label><i class="fa fa-unlock-alt" aria-hidden="true"></i> Password </label>
+				<input type="password" name="Password" placeholder="Enter Password" required="" id="myInput" />
+		</div>
+		<div class="agile-field-txt">
+				<label><i class="fa fa-unlock-alt" aria-hidden="true"></i> Role </label>
+				<select name="Role" required="">
+						<option type="text">Employee</option>
+						<option type="text">Manger</option>
+					</select>
+		</div>
+		<input type="submit" value="LOGIN">
+	</form>
+		<a class="text-center" href="@Url.Action("register", "Login")">
+			<button>Register</button>
+		</a>
+	</div>
+</div>

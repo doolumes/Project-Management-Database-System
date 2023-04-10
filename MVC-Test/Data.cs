@@ -54,6 +54,37 @@ namespace Group6Application
 
         }
 
+
+        public static DataTable ProjectIDs()
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT \"ID\", \"Name\" FROM \"Project\"";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+
+        }
+
         // returns all information from department with id matching id
         public static DataTable Department(int id)
         {
@@ -400,7 +431,38 @@ namespace Group6Application
             };
         }
 
-        //returns all info from Employees using ID
+        public static DataTable Timesheets(int WorkerID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Timesheet\" WHERE \"WorkerID\"=@WorkerID AND \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@WorkerID", WorkerID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+
+        }
         public static DataTable Employees_id(int ID)
         {
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
@@ -430,5 +492,37 @@ namespace Group6Application
                 return datatable;
             };
         }
-    }
+
+		public static DataTable login(string Username, string Password, string Role)
+		{
+			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+			{
+				DataTable datatable = new DataTable();
+				string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password AND \"Role\"=@Role;";
+				conn.Open();
+				NpgsqlCommand command = new NpgsqlCommand("", conn);
+				NpgsqlTransaction sqlTransaction;
+				sqlTransaction = conn.BeginTransaction();
+				command.Transaction = sqlTransaction;
+
+				try
+				{
+					command.CommandText = sqlQuery.ToString();
+					command.Parameters.Clear();
+					command.Parameters.AddWithValue("@Username", Username);
+					command.Parameters.AddWithValue("@Password", Password);
+                    command.Parameters.AddWithValue("@Role", Role);
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+					sqlDataAdapter.Fill(datatable);
+
+				}
+				finally
+				{
+					conn.Close();
+				}
+				return datatable;
+			};
+		}
+	}
 }

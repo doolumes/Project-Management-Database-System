@@ -1,6 +1,6 @@
 ﻿@model MVC_Test.Models.TaskModel
 @{
-
+    ViewBag.Title = "Add Task Page";
 }
 @using MVC_Test.Controllers
 @using Group6Application.Models;
@@ -15,13 +15,38 @@
 <script>
     $(document).ready(function () {
         $("#submit").click(function () {
-            $('#submittingModal').modal({
-                //backdrop:'static',
-                //keyboard: false
-            })
-            submit();
+            $('#submittingModal').modal('show');
+            if (pageValid()){  
+                submit();
+            }
+            else{
+                $('#submittingModal').modal('hide');
+            };
         });
     });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#taskName";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+        return pageValid;
+    }
+
 
     function submit() {
         $.ajax({
@@ -53,49 +78,55 @@
     }
 </script>
     <form id="taskForm" method="post">
-        <table>
-            <tr>
-                <th>Task Name*</th>
-                <th>Task Description</th>
-                <th>CheckPoint</th>
-                <th>Start Date</th>
-                <th>Due Date</th>
-                <th>Assignee</th>
-            </tr>
-            <tr>
-            <td><input id="taskName" name="taskName" type="text" required></input></td>
-            <td><input id="taskDescription" name="taskDescription" type="text"></input></td>
-                <td>
-                <select id="TaskCheckPointID" name="TaskCheckPointID">
-                        <option value="" selected>Please select...</option>
-                        @{
-                            foreach (int checkID in TaskController.getCheckpoints())
-                            {
-                                CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
-                                <option value=@checkID>@checkpoint.Name</option>
-                            }
-                        }
-                    </select>
-                </td>
-            <td><input id="taskStart" name="taskStart" type="date"></input></td>
-            <td><input id="taskDue" name="taskDue" type="date"></input></td>
-                <td>
-                <select id="taskAssignee" name="taskAssignee" name="TaskAssignee">
-                        <option value="" selected>Please select...</option>
-                        @{
-                            foreach (int assigneeID in TaskController.getAssignees())
-                            {
-                                EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
-                                string fullName = employee.FirstName + " " + employee.LastName;
-                                <option value=@assigneeID>@fullName</option>
-                            }
-                        }
-                    </select>
-                </td>
-            </tr>
-        </table>
-    <input type="submit" id="submit" name="submit" class="btn-block">Submit</input>
+
+        <label for="taskName">Task Name</label>
+        <input id="taskName" name="taskName" type="text" />
+        <span id="taskNameIDRequiredAlert" class="collapse required">Required Field</span>
+
+
+        <br />
+        <label for="taskDescription">Task Description</label>
+        <input id="taskDescription" name="taskDescription" type="text" />
+
+        <br />
+        <label for="TaskCheckPointID">Checkpoint</label>
+        <select id="TaskCheckPointID" name="TaskCheckPointID">
+            <option value="" selected>Please select...</option>
+            @{
+                foreach (int checkID in TaskController.getCheckpoints())
+                {
+                    CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
+                    <option value=@checkID>@checkpoint.Name</option>
+                }
+            }
+        </select>
+
+        <br />
+
+        <label for="taskStart">Start Date</label>
+        <input id="taskStart" name="taskStart" type="date" />
+
+        <br />
+
+        <label for="taskDue">Due Date</label>
+        <input id="taskDue" name="taskDue" type="date" />
+        <select id="taskAssignee" name="taskAssignee TaskAssignee">
+                <option value="" selected>Please select...</option>
+                @{
+                    foreach (int assigneeID in TaskController.getAssignees())
+                    {
+                        EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
+                        string fullName = employee.FirstName + " " + employee.LastName;
+                        <option value=@assigneeID>@fullName</option>
+                    }
+                }
+        </select>
+
+        <br />
+
+        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
     </form>
+
 <div id="submittingModal" class="modal fade" tabindex="-1">
 
     <div class="modal-dialog" role="document">

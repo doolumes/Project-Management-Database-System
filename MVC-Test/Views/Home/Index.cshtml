@@ -8,13 +8,12 @@
         <h2>Assigned Tasks</h2>
         <table>
             <div class="col-md-12">
-            
                 <th>Task Name</th>
                 <th>Project Page</th>
                 @foreach (TaskModel task in Model.AssignedTasks)
                 {
                     <tr>
-                    <td><a href="/Task?taskId=@task.ID">@task.Name</a></td>
+                        <td><a href="/Task?taskId=@task.ID">@task.Name</a></td>
                         <td><a href="/Project/View?id=@(task.ProjectID)">View Project</a></td>
                     </tr>
                     
@@ -25,4 +24,4 @@
         
     </div>
     
-    </div>
+</div>

@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Timesheet Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.TimesheetView
+
+<script>
+
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            $('#submittingModal').modal('show');
+            if (pageValid()) {
+                submit();
+            }
+            else {
+                $('#submittingModal').modal('hide');
+            }
+
+        });
+    });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#Date";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        var inputID = "#ProjectID";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        var inputID = "#HoursWorked";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+        return pageValid;
+    }
+
+    function submit() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddTimesheetDB")", // must match function name in controller
+            data: {
+                Date: $('#Date').val(),
+                ProjectID: $('#ProjectID').val(),
+                WorkerID: 1, // get from cookie
+                HoursWorked: $('#HoursWorked').val(),
+            },
+            dataType: "text",
+            error: function (msg) {
+                $("#submittingModal").modal('hide');
+                $(".modal-backdrop").remove();
+                $("#errorModal").modal();
+            },
+            success: function (data) {
+                $("#submittingModal").modal('hide');
+                var json = $.parseJSON(data);
+                if (json.submissionResult) { // Submission is true
+                    $("#confirmationModal").modal();
+                }
+                else {
+                    $("#errorModal").modal();
+                }
+            }
+        });
+    }
+</script>
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+<div class="text-center">
+    <div class="row">
+        <h2>Add Timesheet Entry</h2>
+
+        <form>
+            <div class="col-md-12">
+                <label for="Date">Date</label>
+                <input type="datetime" id="date" name="date" required />
+                <span id="dateRequiredAlert" class="collapse required">Required Field</span>
+
+                <label for="HoursWorked">Hours Worked</label>
+                <input type="number" id="HoursWorked" name="HoursWorked" required />
+                <span id="HoursWorkedRequiredAlert" class="collapse required">Required Field</span>
+
+                <label for="ProjectID">Project Worked on</label>
+                <select id="ProjectID" name="ProjectID" required>
+                    <option value="">Please Select</option>
+                    @{
+                        foreach (SelectListItem id in Model.ProjectIDs)
+                        {
+                            if (!String.IsNullOrEmpty(id.Text))
+                            {
+                                <option value="@id.Value">@id.Text</option>
+                            }
+
+                        }
+                    }
+                </select>
+                <span id="ProjectIDRequiredAlert" class="collapse required">Required Field</span>
+
+            </div>
+
+            <div class="col-md-3">
+                <p>
+                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                </p>
+            </div>
+        </form>
+    </div>
+    <br />
+    <div class="row text-start">
+        <h2 class="text-center">Previous Timesheet Submissions</h2>
+        <table>
+            <div class="col-md-12">
+                <tr>
+                    <th>Timesheet Entry ID</th>
+                    <th>Date</th>
+                    <th>Hours Worked</th>
+                    <th>Project ID</th>
+                    <th>Worker ID</th>
+                </tr>
+
+                @{
+                    foreach (Timesheet timesheet in Model.Timesheets)
+                    {
+                    <tr>
+                        <td>@timesheet.EntryID</td>
+                        <td>@timesheet.Date</td>
+                        <td>@timesheet.HoursWorked</td>
+                        <td>@timesheet.ProjectID</td>
+                        <td>@timesheet.WorkerID</td>
+                    </tr>
+                    }
+                }
+
+            </div>
+            
+        </table>
+        <br />
+        
+
+    </div>
+
+</div>
+
+<div id="submittingModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="errorModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
+        </div>
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+<div id="confirmationModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
+        </div>
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+</html>
