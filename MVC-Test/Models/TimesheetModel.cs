@@ -18,7 +18,13 @@ namespace Group6Application.Models
         public List<SelectListItem> ProjectIDs { get; set; }
     }
 
-    public class TimesheetDeleteView
+	public class TimesheetUpdateView
+	{
+		public Timesheet timesheet = new ();
+		public List<SelectListItem> ProjectIDs { get; set; }
+	}
+
+	public class TimesheetDeleteView
     {
         public Timesheet timesheet = new();
         public string? Project { get; set; }
