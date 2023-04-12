@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Group6Application.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace MVC_Test.Controllers
 {
@@ -6,7 +8,16 @@ namespace MVC_Test.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            string viewPath = "Views/Project/Index.cshtml";
+            Project project = new Project()
+            {
+                ID = 1,
+                Name = "TaskForce",
+                Status = "Not Started",
+                Description = "Project Database Management System",
+            };
+
+            return View(project);
         }
     }
 }
