@@ -54,6 +54,71 @@ namespace Group6Application
 
         }
 
+        public static DataTable ProjectName(int projectID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT \"ID\", \"Name\" FROM \"Project\" WHERE \"ID\"=@projectID AND \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@projectID", projectID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+
+        }
+
+        public static DataTable EmployeeName(int employeeID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT \"ID\", \"FirstName\", \"LastName\" FROM \"Employee\" WHERE \"ID\"=@employeeID AND \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@employeeID", employeeID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+
+        }
 
         public static DataTable ProjectIDs()
         {
@@ -430,7 +495,38 @@ namespace Group6Application
                 return datatable;
             };
         }
+        public static DataTable Timesheet(int entryID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Timesheet\" WHERE \"EntryID\"=@EntryID AND \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
 
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@EntryID", entryID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+
+        }
         public static DataTable Timesheets(int WorkerID)
         {
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))

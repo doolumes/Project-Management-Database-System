@@ -159,8 +159,8 @@ namespace Group6Application.Controllers
 			}
             else
             {
-				Response.Redirect("/Login"); 
-				return RedirectToAction("Login", "Login");
+				Response.Redirect("/Permission");
+				return RedirectToAction("PermissionError", "Permission");
 			}
         }
 
