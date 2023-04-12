@@ -278,8 +278,8 @@ namespace MVC_Test.Controllers
                     taskModel.Description = dataReader["Description"].ToString();
                     taskModel.Assignee = (Int32)dataReader["Assignee"];
                     taskModel.CheckpointID = (Int32)dataReader["CheckpointID"];
-                    taskModel.Start = dataReader["Start"] == DBNull.Value ? (DateOnly?)null : DateOnly.FromDateTime((DateTime)dataReader["Start"]);
-                    taskModel.Due = dataReader["Due"] == DBNull.Value ? (DateOnly?)null : DateOnly.FromDateTime((DateTime)dataReader["Due"]);
+                    taskModel.Start = dataReader["Start"] == DBNull.Value ? (DateTime?)null : (DateTime)dataReader["Start"];
+                    taskModel.Due = dataReader["Due"] == DBNull.Value ? (DateTime?)null : (DateTime)dataReader["Due"];
                 }
                 
             }
