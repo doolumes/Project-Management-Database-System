@@ -63,6 +63,20 @@ namespace MVC_Test.Controllers
             return View();
         }
 
+        public ActionResult Delete(string tskID) {
+            string sqlCommand = "DELETE FROM \"Task\" WHERE \"ID\"=@taskID;";
+            NpgsqlConnection connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+            NpgsqlCommand command = new NpgsqlCommand(sqlCommand, connection);
+            command.Parameters.AddWithValue("@taskID", tskID);
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 1)
+            {
+                return Json(new { submissionResult = true, message = "Success"});
+            }
+            return Json(new { submissionResult = false, message = "Failed" });
+        }
+
         public ActionResult SaveChanges(string tskID, string taskName, string description = "", string checkpointID = null, string startDate = "", string dueDate = "", string assignee = null, string status = "Incomplete") { 
             if(string.IsNullOrEmpty(taskName) || string.IsNullOrEmpty(tskID))
             {

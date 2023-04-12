@@ -15,7 +15,39 @@
                 $('#submittingModal').modal('hide');
             };
         });
+        
     });
+
+    function deleteTask(){
+        alert("test");
+        var result = confirm("Are you sure you want to Delete this Task?");
+        if (result == true){
+            $.ajax({
+            type: "POST",
+            url: "@Url.Action("Delete")",
+            data: {
+                tskID: @Model.ID.ToString(),
+            },
+            dataType: "text",
+            error: function (msg){
+                alert(msg);
+            }
+                success: function (data) {
+                    var json = $.parseJSON(data);
+                    if (json.submissionResult) { // Submission is true
+                        alert('Task was deleted!');
+                        window.history.back();
+                    }
+                    else {
+                        alert('Task could not be deleted!');
+                    }
+                }
+            });
+        }
+        else{
+            return;
+        }
+    }
 
     function submit() {
         $.ajax({
@@ -39,7 +71,7 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     alert('Form was submitted!');
-                    window.location.replace('https://localhost:7049/Task?taskID=' + json.id.toString());
+                    window.location.href('Task?taskID=' + json.id.toString());
                 }
                 else {
                     alert('Form was not submitted!');
@@ -143,4 +175,5 @@
     </div>
     <asp:label id="myLabel" runat="server" />
     <button type="button" id="submit" name="submit" class="btn-block" onclick="submit()">Submit</button>
+    <button type="button" id="delete" name="delete" class="btn-block" onclick="deleteTask()">Delete Task</button>
 </body>
