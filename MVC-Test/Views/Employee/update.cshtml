@@ -88,7 +88,7 @@
             <input type="text" id="LastName" name="LastName" value="@Model.Employee_up.LastName" required />
             <label for="DepartmentID">DepartmentID</label>
             <select id="DepartmentID" name="DepartmentID" required />
-            <option value=""></option>
+            <option value="">@Model.Employee_up.Department_ID</option>
             @{
                 foreach (SelectListItem id in Model.DepartmentIDs)
                 {
@@ -108,10 +108,10 @@
             <label for="Title">Title</label>
             <input type="text" id="Title" name="Title" value="@Model.Employee_up.Title" required />
             <label for="StartDate">StartDate</label>
-            <input type="datetime-local" id="StartDate" name="StartDate" value="@Model.Employee_up.Start_Date" required />
+            <input type="date" id="StartDate" name="StartDate" value="@Model.Employee_up.Start_Date" required />
             <label for="SupervisorID">SupervisorID</label>
             <select id="SupervisorID" name="SupervisorID" required />
-            <option value=""></option>
+            <option value="">@Model.Employee_up.Supervisor_ID</option>
             @{
                 foreach (SelectListItem id in Model.EmployeeIDs)
                 {

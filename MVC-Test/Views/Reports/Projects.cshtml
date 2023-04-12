@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "View Project Costs and Hours";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.ReportsProjectsView
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+
+<script>
+
+    $(document).ready(function() {
+        $("#submit").click(function(){
+            $("#submittingModal").modal("show");
+            if (pageValid()){  
+                submit();
+            }
+            $(".modal-backdrop").remove();
+            $("#submittingModal").modal("hide");
+
+        });
+    });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#projectID";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+        return pageValid;
+    }
+
+
+    function submit(){
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddExpenses")", // must match function name in controller
+            data:{
+                projectID: $('#projectID').val(),
+            },
+            dataType:"html",
+            error: function(msg){
+                $(".modal-backdrop").remove();
+                $("#errorModal").modal();
+            },
+            success: function(data){
+                $('#addExpenses').html(data);
+            }
+        });
+    }
+</script>
+
+<html>
+    
+    <div class="row text-center">
+        <div class="col-md-12">
+            <h1>View Project Expenses</h1>
+        </div>
+
+   </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2 ">
+
+            <form>
+                <h3 class="">Task Info</h3>
+
+                <label for="projectID">Select Project to view expenses</label>
+                <select id="projectID" name="projectID" required>
+                    <option value="" selected>Please Select</option>
+                @{
+                    foreach (SelectListItem id in Model.Projects)
+                    {
+                        if (!String.IsNullOrEmpty(id.Text))
+                        {
+                            <option value="@id.Value">@id.Text</option>
+                        }
+
+                    }
+                }
+                </select>
+                <span id="projectIDRequiredAlert" class="collapse required">Required Field</span>
+
+
+                <div class="col-md-3">
+                    <p>
+                        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                    </p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div id="addExpenses" name="addExpenses">
+
+    </div>
+ 
+<div id="submittingModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="errorModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
+        </div>
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+<div id="confirmationModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
+        </div>
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+</html>

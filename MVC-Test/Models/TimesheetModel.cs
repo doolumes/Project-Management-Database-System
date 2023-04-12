@@ -3,14 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Group6Application.Models
 {
-    public class Timesheet
-    {
-        // Date
-        // Hours Worked
-        // Entry ID
-        // Project ID
-        // Worker ID
-
+    public class Timesheet { 
+    
         public int EntryID { get; set; }
         public DateTime Date { get; set; }
         public double HoursWorked { get; set; }
@@ -23,4 +17,20 @@ namespace Group6Application.Models
         public List<Timesheet> Timesheets = new List<Timesheet>();
         public List<SelectListItem> ProjectIDs { get; set; }
     }
+
+	public class TimesheetUpdateView
+	{
+		public Timesheet timesheet = new ();
+		public List<SelectListItem> ProjectIDs { get; set; }
+	}
+
+	public class TimesheetDeleteView
+    {
+        public Timesheet timesheet = new();
+        public string? Project { get; set; }
+        public string? WorkerFirstName { get; set; }
+        public string? WorkerLastName { get; set; }
+
+    }
+
 }

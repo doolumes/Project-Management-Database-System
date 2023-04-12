@@ -8,5 +8,8 @@
         public DateTime StartDate { get; set; }
         public DateTime DueDate { get; set; }
         public int ProjectID { get; set; }
+        public string Status { get; set; }
+
+        public List<TaskModel> Tasks { get; set; }
     }
 }

@@ -1,0 +1,45 @@
+﻿@model MVC_Test.Models.CheckpointModel
+@{
+
+}
+@using MVC_Test.Controllers
+@using Group6Application.Models;
+<style type="text/css">
+	th {
+		padding: 0 15px;
+	}
+
+	td {
+		padding: 0 15px;
+	}
+
+	input {
+		display: inline;
+	}
+</style>
+<center>
+	<h1>
+		@Model.Name Task's
+	</h1>
+	<table>
+		<tr>
+			<th>Task Name</th>
+			<th>Start Date</th>
+			<th>Due Date</th>
+			<th>Assignee</th>
+			<th>Status</th>
+		</tr>
+		@{
+			foreach (TaskModel task in Model.Tasks)
+			{
+				<tr>
+					<td><a href="/Task?taskID=@task.ID">@task.Name</a></td>
+					<td>@task.Start</td>
+					<td>@task.Due</td>
+					<td>@TaskController.getAssignee(task.Assignee).FirstName @TaskController.getAssignee(task.Assignee).LastName</td>
+					<td>@task.Status</td>
+				</tr>
+			}
+		}
+	</table>
+</center>

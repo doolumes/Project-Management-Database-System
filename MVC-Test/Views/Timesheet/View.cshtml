@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models
-@model Group6Application.Models.TimesheetView
+@model Group6Application.Models.TimesheetDeleteView
 
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
@@ -34,7 +34,7 @@
         var listOfInvalidObjects = "";
 
         // Do for each required input
-        var inputID = "#date";
+        var inputID = "#TimesheetID";
         if ($(inputID).val().length == 0) {
             invalidObjects++;
             $(inputID + "RequiredAlert").show();
@@ -42,26 +42,6 @@
         else {
             $(inputID + "RequiredAlert").hide();
         }
-
-
-        var inputID = "#ProjectID";
-        if ($(inputID).val().length == 0) {
-            invalidObjects++;
-            $(inputID + "RequiredAlert").show();
-        }
-        else {
-            $(inputID + "RequiredAlert").hide();
-        }
-
-        var inputID = "#HoursWorked";
-        if ($(inputID).val().length == 0) {
-            invalidObjects++;
-            $(inputID + "RequiredAlert").show();
-        }
-        else {
-            $(inputID + "RequiredAlert").hide();
-        }
-
 
         if (invalidObjects == 0) {
             pageValid = true;
@@ -72,11 +52,9 @@
     function submit() {
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddTimesheetDB")", // must match function name in controller
+            url: "@Url.Action("DeleteTimesheetDB")", // must match function name in controller
             data: {
-                Date: $('#date').val(),
-                ProjectID: $('#ProjectID').val(),
-                HoursWorked: $('#HoursWorked').val(),
+                TimesheetID: @Model.timesheet.EntryID,
             },
             dataType: "text",
             error: function (msg) {
@@ -101,73 +79,40 @@
 
 <div class="text-center">
     <div class="row">
-        <h2>Add Timesheet Entry</h2>
+        <h2>View Timesheet Details</h2>
+        <div class="col-md-3">
+            <h4>Employee</h4>
+            <p><a href="/Employee/View?id=@Model.timesheet.WorkerID">@Model.WorkerFirstName @Model.WorkerLastName</a></p>
+        </div>
 
+        <div class="col-md-3">
+            <h4>Hours Worked</h4>
+            <p>@Model.timesheet.HoursWorked</p>
+        </div>
+        <div class="col-md-3">
+            <h4>Date</h4>
+            <p>@Model.timesheet.Date.ToShortDateString()</p>
+        </div>
+        <div class="col-md-3">
+            <h4>Project</h4>
+            <p><a href="/?@Model.timesheet.ProjectID">@Model.Project</a></p>
+        </div>
+
+        <br />
+        <br />
         <form>
-            <div class="col-md-12">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required />
-                <span id="dateRequiredAlert" class="collapse required">Required Field</span>
-
-                <label for="HoursWorked">Hours Worked</label>
-                <input type="number" id="HoursWorked" name="HoursWorked" required />
-                <span id="HoursWorkedRequiredAlert" class="collapse required">Required Field</span>
-
-                <label for="ProjectID">Project Worked on</label>
-                <select id="ProjectID" name="ProjectID" required>
-                    <option value="">Please Select</option>
-                    @{
-                        foreach (SelectListItem id in Model.ProjectIDs)
-                        {
-                            if (!String.IsNullOrEmpty(id.Text))
-                            {
-                                <option value="@id.Value">@id.Text</option>
-                            }
-
-                        }
-                    }
-                </select>
-                <span id="ProjectIDRequiredAlert" class="collapse required">Required Field</span>
-
-            </div>
 
             <div class="col-md-3">
                 <p>
-                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                    <button type="button" id="submit" name="submit" class="btn-block">Delete Entry</button>
+                </p>
+            </div>
+            <div class="col-md-3">
+                <p>
+                    <button type="button" id="update" name="update" class="btn-block">Update Entry</button>
                 </p>
             </div>
         </form>
-    </div>
-    <br />
-    <div class="row text-start">
-        <h2 class="text-center">Previous Timesheet Submissions</h2>
-        <table>
-            <div class="col-md-12">
-                <tr>
-                    <th>Timesheet Entry ID</th>
-                    <th>Date</th>
-                    <th>Hours Worked</th>
-                    <th>Project ID</th>
-                </tr>
-
-                @{
-                    foreach (Timesheet timesheet in Model.Timesheets)
-                    {
-                    <tr>
-                        <td>@timesheet.EntryID</td>
-                        <td>@timesheet.Date.ToShortDateString()</td>
-                        <td>@timesheet.HoursWorked</td>
-                        <td>@timesheet.ProjectID</td>
-                    </tr>
-                    }
-                }
-
-            </div>
-            
-        </table>
-        <br />
-        
-
     </div>
 
 </div>
