@@ -110,6 +110,95 @@ namespace Group6Application.Controllers
 
         }
 
+        [Route("Reports/Projects")]
+        public ActionResult Projects()
+        {
+
+            string viewPath = "Views/Reports/Projects.cshtml";
+            ReportsProjectsView viewModel = new();
+
+            DataTable projects = Data.Projects();
+            foreach (DataRow row in projects.Rows)
+            {
+                viewModel.Projects.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = row["Name"].ToString()});
+            }
+
+            return View(viewPath, viewModel);
+        }
+
+        public ActionResult AddExpenses(int projectID)
+        {
+            string viewPath = "Views/Reports/_Expense.cshtml";
+
+
+            ReportsProjectsView viewModel = new()
+            {
+                ProjectID = projectID,
+            };
+
+            DataTable timesheetEntries = Data.TimesheetEntries(projectID);
+
+            foreach (DataRow row in timesheetEntries.Rows)
+            {
+                Timesheet timesheet = new Timesheet()
+                {
+                    EntryID = (int)row["EntryID"],
+                    Date = Convert.ToDateTime(row["Date"]),
+                    HoursWorked = (double)row["HoursWorked"],
+                    ProjectID = projectID,
+                    WorkerID = (int)row["WorkerID"]
+                };
+
+                DataTable employee = Data.Employees_id(timesheet.WorkerID);
+                EmployeeTemplate emp = new() { 
+                    ID = (int)employee.Rows[0]["ID"],
+                    FirstName = employee.Rows[0]["FirstName"].ToString(),
+                    LastName = employee.Rows[0]["LastName"].ToString(),
+                    Wage = Convert.ToDouble(employee.Rows[0]["Wage"]),
+                };
+
+                ProjectCosts projectCost = new() {
+                    timesheet = timesheet,
+                    employee = emp,
+                    cost = timesheet.HoursWorked * (double)emp.Wage
+                };
+
+                viewModel.costs.Add(projectCost);
+                viewModel.totalHours += timesheet.HoursWorked;
+                viewModel.totalWages += projectCost.cost;
+            }
+
+            DataTable expenses = Data.Expenses(projectID);
+
+            foreach (DataRow row in expenses.Rows)
+            {
+                Expense expense = new Expense()
+                {
+                    ExpenseID = (int)row["ExpenseID"],
+                    Name = row["Name"].ToString(),
+                    Description = row["Description"].ToString(),
+                    Cost = row["Cost"].ToString(),
+                    ProjectID = projectID,
+                };
+
+                viewModel.expenses.Add(expense);
+                viewModel.totalExpenses += Convert.ToDouble(expense.Cost);
+            }
+
+            return PartialView(viewPath, viewModel);
+
+
+        }
 
     }
 }
+
+
+/*
+        public int ExpenseID { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Cost { get; set; }
+        public int ProjectID { get; set; }
+ 
+ */

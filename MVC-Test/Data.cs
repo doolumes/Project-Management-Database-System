@@ -410,7 +410,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Expense\" WHERE \"ProjectID\"=@ProjectID";
+                string sqlQuery = "SELECT * FROM \"Expense\" WHERE \"ProjectID\"=@ProjectID AND \"deleted\"=@deleted";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -422,6 +422,8 @@ namespace Group6Application
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@ProjectID", ProjectID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
                     sqlDataAdapter.Fill(datatable);
@@ -482,7 +484,6 @@ namespace Group6Application
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@deleted", false);
-
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
                     sqlDataAdapter.Fill(datatable);
@@ -638,6 +639,37 @@ namespace Group6Application
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
+
+        public static DataTable TimesheetEntries(int projectID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Timesheet\" WHERE \"ProjectID\"=@ProjectID AND \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@ProjectID", projectID);
                     command.Parameters.AddWithValue("@deleted", false);
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
