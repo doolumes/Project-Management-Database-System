@@ -53,16 +53,14 @@ namespace Group6Application.Controllers
         [Route("Department/Add")]
         public ActionResult AddDepartment()
         {
-            /*
-            string userRole = Request.Cookies["Name"].Value;
-            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
+            var cookie = Request.Cookies["key"];
+            if (cookie != "Manager")
             {
-                bool submissionResult = false;
-                string errorMessage = "User does not have permission to view this page";
-                return Json(new { submissionResult = submissionResult, message = errorMessage });
-            }
-            */
-            string viewPath = "Views/Department/AddDepartment.cshtml";
+                Response.Redirect("/Permission");
+				return RedirectToAction("PermissionError", "Permission");
+			}
+
+			string viewPath = "Views/Department/AddDepartment.cshtml";
             DepartmentView viewModel = new();
             List<SelectListItem> employeeIDs = new List<SelectListItem>();
 
@@ -123,16 +121,14 @@ namespace Group6Application.Controllers
         [Route("Department/Delete")]
         public ActionResult DeleteDepartment()
         {
-            string viewPath = "Views/Department/DeleteDepartment.cshtml";
-            /*
-            string userRole = Request.Cookies["Name"].Value;
-            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
+            var cookie = Request.Cookies["key"];
+            if (cookie != "Manager")
             {
-                bool submissionResult = false;
-                string errorMessage = "User does not have permission to view this page";
-                return Json(new { submissionResult = submissionResult, message = errorMessage });
-            }
-            */
+                Response.Redirect("/Permission");
+				return RedirectToAction("PermissionError", "Permission");
+			}
+
+			string viewPath = "Views/Department/DeleteDepartment.cshtml";
 
             if (string.IsNullOrEmpty(Request.Query["id"]))
             {
@@ -248,16 +244,14 @@ namespace Group6Application.Controllers
         [Route("Department/Update")]
         public ActionResult UpdateDepartment()
         {
-            /*
-            string userRole = Request.Cookies["Name"].Value;
-            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
+            var cookie = Request.Cookies["key"];
+            if (cookie != "Manager")
             {
-                bool submissionResult = false;
-                string errorMessage = "User does not have permission to view this page";
-                return Json(new { submissionResult = submissionResult, message = errorMessage });
-            }
-            */
-            if (string.IsNullOrEmpty(Request.Query["id"]))
+                Response.Redirect("/Permission");
+				return RedirectToAction("PermissionError", "Permission");
+			}
+
+			if (string.IsNullOrEmpty(Request.Query["id"]))
             {
                 Response.Redirect("/Department");
                 return RedirectToAction("Index", "Department");
@@ -347,6 +341,13 @@ namespace Group6Application.Controllers
         [Route("Department/View")]
         public ActionResult ViewDepartment()
         {
+            var cookie = Request.Cookies["key"];
+            if (cookie == null)
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
             string viewPath = "Views/Department/ViewDepartment.cshtml";
 
             if (string.IsNullOrEmpty( Request.Query["id"] ))

@@ -153,14 +153,14 @@ namespace Group6Application.Controllers
             viewModel.EmployeeIDs = employeeIDs;
 
             var cookie = Request.Cookies["key"];
-            if (cookie == "Manger")
+            if (cookie == "Manager")
             {
 				return PartialView(viewPath, viewModel);
 			}
             else
             {
-				Response.Redirect("/Login"); 
-				return RedirectToAction("Login", "Login");
+				Response.Redirect("/Permission");
+				return RedirectToAction("PermissionError", "Permission");
 			}
         }
 

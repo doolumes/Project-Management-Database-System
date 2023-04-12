@@ -1,0 +1,17 @@
+﻿@{
+	ViewBag.Title = "Permission Error";
+}
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models;
+
+<div class="row">
+	<h2>Manager Permission is needed to view this page</h2>
+	<p>If you think this is an error, please contact the administrator.</p>
+	<p><a href="javascript:history.go(-1)"><button>Return</button></a></p>
+	<a href="@Url.Action("login", "Login")">
+		<button>Login</button>
+	</a>
+</div>
+
+
