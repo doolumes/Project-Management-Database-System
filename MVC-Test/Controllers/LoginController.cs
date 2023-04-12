@@ -39,14 +39,14 @@ namespace Group6Application.Controllers
 			DataTable datatable = Data.login(username, password, role);
 			if (datatable.Rows.Count == 0)
 			{
-				Response.Redirect("/Login"); // if no id passed, redirect back to department
+				Response.Redirect("/Login"); 
 				return RedirectToAction("Login", "Login");
 			}
 			else
 			{
 				Response.Cookies.Append("key", role);
-                Response.Cookies.Append("id", datatable.Rows[0]["EmployeeID"].ToString());
-                Response.Redirect("/Employee"); // if no id passed, redirect back to department
+				Response.Cookies.Append("id", username);
+				Response.Redirect("/Employee"); 
 				return RedirectToAction("Index", "Employee");
 			}
 		}
@@ -105,6 +105,20 @@ namespace Group6Application.Controllers
 			};
 
 			return Json(new { submissionResult = submissionResult, message = errorMessage });
+		}
+
+		[Route("Logout")]
+		public ActionResult Logout()
+		{
+			string value = string.Empty;
+			CookieOptions options = new CookieOptions()
+			{
+				Expires = DateTime.Now.AddDays(-1)
+			};
+			Response.Cookies.Append("key", value, options);
+			Response.Cookies.Append("id", value, options);
+			Response.Redirect("/Login");
+			return RedirectToAction("Login", "Login");
 		}
 	}
 }
