@@ -45,7 +45,8 @@ namespace Group6Application.Controllers
 			else
 			{
 				Response.Cookies.Append("key", role);
-				Response.Redirect("/Employee"); // if no id passed, redirect back to department
+                Response.Cookies.Append("id", datatable.Rows[0]["EmployeeID"].ToString());
+                Response.Redirect("/Employee"); // if no id passed, redirect back to department
 				return RedirectToAction("Index", "Employee");
 			}
 		}

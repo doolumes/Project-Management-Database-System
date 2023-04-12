@@ -25,7 +25,18 @@ namespace Group6Application.Controllers
         [Route("Timesheet")]
         public ActionResult Index()
         {
-            int workerID = 1;
+            int workerID;
+
+            var cookie = Request.Cookies["id"];
+            if (cookie == null)
+            {
+                Response.Redirect("/Login"); 
+                return RedirectToAction("Login", "Login");
+            }
+            else {
+                workerID = Convert.ToInt32(cookie);
+            }
+
             string viewPath = "Views/Timesheet/Index.cshtml";
 
             TimesheetView viewModel = new()
