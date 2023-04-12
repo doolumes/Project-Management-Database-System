@@ -524,5 +524,36 @@ namespace Group6Application
 				return datatable;
 			};
 		}
-	}
+
+        public static DataTable getTasksFromDepartment(int DepartmentID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = $"SELECT T.* FROM \"Task\" AS T, \"Checkpoint\" AS C, \"Project\" AS P, \"Department\" AS D WHERE D.\"ID\"=@DepartmentID AND T.\"deleted\"=@deleted AND C.\"ID\" =T.\"CheckpointID\" AND C.\"ProjectID\"=P.\"ID\" AND P.\"DepartmentID\" = D.\"ID\";";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
+    }
 }

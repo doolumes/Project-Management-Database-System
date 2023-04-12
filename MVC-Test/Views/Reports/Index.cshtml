@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Data Reports Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+
+<script>
+
+    ready(function () {
+
+    }
+</script>
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+<div class="text-center">
+
+    <div class="row text-start">
+        <h1 class="text-center">Get Reports</h1>
+        <div class="col-md-6">
+            <a href="/Reports/Tasks"><button>View Unfinished Tasks</button></a>
+        </div>
+        <div class="col-md-6">
+            <a href=""><button>2nd Report</button></a>
+        </div>
+
+
+    </div>
+
+</div>
+
+</html>

@@ -53,15 +53,7 @@ namespace Group6Application.Controllers
         [Route("Department/Add")]
         public ActionResult AddDepartment()
         {
-            /*
-            string userRole = Request.Cookies["Name"].Value;
-            if (userRole != "Manager" && userRole != "Supervisor") // only Manager and Supervisor can add a department, the rest get an error
-            {
-                bool submissionResult = false;
-                string errorMessage = "User does not have permission to view this page";
-                return Json(new { submissionResult = submissionResult, message = errorMessage });
-            }
-            */
+
             string viewPath = "Views/Department/AddDepartment.cshtml";
             DepartmentView viewModel = new();
             List<SelectListItem> employeeIDs = new List<SelectListItem>();
