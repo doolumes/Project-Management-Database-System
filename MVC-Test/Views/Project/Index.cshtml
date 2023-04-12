@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Project Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.Project
+
+<h2>Project Details</h2>
+
+<table style = "font-family: Arial">
+    <tr>
+        <td>
+            <b>Project ID:</b>
+        </td>
+        <td>
+            @Model.ID
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Project Name:</b>
+        </td>
+        <td>
+            @Model.Name
+        </td>
+    </tr>
+        <td>
+            <b>Project Status:</b>
+        </td>
+        <td>
+            @Model.Status
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Project Description:</b>
+        </td>
+        <td>
+            @Model.Description
+        </td>
+    </tr>
+</table>
