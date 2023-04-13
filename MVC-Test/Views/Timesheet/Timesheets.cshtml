@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Timesheets Page";
+}
+@using Microsoft.AspNetCore.Authorization; 
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models
+@model Group6Application.Models.TimesheetView
+
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+
+
+<html>
+
+<div class="text-center">
+    <div class="row">
+        <h2>All Timesheets</h2>
+    </div>
+    <br />
+    <div class="row text-start">
+        <table class="table">
+            <div class="col-md-12">
+                <tr>
+                    <th>Timesheet Entry ID</th>
+                    <th>Employee</th>
+                    <th>Date</th>
+                    <th>Hours Worked</th>
+                    <th>Project ID</th>
+                </tr>
+
+                @{
+                    foreach (Timesheet timesheet in Model.Timesheets)
+                    {
+                    <tr>
+                        <td><a href="/Timesheet/View?id=@timesheet.EntryID">@timesheet.EntryID</a></td>
+                        <td><a href="/Employee/View?id=@timesheet.WorkerID">@timesheet.employee.FirstName @timesheet.employee.LastName</a></td>
+                        <td>@timesheet.Date.ToShortDateString()</td>
+                        <td>@timesheet.HoursWorked</td>
+                        <td>@timesheet.ProjectID</td>
+                    </tr>
+                    }
+                }
+
+            </div>
+            
+        </table>        
+
+    </div>
+
+</div>
+
+<div id="submittingModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="errorModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
+        </div>
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+<div id="confirmationModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
+        </div>
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+    </div>
+
+</div>
+
+</html>

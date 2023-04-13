@@ -653,6 +653,36 @@ namespace Group6Application
             };
         }
 
+        public static DataTable Timesheets()
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Timesheet\" WHERE \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@deleted", false);
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
+
         public static DataTable TimesheetEntries(int projectID)
         {
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))

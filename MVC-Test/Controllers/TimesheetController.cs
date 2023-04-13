@@ -39,10 +39,10 @@ namespace Group6Application.Controllers
             if (String.IsNullOrEmpty(idcookie))
             {
                 Response.Redirect("/Login");
-				return RedirectToAction("Login", "Login");
+                return RedirectToAction("Login", "Login");
 
-			}
-			else {
+            }
+            else {
                 workerID = Convert.ToInt32(idcookie);
             }
 
@@ -52,6 +52,9 @@ namespace Group6Application.Controllers
             {
                 Timesheets = new List<Timesheet>()
             };
+
+            if (cookie == "Manager") { viewModel.isManager = true; }
+            else {viewModel.isManager = false; }
 
             List<SelectListItem> projectIDs = new List<SelectListItem>();
 
@@ -138,6 +141,69 @@ namespace Group6Application.Controllers
 
             return View(viewPath, viewModel);
         }
+
+        [Route("Timesheets")]
+        public ActionResult Timesheets()
+        {
+
+            var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            if (cookie != "Manager")
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
+
+            string viewPath = "Views/Timesheet/Timesheets.cshtml";
+
+            TimesheetView viewModel = new()
+            {
+                Timesheets = new List<Timesheet>()
+            };
+
+            List<SelectListItem> projectIDs = new List<SelectListItem>();
+
+
+            foreach (DataRow row in Data.ProjectIDs().Rows)
+            {
+                projectIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = row["Name"].ToString() });
+            }
+
+            viewModel.ProjectIDs = projectIDs;
+
+            DataTable datatable = Data.Timesheets();
+
+            foreach (DataRow row in datatable.Rows)
+            {
+                Timesheet timesheet = new Timesheet()
+                {
+                    EntryID = (int)row["EntryID"],
+                    Date = Convert.ToDateTime(row["Date"]),
+                    ProjectID = (int)row["ProjectID"],
+                    HoursWorked = (double)row["HoursWorked"],
+                    WorkerID = (int)row["WorkerID"],
+                };
+                DataTable empTable = Data.Employees_id(timesheet.WorkerID);
+
+                EmployeeTemplate emp = new()
+                {
+                    FirstName = empTable.Rows[0]["FirstName"].ToString(),
+                    LastName = empTable.Rows[0]["LastName"].ToString(),
+                    ID = timesheet.WorkerID,
+                };
+                timesheet.employee = emp;
+
+                viewModel.Timesheets.Add(timesheet);
+            }
+
+            return View(viewPath, viewModel);
+        }
+
 
         [Route("Timesheet/View")]
         public ActionResult View()

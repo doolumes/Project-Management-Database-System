@@ -10,15 +10,19 @@ namespace Group6Application.Models
         public double HoursWorked { get; set; }
         public int ProjectID { get; set; }
         public int WorkerID { get; set; }
+
+        public EmployeeTemplate employee = new();
     }
 
     public class TimesheetView
     {
         public List<Timesheet> Timesheets = new List<Timesheet>();
         public List<SelectListItem> ProjectIDs { get; set; }
+        public bool isManager { get; set; }
+
     }
 
-	public class TimesheetUpdateView
+    public class TimesheetUpdateView
 	{
 		public Timesheet timesheet = new ();
 		public List<SelectListItem> ProjectIDs { get; set; }
