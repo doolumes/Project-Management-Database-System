@@ -45,8 +45,10 @@ namespace Group6Application.Controllers
 			else
 			{
 				Response.Cookies.Append("key", role);
-				Response.Cookies.Append("id", username);
-				Response.Redirect("/Employee"); 
+				Response.Cookies.Append("id", datatable.Rows[0]["EmployeeID"] == null ? "" : datatable.Rows[0]["EmployeeID"].ToString());
+                Response.Cookies.Append("username", Username);
+
+                Response.Redirect("/Employee"); 
 				return RedirectToAction("Index", "Employee");
 			}
 		}

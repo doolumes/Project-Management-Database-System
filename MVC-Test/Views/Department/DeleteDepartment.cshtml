@@ -128,7 +128,7 @@
                 <p><strong>Please remove all projects from this department:</strong></p>
                 @if(Model.Projects.Count > 0)
                 {
-                    <table>
+                    <table class="table">
                         <thead>
                         <th>Project</th>
                         <th>Project Page</th>
@@ -139,7 +139,7 @@
                             <li><a href="/Project/Delete?id=@(project.ID)">Delete Project</a></li>
                         }
 
-                </table>
+                    </table>
                 }
                 else
                 {
@@ -152,15 +152,18 @@
                 <p><strong>Please reassign all employees in this department:</strong></p>
                 @if(Model.Employees.Count > 0)
                 {
-                    <table>
-                        <thead>
+                    <table class="table">
+                        <tr>
                         <th>Name</th>
                         <th>Employee Page</th>
-                        </thead>
+                        </tr>
                         @foreach (EmployeeTemplate employee in Model.Employees)
                         {
-                            <li>@employee.FirstName @employee.LastName</li>
-                            <li><a href="/Employee/Delete?id=@(employee.ID)">Delete Employee</a></li>
+                            <tr>
+                                <td>@employee.FirstName @employee.LastName</td>
+                                <td><a href="/Employee/View?id=@(employee.ID)">Employee Page</a></td>
+                            </tr>
+                            
                         }
 
                     </table>
