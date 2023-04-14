@@ -31,7 +31,7 @@ namespace Group6Application.Controllers
                 return Json(null);
             }
             
-            string currentUserUsername = Request.Cookies["id"];
+            string currentUserUsername = Request.Cookies["username"];
             DataTable datatable = Data.getEmployeeFromUsername(currentUserUsername);
             EmployeeTemplate employeeTemplate = new EmployeeTemplate() {
                 ID = (int)datatable.Rows[0]["ID"],
