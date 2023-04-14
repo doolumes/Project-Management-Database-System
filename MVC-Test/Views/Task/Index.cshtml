@@ -93,86 +93,127 @@
     input {display: inline;}
 
     .container {
-        max-width: 90%; /* adjust this value to fit your needs */
-        margin: 0 auto; /* center the container horizontally */
+        display:flex;
+        flex-direction:row;
     }
+    .main-table{
+        flex:3;
+    }
+    .side-table{
+        flex:1;
+        margin-left:auto;
+        margin-right:0;
+    }
+
+        #taskDescription {
+            resize: both;
+            width:50vw;
+            height:30vh;
+        }
+        #taskName {
+            width: 30vw;
+        }
 </style>
 </head>
 <body>
+
     <div class="container">
-    @using (Html.BeginForm())
-    {
-        <form id="taskForm" method="post">
-            <table>
-                <tr>
-                    <th>Task ID</th>
-                    <th>Task Name</th>
-                    <th>Task Description</th>
-                    <th>CheckPoint</th>
-                    <th>Start Date</th>
-                    <th>Due Date</th>
-                    <th>Assignee</th>
-                    <th>Status</th>
-                </tr>
-                <tr>
-                    <td><input type="number" name="taskID" id="taskID" value=@Model.ID readonly></input></td>
-                    <td><input name="taskName" id="taskName" type="text" value="@Model.Name" required></input></td>
-                    <td><input name="taskDescription" id="taskDescription" type="text" value="@Model.Description"></input></td>
-                    <td>
-                            <select name="TaskCheckPointID" id="TaskCheckPointID">
-                            @{
-                                foreach (int checkID in TaskController.getCheckpoints())
-                                {
-                                    CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
-                                    if (checkID == Model.CheckpointID)
-                                    {
-                                        <option value=@checkID selected>@checkpoint.Name</option>
-                                        continue;
-                                    }
-                                    <option value=@checkID>@checkpoint.Name</option>
-                                }
+        <table class="main-table">
+            <tr>
+                <th>ID</th>
+                <th>Task Name</th>
+            </tr>
+            <tr>
+                <td>@Model.ID</td>
+                <td><input name="taskName" id="taskName" type="text" value="@Model.Name" required></input></td>
+            </tr>
+            <tr>
+                <th colspan="2">Task Description</th>
+            </tr>
+            <tr>
+                <td colspan="2"><textarea name="taskDescription" id="taskDescription" type="text">@Model.Description</textarea></td>
+            </tr>
+        </table>
+        <table class="side-table">
+            <tr>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="taskStatus" id="taskStatus">
+                        @{
+                            if (Model.Status == "Incomplete")
+                            {
+                                <option value="Incomplete" selected>Incomplete</option>
+                                <option value="Complete">Complete</option>
                             }
-                        </select>
-                    </td>
-                        <td><input name="taskStart" id="taskStart" type="date" value="@Model.Start.Value.ToString("yyyy-MM-dd")"></input></td>
-                        <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
-                    <td>
-                            <select name="taskAssignee" id="taskAssignee">
-                            @{
-                                foreach (int assigneeID in TaskController.getAssignees())
-                                {
-                                    EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
-                                    string fullName = employee.FirstName + " " + employee.LastName;
-                                    if (assigneeID == Model.Assignee)
-                                    {
-                                        <option value=@assigneeID selected>@fullName</option>
-                                        continue;
-                                    }
-                                    <option value=@assigneeID>@fullName</option>
-                                }
+                            else
+                            {
+                                <option value="Complete" selected>Complete</option>
+                                <option value="Incomplete">Incomplete</option>
                             }
-                        </select>
-                    </td>
-                    <td>
-                        <select name="taskStatus" id="taskStatus">
-                            @{
-                                if (Model.Status == "Incomplete")
+                        }
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>Assignee</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="taskAssignee" id="taskAssignee">
+                        @{
+                            foreach (int assigneeID in TaskController.getAssignees())
+                            {
+                                EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
+                                string fullName = employee.FirstName + " " + employee.LastName;
+                                if (assigneeID == Model.Assignee)
                                 {
-                                    <option value="Incomplete" selected>Incomplete</option>
-                                    <option value="Complete">Complete</option>
+                                    <option value=@assigneeID selected>@fullName</option>
+                                    continue;
                                 }
-                                else
-                                {
-                                    <option value="Complete" selected>Complete</option>
-                                    <option value="Incomplete">Incomplete</option>
-                                }
+                                <option value=@assigneeID>@fullName</option>
                             }
-                        </select>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Checkpoint</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="TaskCheckPointID" id="TaskCheckPointID">
+                        @{
+                            foreach (int checkID in TaskController.getCheckpoints())
+                            {
+                                CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
+                                if (checkID == Model.CheckpointID)
+                                {
+                                    <option value=@checkID selected>@checkpoint.Name</option>
+                                    continue;
+                                }
+                                <option value=@checkID>@checkpoint.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Start Date</th>
+            </tr>
+            <tr>
+                <td><input name="taskStart" id="taskStart" type="date" value="@Model.Start.Value.ToString("yyyy-MM-dd")"></input></td>
+            </tr>
+
+            <tr>
+                <th>Due Date</th>
+            </tr>
+            <tr>
+                <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
+            </tr>
+        </table>
     </div>
     <asp:label id="myLabel" runat="server" />
     <button type="button" id="submit" name="submit" class="btn-block" onclick="submit()">Submit</button>
