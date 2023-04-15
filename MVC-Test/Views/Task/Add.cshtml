@@ -1,64 +1,116 @@
 ﻿@model MVC_Test.Models.TaskModel
 @{
-    ViewBag.Title = "Add Task Page";
+
 }
 @using MVC_Test.Controllers
 @using Group6Application.Models;
+@using System.Data;
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Mvc;
+<html>
+
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
     <script src="~/js/jquery-3.6.4.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        th {
+            padding: 0 15px;
+        }
 
+        td {
+            padding: 0 15px;
+        }
+
+        input {
+            display: inline;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main-table {
+            flex: 3;
+        }
+
+        .side-table {
+            flex: 1;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        #taskDescription {
+            resize: both;
+            width: 50vw;
+            height: 30vh;
+        }
+
+        #taskName {
+            width: 30vw;
+        }
+
+        #submit {
+            width: auto;
+        }
+
+        #delete {
+            width: auto;
+        }
+    </style>
 </head>
 <script>
     $(document).ready(function () {
-        $("#submit").click(function () {
-            $('#submittingModal').modal('show');
-            if (pageValid()){  
-                submit();
-            }
-            else{
-                $('#submittingModal').modal('hide');
-            };
+            $("#saveTask").click(function (){
+                saveTask();
+            });
+        $("#project-dropdown").change(function () {
+            var projectID = $(this).val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetCheckpointsFromProject")",
+                data: {
+                    projectID: projectID,
+                },
+                dataType: "text",
+                success: function (response) {
+                    var data = JSON.parse(response)
+                    var checkpoints = data.map(function (checkpoint) {
+                        return {
+                            value: checkpoint.value,
+                            text: checkpoint.text
+                        };
+                    });
+                    $('#checkpoint-dropdown').empty();
+                    var select = document.getElementById("checkpoint-dropdown");
+                    $.each(checkpoints, function (index, value){
+                        console.log(value);
+                        var option = document.createElement("option");
+                        option.text = value.text;
+                        option.value = value.value;
+                        select.add(option);
+                    });
+                }
+            });
         });
     });
 
-    function pageValid() {
-        var pageValid = false;
-        var invalidObjects = 0;
-        var listOfInvalidObjects = "";
-
-        // Do for each required input
-        var inputID = "#taskName";
-        if ($(inputID).val().length == 0) {
-            invalidObjects++;
-            $(inputID + "RequiredAlert").show();
-        }
-        else {
-            $(inputID + "RequiredAlert").hide();
-        }
-
-
-        if (invalidObjects == 0) {
-            pageValid = true;
-        }
-        return pageValid;
-    }
-
-
-    function submit() {
+    function saveTask() {
         $.ajax({
             type: "POST",
             url: "@Url.Action("AddTask")", // must match function name in controller
             data: {
                 taskName: $('#taskName').val(),
                 description: $('#taskDescription').val(),
-                checkPointID: $('#TaskCheckPointID').val(),
+                checkPointID: $('#checkpoint-dropdown').val(),
                 startDate: $('#taskStart').val(),
                 dueDate: $('#taskDue').val(),
                 assignee: $('#taskAssignee').val(),
+                status: $('#taskStatus').val(),
             },
             dataType: "text",
             error: function (msg) {
@@ -67,103 +119,113 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
-                    alert('Form was submitted!');
+                    alert('Changes were saved!');
                     window.location.replace('https://localhost:7049/Task?taskID=' + json.id.toString());
                 }
                 else {
-                    alert('Form was not submitted!');
+                    alert('Changes could not be saved!');
                 }
             }
         });
     }
 </script>
-    <form id="taskForm" method="post">
+<body>
 
-        <label for="taskName">Task Name</label>
-        <input id="taskName" name="taskName" type="text" />
-        <span id="taskNameIDRequiredAlert" class="collapse required">Required Field</span>
+    <div class="container">
+        <table class="main-table">
+            <tr>
+                <th>Task Name</th>
+            </tr>
+            <tr>
+                <td><input name="taskName" id="taskName" type="text" value="" required></input></td>
+            </tr>
+            <tr>
+                <th colspan="2">Task Description</th>
+            </tr>
+            <tr>
+                <td colspan="2"><textarea name="taskDescription" id="taskDescription" type="text"></textarea></td>
+            </tr>
+        </table>
+        <table class="side-table">
+            <tr>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="taskStatus" id="taskStatus">
+                        <option value="Incomplete" selected>Incomplete</option>
+                        <option value="Complete">Complete</option>
+                    </select>
+                </td>
+            </tr>
 
+            <tr>
+                <th>Project</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="project-dropdown" id="project-dropdown">
+                        <option value="" selected>Please Select One...</option>
+                        @{
+                            foreach (Project project in TaskController.GetProjects())
+                            {
+                                <option value="@project.ID">@project.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
 
-        <br />
-        <label for="taskDescription">Task Description</label>
-        <input id="taskDescription" name="taskDescription" type="text" />
+            <tr>
+                <th>Assignee</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="taskAssignee" id="taskAssignee">
+                        <option value="" selected>Please Select One...</option>
+                        @{
+                            foreach (int assigneeID in TaskController.getAssignees())
+                            {
+                                EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
+                                string fullName = employee.FirstName + " " + employee.LastName;
+                                <option value=@assigneeID>@fullName</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Checkpoint</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="checkpoint-dropdown" id="checkpoint-dropdown">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Start Date</th>
+            </tr>
+            <tr>
+                <td><input name="taskStart" id="taskStart" type="date" value=""></input></td>
+            </tr>
 
-        <br />
-        <label for="TaskCheckPointID">Checkpoint</label>
-        <select id="TaskCheckPointID" name="TaskCheckPointID">
-            <option value="" selected>Please select...</option>
-            @{
-                foreach (int checkID in TaskController.getCheckpoints())
-                {
-                    CheckpointModel checkpoint = TaskController.getCheckpoint(checkID);
-                    <option value=@checkID>@checkpoint.Name</option>
-                }
-            }
-        </select>
-
-        <br />
-
-        <label for="taskStart">Start Date</label>
-        <input id="taskStart" name="taskStart" type="date" />
-
-        <br />
-
-        <label for="taskDue">Due Date</label>
-        <input id="taskDue" name="taskDue" type="date" />
-        <select id="taskAssignee" name="taskAssignee">
-                <option value="" selected>Please select...</option>
-                @{
-                    foreach (int assigneeID in TaskController.getAssignees())
-                    {
-                        EmployeeTemplate employee = TaskController.getAssignee(assigneeID);
-                        string fullName = employee.FirstName + " " + employee.LastName;
-                        <option value=@assigneeID>@fullName</option>
-                    }
-                }
-        </select>
-
-        <br />
-
-        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
-    </form>
-
-<div id="submittingModal" class="modal fade" tabindex="-1">
-
-    <div class="modal-dialog" role="document">
-        <div class="modal-header">
-            <h2>Submitting</h2>
-        </div>
-        <div class="modal-body">
-            <p>Form is being submitted</p>
-        </div>
+            <tr>
+                <th>Due Date</th>
+            </tr>
+            <tr>
+                <td><input name="taskDue" id="taskDue" type="date" value=""></input></td>
+            </tr>
+        </table>
     </div>
+    <asp:label id="myLabel" runat="server" />
+    <center>
+        <table>
+            <tr>
+                <td><button type="button" id="saveTask" name="saveTask" class="btn-block">Save Task</button></td>
+            </tr>
+        </table>
 
-</div>
-
-<div id="errorModal" class="modal fade" tabindex="-1">
-
-    <div class="modal-dialog" role="document">
-        <div class="modal-header">
-            <h2>Error</h2>
-        </div>
-        <div class="modal-body">
-            <p>An error has occurred while submitting.</p>
-        </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
-    </div>
-
-</div>
-
-<div id="confirmationModal" class="modal fade" tabindex="-1">
-
-    <div class="modal-dialog" role="document">
-        <div class="modal-header">
-            <h2>Confirmation</h2>
-        </div>
-        <div class="modal-body">
-            <p>The form has been sucessfully submitted</p>
-        </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
-    </div>
-
-</div>
+    </center>
+</body>
+</html>

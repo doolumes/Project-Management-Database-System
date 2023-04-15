@@ -803,5 +803,32 @@ namespace Group6Application
             }
 
         }
+
+        public static DataTable getCheckpointsFromProjectID(int projectID) {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ProjectID\" = @projectID;";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@projectID", projectID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
+        }
     }
 }

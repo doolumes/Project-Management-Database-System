@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Group6Application;
 using System.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MVC_Test.Controllers
 {
@@ -179,6 +180,7 @@ namespace MVC_Test.Controllers
         }
 
         public ActionResult AddTask(string taskName, string description = "", string checkPointID = null, string startDate = "", string dueDate = "", string assignee=null) {
+            Console.WriteLine(checkPointID);
             if (string.IsNullOrEmpty(taskName)) {
                 return Json(new { submissionResult = false, message = "Task Name is required!" });
             }
@@ -410,6 +412,32 @@ namespace MVC_Test.Controllers
                 Name = datatable.Rows[0]["Name"].ToString(),
             };
             return project;
+        }
+
+        public static List<Project> GetProjects()
+        {
+            DataTable dataTable = Data.Projects();
+            List<Project> lst = new List<Project>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Project project = new Project() {
+                    ID = Int32.Parse(row["ID"].ToString()),
+                    Name = row["Name"].ToString(),
+                };
+                lst.Add(project);
+            }
+            return lst;
+        }
+
+        public ActionResult GetCheckpointsFromProject(int projectID) {
+            DataTable checkpoints = Data.getCheckpointsFromProjectID(projectID);
+            var checkpointList = checkpoints.AsEnumerable().Select(row =>
+            new SelectListItem { 
+                Value = row.Field<int>("ID").ToString(),
+                Text = row.Field<string>("Name"),
+            }
+            );
+            return Json( checkpointList );
         }
 
     }
