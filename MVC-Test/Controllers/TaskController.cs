@@ -63,12 +63,14 @@ namespace MVC_Test.Controllers
             return View();
         }
 
-        public ActionResult Delete(string tskID) {
+        [HttpPost]
+        public ActionResult deleteTask(string tskID) {
+            int taskID = Convert.ToInt32(tskID);
             string sqlCommand = "DELETE FROM \"Task\" WHERE \"ID\"=@taskID;";
             NpgsqlConnection connection = new NpgsqlConnection(_connectionString);
             connection.Open();
             NpgsqlCommand command = new NpgsqlCommand(sqlCommand, connection);
-            command.Parameters.AddWithValue("@taskID", tskID);
+            command.Parameters.AddWithValue("@taskID", taskID);
             int rowsAffected = command.ExecuteNonQuery();
             if (rowsAffected == 1)
             {
@@ -77,6 +79,7 @@ namespace MVC_Test.Controllers
             return Json(new { submissionResult = false, message = "Failed" });
         }
 
+        [HttpPost]
         public ActionResult SaveChanges(string tskID, string taskName, string description = "", string checkpointID = null, string startDate = "", string dueDate = "", string assignee = null, string status = "Incomplete") { 
             if(string.IsNullOrEmpty(taskName) || string.IsNullOrEmpty(tskID))
             {
@@ -397,14 +400,6 @@ namespace MVC_Test.Controllers
             }
             conn.Close();
             return lst;
-        }
-
-        [HttpPost]
-        public static bool saveTaskChanges(FormCollection formCollection) {
-            //TODO: Add SQL command to update task with changes
-            string taskName = formCollection["taskName"];
-            string taskDescription = formCollection["taskDescription"];
-            return true;
         }
 
     }

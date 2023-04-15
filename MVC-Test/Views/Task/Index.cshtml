@@ -5,83 +5,16 @@
 @using MVC_Test.Controllers
 @using Group6Application.Models;
 @using System.Data;
-<script>
-    $(document).ready(function () {
-        $("#submit").click(function () {
-            $('#submittingModal').modal('show');
-            if (pageValid()) {
-                submit();
-            }
-            else {
-                $('#submittingModal').modal('hide');
-            };
-        });
-        
-    });
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+<html>
 
-    function deleteTask(){
-        alert("test");
-        var result = confirm("Are you sure you want to Delete this Task?");
-        if (result == true){
-            $.ajax({
-            type: "POST",
-            url: "@Url.Action("Delete")",
-            data: {
-                tskID: @Model.ID.ToString(),
-            },
-            dataType: "text",
-            error: function (msg){
-                alert(msg);
-            }
-                success: function (data) {
-                    var json = $.parseJSON(data);
-                    if (json.submissionResult) { // Submission is true
-                        alert('Task was deleted!');
-                        window.history.back();
-                    }
-                    else {
-                        alert('Task could not be deleted!');
-                    }
-                }
-            });
-        }
-        else{
-            return;
-        }
-    }
-
-    function submit() {
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("SaveChanges")", // must match function name in controller
-            data: {
-                tskID: @Model.ID.ToString(),
-                taskName: $('#taskName').val(),
-                description: $('#taskDescription').val(),
-                checkPointID: $('#TaskCheckPointID').val(),
-                startDate: $('#taskStart').val(),
-                dueDate: $('#taskDue').val(),
-                assignee: $('#taskAssignee').val(),
-                status: $('#taskStatus').val(),
-            },
-            dataType: "text",
-            error: function (msg) {
-                alert(msg);
-            },
-            success: function (data) {
-                var json = $.parseJSON(data);
-                if (json.submissionResult) { // Submission is true
-                    alert('Form was submitted!');
-                    window.location.href('Task?taskID=' + json.id.toString());
-                }
-                else {
-                    alert('Form was not submitted!');
-                }
-            }
-        });
-    }
-</script>
 <head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style type="text/css">
     th {
@@ -113,8 +46,86 @@
         #taskName {
             width: 30vw;
         }
+        #submit{
+            width: auto;
+        }
+        #delete{
+            width:auto;
+        }
 </style>
 </head>
+<script>
+    $(document).ready(function () {
+        $("#saveTask").click(function () {
+            saveTask();
+        });
+        $("#deleteTask").click(function () {
+            deleteTask();
+        });
+    });
+
+    function deleteTask() {
+        alert("test");
+        var result = confirm("Are you sure you want to Delete this Task?");
+        if (result == true) {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("deleteTask")",
+                data: {
+                    tskID: @Model.ID.ToString(),
+                },
+                dataType: "text",
+                error: function (msg) {
+                    alert(msg);
+                },
+                success: function (data) {
+                    var json = $.parseJSON(data);
+                    if (json.submissionResult) { // Submission is true
+                        alert('Task was deleted!');
+                        window.history.back();
+                    }
+                    else {
+                        alert('Task could not be deleted!');
+                    }
+                }
+            });
+        }
+        else {
+            return;
+        }
+    }
+
+    function saveTask() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveChanges")", // must match function name in controller
+            data: {
+                tskID: @Model.ID.ToString(),
+                taskName: $('#taskName').val(),
+                description: $('#taskDescription').val(),
+                checkPointID: $('#TaskCheckPointID').val(),
+                startDate: $('#taskStart').val(),
+                dueDate: $('#taskDue').val(),
+                assignee: $('#taskAssignee').val(),
+                status: $('#taskStatus').val(),
+            },
+            dataType: "text",
+            error: function (msg) {
+                alert(msg);
+            },
+            success: function (data) {
+                var json = $.parseJSON(data);
+                if (json.submissionResult) { // Submission is true
+                    alert('Changes were saved!');
+                    window.location.replace('https://localhost:7049/Task?taskID=' + json.id.toString());
+                }
+                else {
+                    alert('Changes could not be saved!');
+                }
+            }
+        });
+    }
+</script>
 <body>
 
     <div class="container">
@@ -216,6 +227,14 @@
         </table>
     </div>
     <asp:label id="myLabel" runat="server" />
-    <button type="button" id="submit" name="submit" class="btn-block" onclick="submit()">Submit</button>
-    <button type="button" id="delete" name="delete" class="btn-block" onclick="deleteTask()">Delete Task</button>
+    <center>
+        <table>
+            <tr>
+                <td><button type="button" id="saveTask" name="saveTask" class="btn-block">Save Changes</button></td>
+                <td><button type="button" id="deleteTask" name="deleteTask" class="btn-block">Delete Task</button></td>
+            </tr>
+        </table>
+        
+    </center>
 </body>
+</html>
