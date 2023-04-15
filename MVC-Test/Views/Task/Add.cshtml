@@ -120,7 +120,7 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     alert('Changes were saved!');
-                    window.location.replace('https://localhost:7049/Task?taskID=' + json.id.toString());
+                    window.location.replace('/Task?taskID=' + json.id.toString());
                 }
                 else {
                     alert('Changes could not be saved!');
