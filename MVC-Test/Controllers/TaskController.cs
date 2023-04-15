@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Group6Application;
+using System.Data;
 
 namespace MVC_Test.Controllers
 {
@@ -400,6 +402,14 @@ namespace MVC_Test.Controllers
             }
             conn.Close();
             return lst;
+        }
+        public static Project GetProject(int checkpointID) {
+            DataTable datatable = Data.getProjectFromCheckpointID(checkpointID);
+            Project project = new Project() {
+                ID = Int32.Parse(datatable.Rows[0]["ID"].ToString()),
+                Name = datatable.Rows[0]["Name"].ToString(),
+            };
+            return project;
         }
 
     }

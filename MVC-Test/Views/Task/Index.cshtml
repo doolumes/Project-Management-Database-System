@@ -224,6 +224,12 @@
             <tr>
                 <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
             </tr>
+            <tr>
+                <th>Project</th>
+            </tr>
+            <tr>
+                <td>@TaskController.GetProject(Model.CheckpointID).Name</td>
+            </tr>
         </table>
     </div>
     <asp:label id="myLabel" runat="server" />
