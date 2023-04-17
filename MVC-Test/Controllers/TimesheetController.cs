@@ -119,6 +119,15 @@ namespace Group6Application.Controllers
 
             List<SelectListItem> projectIDs = new List<SelectListItem>();
 
+            if (string.IsNullOrEmpty(Request.Query["id"]))
+            {
+                Response.Redirect("/Timesheet"); // if not found in database, redirect back to department
+                return RedirectToAction("Index", "Timesheet");
+
+            }
+
+            int entryID = Convert.ToInt32(Request.Query["id"].ToString());
+
 
             foreach (DataRow row in Data.ProjectIDs().Rows)
             {
@@ -128,7 +137,7 @@ namespace Group6Application.Controllers
             viewModel.ProjectIDs = projectIDs;
 
             // Add datatable
-            DataTable datatable = Data.Timesheet(workerID);
+            DataTable datatable = Data.Timesheet(entryID);
             Timesheet timesheet = new Timesheet()
             {
                 EntryID = (int)datatable.Rows[0]["EntryID"],
@@ -311,8 +320,9 @@ namespace Group6Application.Controllers
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
 
-		public ActionResult UpdateTimesheetDB(DateTime Date, int ProjectID, double HoursWorked)
+		public ActionResult UpdateTimesheetDB(DateTime Date, int ProjectID, double HoursWorked, int EntryID)
 		{
+
 			int workerID;
 
 			var idcookie = Request.Cookies["id"];
@@ -330,7 +340,7 @@ namespace Group6Application.Controllers
 			string errorMessage = "";
 
 			// SQL
-			string sqlQuery = $"UPDATE \"Timesheet\" SET \"Date\"=@Date,\"HoursWorked\"=@HoursWorked,\"ProjectID\"=@ProjectID WHERE \"WorkerID\"=@WorkerID ;";
+			string sqlQuery = $"UPDATE \"Timesheet\" SET \"Date\"=@Date,\"HoursWorked\"=@HoursWorked,\"ProjectID\"=@ProjectID WHERE \"EntryID\"=@EntryID;";
 			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
 			{
 				conn.Open();
@@ -339,21 +349,20 @@ namespace Group6Application.Controllers
 				sqlTransaction = conn.BeginTransaction();
 				command.Transaction = sqlTransaction;
 
-				//try
-				//{
+				try
+				{
 				command.CommandText = sqlQuery.ToString();
 				command.Parameters.Clear();
 				command.Parameters.AddWithValue("@Date", Date);
 				command.Parameters.AddWithValue("@HoursWorked", HoursWorked);
 				command.Parameters.AddWithValue("@ProjectID", ProjectID);
-				command.Parameters.AddWithValue("@WorkerID", workerID);
+				command.Parameters.AddWithValue("@EntryID", EntryID);
 
 				command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 
 				sqlTransaction.Commit();
 				submissionResult = true;
-				//}
-				try { }
+				}
 				catch (Exception e)
 				{
 					// error catch here
@@ -383,7 +392,7 @@ namespace Group6Application.Controllers
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"UPDATE \"Timesheet\" Set \"deleted\"=@deleted;";
+            string sqlQuery = $"UPDATE \"Timesheet\" Set \"deleted\"=@deleted WHERE \"EntryID\"=@EntryID;";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -392,18 +401,17 @@ namespace Group6Application.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                //try
-                //{
+                try
+                {
                 command.CommandText = sqlQuery.ToString();
                 command.Parameters.Clear();
                 command.Parameters.AddWithValue("@deleted", true);
-
+                command.Parameters.AddWithValue("@EntryID", TimesheetID);
                 command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 
                 sqlTransaction.Commit();
                 submissionResult = true;
-                //}
-                try { }
+                }
                 catch (Exception e)
                 {
                     // error catch here

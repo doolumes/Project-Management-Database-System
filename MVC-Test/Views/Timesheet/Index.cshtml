@@ -87,6 +87,7 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
+                    window.location.replace("/Timesheet");
                     $("#confirmationModal").modal('show');
                 }
                 else {

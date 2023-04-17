@@ -3,6 +3,7 @@
 }
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Http;
 @using Group6Application.Models
 @model Group6Application.Models.TimesheetDeleteView
 
@@ -18,13 +19,13 @@
 <script>
 
     $(document).ready(function () {
-        $("#submit").click(function () {
+        $("#delete").click(function () {
             $('#submittingModal').modal('show');
             if (pageValid()) {
-                submit();
+                console.log("Deleting");
+                Delete();
             }
             $('#submittingModal').modal('hide');
-            location.reload();
         });
     });
 
@@ -33,23 +34,13 @@
         var invalidObjects = 0;
         var listOfInvalidObjects = "";
 
-        // Do for each required input
-        var inputID = "#TimesheetID";
-        if ($(inputID).val().length == 0) {
-            invalidObjects++;
-            $(inputID + "RequiredAlert").show();
-        }
-        else {
-            $(inputID + "RequiredAlert").hide();
-        }
-
         if (invalidObjects == 0) {
             pageValid = true;
         }
         return pageValid;
     }
 
-    function submit() {
+    function Delete() {
         $.ajax({
             type: "POST",
             url: "@Url.Action("DeleteTimesheetDB")", // must match function name in controller
@@ -64,7 +55,7 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
-                    $("#confirmationModal").modal();
+                    window.location.replace("/Timesheet");
                 }
                 else {
                     $("#errorModal").modal();
@@ -104,12 +95,14 @@
 
             <div class="col-md-3">
                 <p>
-                    <button type="button" id="submit" name="submit" class="btn-block">Delete Entry</button>
+                    <button type="button" id="delete" name="delete" class="btn-block">Delete Entry</button>
                 </p>
             </div>
             <div class="col-md-3">
                 <p>
-                    <button type="button" id="update" name="update" class="btn-block">Update Entry</button>
+                    <a href="/Timesheet/Update?id=@Model.timesheet.EntryID">
+                        <button type="button" id="update" name="update" class="btn-block">Update Entry</button>
+                    </a>
                 </p>
             </div>
         </form>
