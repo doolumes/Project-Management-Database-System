@@ -16,7 +16,7 @@
         }
         else
         {
-            <table>
+            <table class="table">
                 <tr>
                     <th>Task ID</th>
                     <th>Name</th>
@@ -30,16 +30,16 @@
 
 
 
-                @foreach (TaskModel task in Model.Tasks)
+                @foreach (TaskInformation task in Model.Tasks)
                 {
                     <tr>
-                        <td>@task.ID</td>
-                        <td>@task.Name</td>
-                        <td>@task.Description</td>
-                        <td><a href="/?@task.Assignee"></a>@task.Assignee</td>
-                        <td>-------</td>
-                        <td>@task.Start</td>
-                        <td>@task.Due</td>
+                        <td>@task.task.ID</td>
+                        <td>@task.task.Name</td>
+                        <td>@task.task.Description</td>
+                        <td><a href="/Employee/View?id=@task.employee.ID">@task.employee.FirstName @task.employee.LastName</a></td>
+                        <td><a href="/Project/View?id=@task.project.ID">@task.project.Name</a></td>
+                        <td>@task.task.Start</td>
+                        <td>@task.task.Due</td>
                     </tr>
                 }
             </table>

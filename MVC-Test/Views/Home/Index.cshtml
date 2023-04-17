@@ -1,27 +1,64 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@model Group6Application.Models.HomeView
+@using MVC_Test.Controllers
+@using Group6Application.Models;
+@using Group6Application.Controllers;
+@using System.Data;
 
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#createTask").click(function () {
+                window.location.href = '/Task/Add';
+            });
+        });
+    </script>
+
+</head>
 <div class="text-center">
-    <div class="row">
-        <h2>Assigned Tasks</h2>
+
+    <div class="row text-start">
+        <h1 class="text-center">Assigned Tasks</h1>
         <table>
             <div class="col-md-12">
+            <tr>
+                <th>ID</th>
                 <th>Task Name</th>
-                <th>Project Page</th>
-                @foreach (TaskModel task in Model.AssignedTasks)
-                {
-                    <tr>
-                        <td><a href="/Task?taskId=@task.ID">@task.Name</a></td>
-                        <td><a href="/Project/View?id=@(task.ProjectID)">View Project</a></td>
-                    </tr>
-                    
+                <th>Status</th>
+                <th>Checkpoint</th>
+                <th>Project</th>
+            </tr>
+
+                @{
+                    foreach (DataRow datatable in HomeController.AssignedTasks(Model.ID).Rows)
+                    {
+                        if (datatable["Status"].ToString() == "Complete")
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@datatable["ID"].ToString()</td>
+                        <td><a href="Task?taskID=@datatable["ID"]">@datatable["Name"].ToString()</a></td>
+                        <td>@datatable["Status"].ToString()</td>
+                        <td><a href="Task?checkpointID=@datatable["CheckpointID"]">@HomeController.CheckpointNameFromID((int)datatable["CheckpointID"])<a /></td>
+                        <td>@HomeController.ProjectNameFromCheckpointID((int)datatable["CheckpointID"])</td>
+                        </tr>    
+                    }
                 }
-            </div>
-        </table>
-        
-        
     </div>
-    
+
+    </table>
+    <br />
+
 </div>
+</div>
+<center><button id="createTask" name="createTask" type="button">Create New Task</button></center>
+</html>

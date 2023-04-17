@@ -45,9 +45,10 @@ namespace Group6Application.Controllers
 			else
 			{
 				Response.Cookies.Append("key", role);
-				Response.Cookies.Append("id", username);
-				Response.Redirect("/Employee"); 
-				return RedirectToAction("Index", "Employee");
+				Response.Cookies.Append("id", datatable.Rows[0]["EmployeeID"] == null ? "" : datatable.Rows[0]["EmployeeID"].ToString());
+                Response.Cookies.Append("username", username);
+                Response.Redirect("/");
+				return RedirectToAction("Index", "Home");
 			}
 		}
 
@@ -68,11 +69,11 @@ namespace Group6Application.Controllers
 
 			return PartialView(viewPath, viewModel);
 		}
-		public ActionResult Register_DB(string Username, string Password, string Role)
+		public ActionResult Register_DB(string Username, string Password, string Role, int EmployeeID)
 		{
 			bool submissionResult = false;
 			string errorMessage = "";
-			string sqlQuery = $"INSERT INTO \"Authentication\"(\"Username\",\"Password\",\"Role\" ) VALUES (@Username,@Password,@Role);";
+			string sqlQuery = $"INSERT INTO \"Authentication\"(\"Username\",\"Password\",\"Role\", \"EmployeeID\") VALUES (@Username,@Password,@Role,@EmployeeID);";
 			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
 			{
 				conn.Open();
@@ -87,6 +88,7 @@ namespace Group6Application.Controllers
 				command.Parameters.AddWithValue("@Username", Username);
 				command.Parameters.AddWithValue("@Password", Password);
 				command.Parameters.AddWithValue("@Role", Role);
+				command.Parameters.AddWithValue("@EmployeeID", EmployeeID);
 				command.ExecuteNonQuery();
 				sqlTransaction.Commit();
 				submissionResult = true;
@@ -117,7 +119,8 @@ namespace Group6Application.Controllers
 			};
 			Response.Cookies.Append("key", value, options);
 			Response.Cookies.Append("id", value, options);
-			Response.Redirect("/Login");
+            Response.Cookies.Append("username", value, options);
+            Response.Redirect("/Login");
 			return RedirectToAction("Login", "Login");
 		}
 	}

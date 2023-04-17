@@ -4,6 +4,8 @@
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models
+@using Microsoft.AspNetCore.Http;
+@using System.Data;
 @model Group6Application.Models.TimesheetView
 
 <head>
@@ -24,7 +26,6 @@
                 submit();
             }
             $('#submittingModal').modal('hide');
-            location.reload();
         });
     });
 
@@ -86,10 +87,10 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
-                    $("#confirmationModal").modal();
+                    $("#confirmationModal").modal('show');
                 }
                 else {
-                    $("#errorModal").modal();
+                    $("#errorModal").modal('show');
                 }
             }
         });
@@ -130,18 +131,30 @@
                 <span id="ProjectIDRequiredAlert" class="collapse required">Required Field</span>
 
             </div>
-
-            <div class="col-md-3">
-                <p>
-                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
-                </p>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>
+                        <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                    </p>
+                </div>
+                @if (Model.isManager == true)
+                {
+                    <div class="col-md-3">
+                        <p>
+                            <a href="/Timesheets"><button type="button" class="btn-block">View all Timesheets</button></a>
+                        </p>
+                    </div>
+                }
             </div>
+            
+            
+            
         </form>
     </div>
     <br />
     <div class="row text-start">
         <h2 class="text-center">Previous Timesheet Submissions</h2>
-        <table>
+        <table class="table">
             <div class="col-md-12">
                 <tr>
                     <th>Timesheet Entry ID</th>
@@ -154,7 +167,7 @@
                     foreach (Timesheet timesheet in Model.Timesheets)
                     {
                     <tr>
-                        <td>@timesheet.EntryID</td>
+                        <td><a href="/Timesheet/View?id=@timesheet.EntryID">@timesheet.EntryID</a></td>
                         <td>@timesheet.Date.ToShortDateString()</td>
                         <td>@timesheet.HoursWorked</td>
                         <td>@timesheet.ProjectID</td>

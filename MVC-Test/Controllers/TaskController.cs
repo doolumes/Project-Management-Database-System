@@ -11,6 +11,9 @@ using System.Globalization;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Group6Application;
+using System.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MVC_Test.Controllers
 {
@@ -63,6 +66,23 @@ namespace MVC_Test.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult deleteTask(string tskID) {
+            int taskID = Convert.ToInt32(tskID);
+            string sqlCommand = "DELETE FROM \"Task\" WHERE \"ID\"=@taskID;";
+            NpgsqlConnection connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+            NpgsqlCommand command = new NpgsqlCommand(sqlCommand, connection);
+            command.Parameters.AddWithValue("@taskID", taskID);
+            int rowsAffected = command.ExecuteNonQuery();
+            if (rowsAffected == 1)
+            {
+                return Json(new { submissionResult = true, message = "Success"});
+            }
+            return Json(new { submissionResult = false, message = "Failed" });
+        }
+
+        [HttpPost]
         public ActionResult SaveChanges(string tskID, string taskName, string description = "", string checkpointID = null, string startDate = "", string dueDate = "", string assignee = null, string status = "Incomplete") { 
             if(string.IsNullOrEmpty(taskName) || string.IsNullOrEmpty(tskID))
             {
@@ -160,6 +180,7 @@ namespace MVC_Test.Controllers
         }
 
         public ActionResult AddTask(string taskName, string description = "", string checkPointID = null, string startDate = "", string dueDate = "", string assignee=null) {
+            Console.WriteLine(checkPointID);
             if (string.IsNullOrEmpty(taskName)) {
                 return Json(new { submissionResult = false, message = "Task Name is required!" });
             }
@@ -384,13 +405,39 @@ namespace MVC_Test.Controllers
             conn.Close();
             return lst;
         }
+        public static Project GetProject(int checkpointID) {
+            DataTable datatable = Data.getProjectFromCheckpointID(checkpointID);
+            Project project = new Project() {
+                ID = Int32.Parse(datatable.Rows[0]["ID"].ToString()),
+                Name = datatable.Rows[0]["Name"].ToString(),
+            };
+            return project;
+        }
 
-        [HttpPost]
-        public static bool saveTaskChanges(FormCollection formCollection) {
-            //TODO: Add SQL command to update task with changes
-            string taskName = formCollection["taskName"];
-            string taskDescription = formCollection["taskDescription"];
-            return true;
+        public static List<Project> GetProjects()
+        {
+            DataTable dataTable = Data.Projects();
+            List<Project> lst = new List<Project>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Project project = new Project() {
+                    ID = Int32.Parse(row["ID"].ToString()),
+                    Name = row["Name"].ToString(),
+                };
+                lst.Add(project);
+            }
+            return lst;
+        }
+
+        public ActionResult GetCheckpointsFromProject(int projectID) {
+            DataTable checkpoints = Data.getCheckpointsFromProjectID(projectID);
+            var checkpointList = checkpoints.AsEnumerable().Select(row =>
+            new SelectListItem { 
+                Value = row.Field<int>("ID").ToString(),
+                Text = row.Field<string>("Name"),
+            }
+            );
+            return Json( checkpointList );
         }
 
     }

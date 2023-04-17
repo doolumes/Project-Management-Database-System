@@ -377,7 +377,7 @@ namespace Group6Application
                 WHERE task."CheckpointID"=checkpoint."ID" AND checkpoint."ProjectID"=project."ID"
                  
                  */
-                string sqlQuery = "SELECT project.\"ID\" FROM \"Task\" AS task, \"Checkpoint\" AS checkpoint, \"Project\" AS project WHERE task.\"CheckpointID\"=checkpoint.\"ID\" AND checkpoint.\"ProjectID\"=project.\"ID\" AND task.\"ID\"=@taskID";
+                string sqlQuery = "SELECT project.\"ID\", project.\"Name\" FROM \"Task\" AS task, \"Checkpoint\" AS checkpoint, \"Project\" AS project WHERE task.\"CheckpointID\"=checkpoint.\"ID\" AND checkpoint.\"ProjectID\"=project.\"ID\" AND task.\"ID\"=@taskID";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -590,37 +590,37 @@ namespace Group6Application
             };
         }
 
-		public static DataTable login(string Username, string Password, string Role)
-		{
-			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
-			{
-				DataTable datatable = new DataTable();
-				string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password AND \"Role\"=@Role;";
-				conn.Open();
-				NpgsqlCommand command = new NpgsqlCommand("", conn);
-				NpgsqlTransaction sqlTransaction;
-				sqlTransaction = conn.BeginTransaction();
-				command.Transaction = sqlTransaction;
+        public static DataTable login(string Username, string Password, string Role)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Authentication\" WHERE \"Username\"=@Username  AND \"Password\"=@Password AND \"Role\"=@Role;";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
 
-				try
-				{
-					command.CommandText = sqlQuery.ToString();
-					command.Parameters.Clear();
-					command.Parameters.AddWithValue("@Username", Username);
-					command.Parameters.AddWithValue("@Password", Password);
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@Username", Username);
+                    command.Parameters.AddWithValue("@Password", Password);
                     command.Parameters.AddWithValue("@Role", Role);
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
-					sqlDataAdapter.Fill(datatable);
+                    sqlDataAdapter.Fill(datatable);
 
-				}
-				finally
-				{
-					conn.Close();
-				}
-				return datatable;
-			};
-		}
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
 
         public static DataTable getTasksFromDepartment(int DepartmentID)
         {
@@ -639,6 +639,36 @@ namespace Group6Application
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
+                    command.Parameters.AddWithValue("@deleted", false);
+
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            };
+        }
+
+        public static DataTable Timesheets()
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Timesheet\" WHERE \"deleted\"=@deleted";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
                     command.Parameters.AddWithValue("@deleted", false);
 
                     NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
@@ -682,6 +712,123 @@ namespace Group6Application
                 }
                 return datatable;
             };
+        }
+
+        //Returns the employee info based on Username
+        public static DataTable getEmployeeFromUsername(string username)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Employee\" WHERE \"ID\" IN (SELECT \"EmployeeID\" FROM \"Authentication\" WHERE \"Username\"=@username);";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@username", username);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
+
+        }
+
+        //Returns: All Checkpoint data for given ID
+        public static DataTable getCheckpointFromID(int checkpointID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ID\"=@checkpointID";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@checkpointID", checkpointID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
+
+        }
+
+        //Returns: All Project Data given Checkpoint ID
+        public static DataTable getProjectFromCheckpointID(int checkpointID)
+        {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Project\" WHERE \"ID\" = ( SELECT \"ProjectID\" FROM \"Checkpoint\" WHERE \"ID\" = @checkpointID);";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@checkpointID", checkpointID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
+
+        }
+
+        public static DataTable getCheckpointsFromProjectID(int projectID) {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ProjectID\" = @projectID;";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@projectID", projectID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
         }
     }
 }

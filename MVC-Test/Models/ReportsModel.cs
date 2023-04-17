@@ -14,10 +14,17 @@ namespace Group6Application.Models
         public EmployeeTemplate employee = new();
         public double cost { get; set; } // employee hourly rate * timesheet hours worked
     }
+
+    public class TaskInformation
+    {
+        public TaskModel task = new();
+        public Project project = new();
+        public EmployeeTemplate employee = new();
+    }
     public class DownloadTasksView
     {
         public int DepartmentID { get; set; }
-        public List<TaskModel> Tasks = new List<TaskModel>();
+        public List<TaskInformation> Tasks = new List<TaskInformation>();
         public List<SelectListItem> Departments = new();
     }
 
@@ -31,6 +38,13 @@ namespace Group6Application.Models
         public List<SelectListItem> Projects = new();
         public List<ProjectCosts> costs = new();
         public List<Expense> expenses = new();
+    }
+
+    public class OverdueTasksView
+    {
+        public int DepartmentID { get; set; }
+        public List<TaskInformation> Tasks = new List<TaskInformation>();
+        public List<SelectListItem> Departments = new();
     }
 
 }

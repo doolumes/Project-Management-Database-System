@@ -25,8 +25,25 @@ namespace Group6Application.Controllers
         [Route("/")]
         public ActionResult Index()
         {
-            Response.Redirect("/Login"); // set login as home
+            //If no cookies are provided, then redirect to login page
+            if (string.IsNullOrEmpty(Request.Cookies["key"]) || string.IsNullOrEmpty(Request.Cookies["id"])) {
+                Response.Redirect("/Login");
+                return Json(null);
+            }
+            
+            string currentUserUsername = Request.Cookies["username"];
+            DataTable datatable = Data.getEmployeeFromUsername(currentUserUsername);
+            EmployeeTemplate employeeTemplate = new EmployeeTemplate() {
+                ID = (int)datatable.Rows[0]["ID"],
+                FirstName = datatable.Rows[0]["FirstName"].ToString(),
+                LastName = datatable.Rows[0]["LastName"].ToString(),
+                Department_ID = (int)datatable.Rows[0]["DepartmentID"],
+            };
 
+            return View(employeeTemplate);
+
+
+            /*
             int userID=2; // ADD LOGIN VALIDATION to get this
             string viewPath = "Views/Home/Index.cshtml";
             
@@ -53,6 +70,18 @@ namespace Group6Application.Controllers
             }
             
             return View(viewPath, viewModel);
+            */
+        }
+
+        public static DataTable AssignedTasks(int employeeID) {
+            return Data.AssignedTasks(employeeID);
+        }
+        public static string CheckpointNameFromID(int checkpointID) {
+            return Data.getCheckpointFromID(checkpointID).Rows[0]["Name"].ToString();
+        }
+
+        public static string ProjectNameFromCheckpointID(int checkpointID) {
+            return Data.getProjectFromCheckpointID(checkpointID).Rows[0]["Name"].ToString();
         }
 
     }

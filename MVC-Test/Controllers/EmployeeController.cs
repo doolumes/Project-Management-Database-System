@@ -66,7 +66,17 @@ namespace Group6Application.Controllers
                 }
                 viewModel.Employee.Add(employees);
             }
-            return View(viewPath, viewModel);
+
+            var cookie = Request.Cookies["key"];
+            if (cookie != null)
+            {
+                return View(viewPath, viewModel);
+            }
+            else
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
         }
 
        
@@ -123,8 +133,19 @@ namespace Group6Application.Controllers
                 employees.Supervisor_ID = (int)datatable.Rows[0]["SupervisorID"];
             }
 
-        return View(viewPath, employees);
-    }
+            var cookie = Request.Cookies["key"];
+            var cookie2 = Request.Cookies["id"];
+            int cookie_id = Convert.ToInt32(cookie2);
+            if (cookie == "Manager" || cookie_id==id)
+            {
+                return View(viewPath, employees);
+            }
+            else
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
+        }
 
 
         [Route("Employee/Add")]
@@ -155,7 +176,7 @@ namespace Group6Application.Controllers
             var cookie = Request.Cookies["key"];
             if (cookie == "Manager")
             {
-				return PartialView(viewPath, viewModel);
+				return View(viewPath, viewModel);
 			}
             else
             {
@@ -230,7 +251,16 @@ namespace Group6Application.Controllers
 
             viewModel.EmployeeIDs = employeeIDs;
 
-            return PartialView(viewPath, viewModel);
+            var cookie = Request.Cookies["key"];
+            if (cookie == "Manager")
+            {
+                return View(viewPath, viewModel);
+            }
+            else
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
         }
         public ActionResult DeleteEmplyeeDB(int id)
         {
@@ -245,22 +275,19 @@ namespace Group6Application.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                //try
-                //{
-                command.CommandText = sqlQuery.ToString();
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@id", id);
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@id", id);
 
-                command.ExecuteNonQuery();
-                sqlTransaction.Commit();
-                submissionResult = true;
-                //}
-                try { }
+                    command.ExecuteNonQuery();
+                    sqlTransaction.Commit();
+                    submissionResult = true;
+                }
                 catch (Exception e)
                 {
-                    // error catch here
-                    sqlTransaction.Rollback();
-                    errorMessage = "We experienced an error while accessing the database";
+                    submissionResult = false;
                 }
                 finally
                 {
@@ -339,7 +366,16 @@ namespace Group6Application.Controllers
             }
             viewModel.EmployeeIDs = employeeIDs;
 
-            return PartialView(viewPath, viewModel);
+            var cookie = Request.Cookies["key"];
+            if (cookie == "Manager")
+            {
+                return View(viewPath, viewModel);
+            }
+            else
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
         }
 
         public ActionResult UpdateEmplyeeDB(int id, string Address, int Wage, string FirstName, string LastName, int DepartmentID, string PhoneNumber, string Email, string Title, string StartDate, string SupervisorID)
@@ -392,5 +428,13 @@ namespace Group6Application.Controllers
 
             return Json(new { submissionResult = submissionResult, message = errorMessage });
         }
-    }
+
+		[Route("Error")]
+		public ActionResult Error()
+		{
+			string viewPath = "Views/Employee/Error.cshtml";
+
+			return View(viewPath);
+		}
+	}
 }

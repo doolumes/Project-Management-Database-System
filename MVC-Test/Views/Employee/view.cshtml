@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="~/css/bootstrap.css">
 </head>
 <div class="text-center">
-    <h1 class="display-4">Employees</h1>
-    <table>
+    <h1 class="display-4">Employee</h1>
+    <table class="table">
         <tr>
             <th>ID</th>
             <th>First Name</th>
@@ -52,9 +52,8 @@
         <div class="col-md-4">
             <a href="/Employee/Update?id=@Model.ID"><button>Update Employee</button></a>
         </div>
-
         <div class="col-md-4">
-            <a href="/Employee"><button>Return</button></a>
+            <a href="@Url.Action("Index", "Employee")"><button>Return</button></a>
         </div>
     </div>
 

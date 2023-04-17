@@ -20,3 +20,7 @@ body {
 .required {
     color: red !important;
 }
+
+.modal{
+    background-color: white !important;
+}

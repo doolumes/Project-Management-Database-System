@@ -1,0 +1,12 @@
+﻿@{
+	ViewBag.Title = "Error";
+}
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models;
+
+<div class="row">
+	<h2>Sorry You Cannot Delete This Employee At This Point</h2>
+	<p>The Employee you are trying to delete might be a supervisor or have unfinished task.</p>
+	<p><a href="javascript:history.go(-1)"><button>Return</button></a></p>
+</div>
