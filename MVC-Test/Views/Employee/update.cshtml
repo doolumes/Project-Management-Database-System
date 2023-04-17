@@ -8,6 +8,8 @@
 
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
     <script src="~/js/jquery-3.6.4.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
 
@@ -18,11 +20,90 @@
     $(document).ready(function () {
         $("#submit").click(function () {
             $('#submittingModal').modal('show');
-            submit();
-            $('#submittingModal').modal('hide');
-
+            if (pageValid()) {
+                submit();
+            }
+            else {
+                $('#submittingModal').modal('hide');
+            }
         });
     });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#FirstName";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#LastName";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#Email";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#Title";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#Wage";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#StartDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#DepartmentID";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+        return pageValid;
+    }
 
     function submit() {
         $.ajax({
@@ -43,17 +124,18 @@
             },
             dataType: "text",
             error: function (msg) {
-                $("#submittingModal").modal("toggle");
+                $("#submittingModal").modal('hide');
                 $(".modal-backdrop").remove();
                 $("#errorModal").modal();
             },
             success: function (data) {
+                $('#submittingModal').modal('hide');
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
+                    location.href = "/Employee/View?id=@Model.Employee_up.ID";
                 }
                 else {
-                    $("#submittingModal").modal("toggle");
                     $(".modal-backdrop").remove();
                     $("#errorModal").modal();
                 }
@@ -79,15 +161,27 @@
 
             <label for="Address">Address</label>
             <input type="text" id="Address" name="Address" value="@Model.Employee_up.Address" required />
+            <span id="AddressRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="Wage">Wage</label>
             <input type="number" id="Wage" name="Wage" value="@Model.Employee_up.Wage" required />
+            <span id="WageRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="FirstName">FirstName</label>
             <input type="text" id="FirstName" name="FirstName" value="@Model.Employee_up.FirstName" required />
+            <span id="FirstNameRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="LastName">LastName</label>
             <input type="text" id="LastName" name="LastName" value="@Model.Employee_up.LastName" required />
+            <span id="LastNameRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="DepartmentID">DepartmentID</label>
             <select id="DepartmentID" name="DepartmentID" required />
-            <option value="">@Model.Employee_up.Department_ID</option>
+            <option value="@Model.Employee_up.Department_ID">@Model.Employee_up.Department_ID</option>
             @{
                 foreach (SelectListItem id in Model.DepartmentIDs)
                 {
@@ -99,18 +193,31 @@
                 }
             }
             </select>
+            <span id="DepartmentIDRequiredAlert" class="collapse required">Required Field</span>
+            <br />
 
             <label for="PhoneNumber">PhoneNumber</label>
-            <input type="text" id="PhoneNumber" name="PhoneNumber" value="@Model.Employee_up.Phone_Number" required />
+            <input type="text" id="PhoneNumber" name="PhoneNumber" maxlength="15" value="@Model.Employee_up.Phone_Number" required />
+            <br />
+
             <label for="Email">Email</label>
             <input type="text" id="Email" name="Email" value="@Model.Employee_up.Email" required />
+            <span id="EmailRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="Title">Title</label>
             <input type="text" id="Title" name="Title" value="@Model.Employee_up.Title" required />
+            <span id="TitleRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="StartDate">StartDate</label>
             <input type="date" id="StartDate" name="StartDate" value="@Model.Employee_up.Start_Date" required />
+            <span id="StartDateRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
             <label for="SupervisorID">SupervisorID</label>
             <select id="SupervisorID" name="SupervisorID" required />
-            <option value="">@Model.Employee_up.Supervisor_ID</option>
+            <option value="@Model.Employee_up.Supervisor_ID">@Model.Employee_up.Supervisor_ID</option>
             @{
                 foreach (SelectListItem id in Model.EmployeeIDs)
                 {
@@ -135,7 +242,7 @@
     </div>
 </div>
 
-<div id="submittingModal" class="modal fade" tabindex="-1">
+<div id="submittingModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -144,13 +251,12 @@
         <div class="modal-body">
             <p>Form is being submitted</p>
         </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
 
     </div>
 
 </div>
 
-<div id="errorModal" class="modal fade" tabindex="-1">
+<div id="errorModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -164,7 +270,7 @@
 
 </div>
 
-<div id="confirmationModal" class="modal fade" tabindex="-1">
+<div id="confirmationModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">

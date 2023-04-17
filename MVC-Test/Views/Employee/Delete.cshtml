@@ -37,11 +37,13 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
+                    location.href = "@Url.Action("Index", "Employee")";
                 }
                 else {
                     $("#submittingModal").modal("toggle");
                     $(".modal-backdrop").remove();
                     $("#errorModal").modal();
+                    location.href = "@Url.Action("Error", "Employee")";
                 }
             }
         });

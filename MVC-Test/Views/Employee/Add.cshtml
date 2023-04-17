@@ -121,17 +121,18 @@
             },
             dataType: "text",
             error: function (msg) {
-                $("#submittingModal").modal("toggle"); // for these modals, copy from very bottom of AddDepartment page
+                $("#submittingModal").modal('hide');
                 $(".modal-backdrop").remove();
                 $("#errorModal").modal();
             },
             success: function (data) {
+                $('#submittingModal').modal('hide');
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
+                    location.href = "@Url.Action("Index", "Employee")";
                 }
                 else {
-                    $("#submittingModal").modal("toggle");
                     $(".modal-backdrop").remove();
                     $("#errorModal").modal();
                 }
@@ -184,7 +185,7 @@
                 {
                     if (!String.IsNullOrEmpty(id.Text))
                     {
-                        <option value="@id.Value">@id.Text</option>
+                        <option value="@id.Value">@id.Value @id.Text</option>
                     }
 
                 }
@@ -194,7 +195,7 @@
             <br />
 
             <label for="PhoneNumber">PhoneNumber</label>
-            <input type="text" id="PhoneNumber" name="PhoneNumber" required />
+            <input type="text" id="PhoneNumber" name="PhoneNumber" maxlength="15" required />
             <br />
 
             <label for="Email">Email</label>
@@ -220,7 +221,7 @@
                 {
                     if (!String.IsNullOrEmpty(id.Text))
                     {
-                        <option value="@id.Value">@id.Text</option>
+                        <option value="@id.Value">@id.Value @id.Text</option>
                     }
 
                 }
@@ -239,7 +240,7 @@
     </div>
 </div>
 
-<div id="submittingModal" class="modal fade" tabindex="-1">
+<div id="submittingModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -248,13 +249,12 @@
         <div class="modal-body">
             <p>Form is being submitted</p>
         </div>
-        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
 
     </div>
 
 </div>
 
-<div id="errorModal" class="modal fade" tabindex="-1">
+<div id="errorModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -268,7 +268,7 @@
 
 </div>
 
-<div id="confirmationModal" class="modal fade" tabindex="-1">
+<div id="confirmationModal" class="modal" tabindex="-1">
 
     <div class="modal-dialog" role="document">
         <div class="modal-header">
