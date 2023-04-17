@@ -43,6 +43,8 @@ namespace MVC_Test.Controllers
                 };
                 project.CheckPointID = 0;
                 project.EmployeeID = 0;
+
+                viewModel.Projects.Add(project);
             }
 
             return View(viewPath, viewModel);
