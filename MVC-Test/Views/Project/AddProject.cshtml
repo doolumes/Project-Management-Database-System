@@ -1,0 +1,236 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application.Models;
+@model Group6Application.Models.ProjectView
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+
+<script>
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            $('#submittingModal').modal('show');
+            if (pageValid()) {
+                submit();
+            }
+            else {
+                $('#submittingModal').modal('hide');
+            }
+        });
+    });
+
+    function pageValid() {
+        var pageValid = false;
+        var invalidObjects = 0;
+        var listOfInvalidObjects = "";
+
+        // Do for each required input
+        var inputID = "#Name";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#DepartmentID";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#SupervisorID";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+
+        if (invalidObjects == 0) {
+            pageValid = true;
+        }
+
+        return pageValid;
+    }
+
+
+    // Use AddDepartment as example of how to build this function out
+    function submit() {
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddProjectDB")", // must match function name in controller
+            data: {
+                Name: $('#Name').val(),
+                Description: $('#Description').val(),
+                DepartmentID: $('#DepartmentID').val(),
+                Budget: $('#Budget').val(),
+                StartDate: $('#StartDate').val(),
+                EndDate: $('#EndDate').val(),
+                SupervisorID: $('#SupervisorID').val(),
+            },
+            dataType: "text",
+            error: function (msg) {
+                $("#submittingModal").modal("toggle"); // for these modals, copy from very bottom of AddDepartment page
+                $(".modal-backdrop").remove();
+                $("#errorModal").modal();
+            },
+            success: function (data) {
+                var json = $.parseJSON(data);
+                if (json.submissionResult) { // Submission is true
+                    $("#confirmationModal").modal();
+                }
+                else {
+                    $("#submittingModal").modal("toggle");
+                    $(".modal-backdrop").remove();
+                    $("#errorModal").modal();
+                }
+            }
+        });
+    }
+</script>
+
+<html>
+    <div class="row text-center">
+        <div class="col-md-12">
+            <h1>Create a new Project</h1>
+        </div>
+
+        <div class="col-md-12">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2 ">
+
+        <span id="current-url"></span>
+        <form>
+            <h3 class="">Project Information</h3>
+
+            <label for="ProjectTitle">Project Title</label>
+            <input type="text" id="ProjectTitle" name="ProjectTitle" required />
+            <span id="ProjectTitleRequiredAlert" class="collapse required">Required Field</span>
+            <br />
+
+            <label for="Description">Description</label>
+            <input type="text" id="Description" name="Description" required />
+            <br />
+
+            <label for="DepartmentID">Department</label>
+            <select id="DepartmentID" name="DepartmentID" required />
+
+            <option value="">Select Department</option>
+            @{
+                foreach (SelectListItem id in Model.DepartmentIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Text</option>
+                    }
+
+                }
+            }
+            </select>
+            <span id="DepartmentIDRequiredAlert" class="collapse required">Required Field</span>
+
+            <br />
+
+            <label for="Budget">Budget</label>
+            <input type="text" id="Budget" name="Budget" required />
+            <br />
+
+
+            <label for="StartDate">Start Date</label>
+            <input type="date" id="StartDate" name="StartDate" required />
+            <span id="StartDateRequiredAlert" class="collapse required">Required Field</span>
+
+            <label for="EndDate">End Date</label>
+            <input type="date" id="EndDate" name="EndDate" required />
+            <span id="EndDateRequiredAlert" class="collapse required">Required Field</span>
+
+            <br />
+
+            <label for="SupervisorID">Supervisor</label>
+            <select id="SupervisorID" name="SupervisorID" required />
+            <option value="">Unassigned</option>
+            @{
+                foreach (SelectListItem id in Model.EmployeeIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Text</option>
+                    }
+
+                }
+            }
+            </select>
+            <br />
+            <div class="col-md-3">
+                <p>
+                    <button type="button" id="submit" name="submit" class="btn-block">Submit</button>
+                </p>
+            </div>
+        </form>
+            <div class="col-md-3">
+                <a href="/Department"><button class="btn-block">Return</button></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="submittingModal" class="modal" tabindex="-1">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-header">
+                <h2>Submitting</h2>
+            </div>
+            <div class="modal-body">
+                <p>Form is being submitted</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="errorModal" class="modal" tabindex="-1">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-header">
+                <h2>Error</h2>
+            </div>
+            <div class="modal-body">
+                <p>An error has occurred while submitting.</p>
+            </div>
+            <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+        </div>
+
+    </div>
+
+    <div id="confirmationModal" class="modal" tabindex="-1">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-header">
+                <h2>Confirmation</h2>
+            </div>
+            <div class="modal-body">
+                <p>The form has been sucessfully submitted</p>
+            </div>
+            <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+        </div>
+
+    </div>
+
+
+
+
+</html>

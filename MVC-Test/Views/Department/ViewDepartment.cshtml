@@ -4,7 +4,6 @@
 @using Microsoft.AspNetCore.Authorization; 
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models
-@using Group6Application.Model
 @model Group6Application.Models.DepartmentTemplate
 
 <script>
@@ -112,6 +111,10 @@
                         <a href="/Department/Update?id=@Model.ID"><button>Update Department</button></a>
                     </div>
 
+                    <div class="col-md-4">
+                        <a class="text-center" href="/Department/AddProject?deptID=@Model.ID"><button>Add Project</button></a>
+                    </div>
+                
                     <div class="col-md-4">
                         <a href="/Department"><button>Return</button></a>
                     </div>
