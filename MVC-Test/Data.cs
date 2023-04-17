@@ -15,6 +15,7 @@ using MVC_Test.Models;
 using System.Threading.Tasks;
 using System.Xml;
 using Group6Application.Model;
+using Microsoft.CodeAnalysis;
 
 
 namespace Group6Application
@@ -859,6 +860,33 @@ namespace Group6Application
                 return datatable;
             };
 
+        }
+
+        public static DataTable getTasksFromCheckpointID(int checkpointID) {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Task\" WHERE \"CheckpointID\" = @checkpointID;";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@checkpointID", checkpointID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
         }
     }
 }
