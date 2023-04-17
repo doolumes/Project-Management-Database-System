@@ -12,39 +12,44 @@
         {
             <p>No overdue tasks found for this Department</p>
         }
-        @foreach (TaskInformation task in Model.Tasks)
-        {
-            @if (@task.task.Due < @DateTime.Now)
-            {
-                <table class="table">
-                    <tr>
-                        <th>Task ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Assignee</th>
-                        <th>Project</th>
-                        <th>Days Overdue</th>
-                        <th>Due Date</th>
+        else{
+            <table class="table">
+                <tr>
+                    <th>Task ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Assignee</th>
+                    <th>Project</th>
+                    <th>Days Overdue</th>
+                    <th>Due Date</th>
 
-                    </tr>
+                </tr>
+
+                @foreach (TaskInformation task in Model.Tasks)
+                {
+                    @if (@task.task.Due < @DateTime.Now)
+                    {
+                
 
 
 
 
 
-                    <tr>
-                        <td>@task.task.ID</td>
-                        <td>@task.task.Name</td>
-                        <td>@task.task.Description</td>
-                        <td><a href="/Employee/View?id=@task.employee.ID">@task.employee.FirstName @task.employee.LastName</a></td>
-                        <td><a href="/Project/View?id=@task.project.ID">@task.project.Name</a></td>
-                        <td>@Convert.ToInt32((DateTime.Now - task.task.Due).Value.TotalDays)</td>
-                        <td>@task.task.Due</td>
-                    </tr>
+                            <tr>
+                                <td><a href="/Task?taskID=@task.task.ID">@task.task.ID</a></td>
+                                <td>@task.task.Name</td>
+                                <td>@task.task.Description</td>
+                                <td><a href="/Employee/View?id=@task.employee.ID">@task.employee.FirstName @task.employee.LastName</a></td>
+                                <td><a href="/Project/View?id=@task.project.ID">@task.project.Name</a></td>
+                                <td>@Convert.ToInt32((DateTime.Now - task.task.Due).Value.TotalDays)</td>
+                                <td>@task.task.Due</td>
+                            </tr>
 
-                </table>
-            }
+                    }
+                }
+
+            </table>
         }
-
+        
     </div>
 </div>

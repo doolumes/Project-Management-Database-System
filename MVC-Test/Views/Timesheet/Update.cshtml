@@ -19,12 +19,9 @@
 
     $(document).ready(function () {
         $("#submit").click(function () {
-            $('#submittingModal').modal('show');
             if (pageValid()) {
                 submit();
             }
-            $('#submittingModal').modal('hide');
-            location.reload();
         });
     });
 
@@ -77,6 +74,7 @@
                 Date: $('#date').val(),
                 ProjectID: $('#ProjectID').val(),
                 HoursWorked: $('#HoursWorked').val(),
+                EntryID: @Model.timesheet.EntryID,
             },
             dataType: "text",
             error: function (msg) {
@@ -86,10 +84,10 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
-                    $("#confirmationModal").modal();
+                    $("#confirmationModal").modal('show');
                 }
                 else {
-                    $("#errorModal").modal();
+                    $("#errorModal").modal('show');
                 }
             }
         });
@@ -106,7 +104,7 @@
         <form>
             <div class="col-md-12">
                 <label for="date">Date</label>
-                <input type="date" id="date" name="date" value="@Model.timesheet.Date" required  />
+                <input type="date" id="date" name="date" value="@((Model.timesheet.Date).ToString("yyyy-MM-dd"))" required />
                 <span id="dateRequiredAlert" class="collapse required">Required Field</span>
 
                 <label for="HoursWorked">Hours Worked</label>
@@ -124,7 +122,6 @@
                                 if (Convert.ToInt32(id.Value) == Model.timesheet.ProjectID)
                                 {
                                     <option value="@id.Value" selected>@id.Text</option>
-
                                 }
                                 else
                                 {

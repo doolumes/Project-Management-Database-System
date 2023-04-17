@@ -304,6 +304,11 @@ namespace Group6Application.Controllers
                 {
                     task.Due = Convert.ToDateTime(row["Due"]);
                 }
+                else
+                {
+                    continue; // skip if there is no Due Date
+                }
+                if (task.Due > DateTime.Now) { continue; } // skip adding task if it is not overdue
 
                 if (!String.IsNullOrEmpty(row["Assignee"].ToString()))
                 {
@@ -343,13 +348,3 @@ namespace Group6Application.Controllers
 
     }
 }
-
-
-/*
-        public int ExpenseID { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-        public string? Cost { get; set; }
-        public int ProjectID { get; set; }
- 
- */
