@@ -33,7 +33,19 @@ namespace Group6Application.Controllers
         [Route("Reports/Tasks")]
         public ActionResult Tasks()
         {
-            
+            var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            if (cookie != "Manager")
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
+
             string viewPath = "Views/Reports/DownloadTasks.cshtml";
             DownloadTasksView viewModel = new();
             List<SelectListItem> departments = new List<SelectListItem>();
@@ -55,23 +67,18 @@ namespace Group6Application.Controllers
 
 
             DownloadTasksView viewModel = new();
-            List<SelectListItem> departments = new List<SelectListItem>();
-
-
-            foreach (DataRow row in Data.Departments().Rows)
-            {
-                departments.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = row["Name"].ToString() });
-            }
-
-            viewModel.Departments = departments;
 
             // Get task data
             DataTable tasks = Data.getTasksFromDepartment(DepartmentID);
 
-            List<TaskModel> taskList = new ();
+            List<TaskInformation> taskList = new ();
             foreach (DataRow row in tasks.Rows)
             {
-                TaskModel task = new TaskModel() { 
+                TaskInformation taskInfo = new();
+
+                // add task 
+                TaskModel task = new TaskModel()
+                {
                     ID = (int)row["ID"],
                 };
 
@@ -100,7 +107,28 @@ namespace Group6Application.Controllers
                     task.Assignee = (int)row["Assignee"];
                 }
 
-                taskList.Add(task);
+                taskInfo.task = task;
+
+                // add employee
+                DataTable empTable = Data.Employees_id(task.Assignee);
+                EmployeeTemplate emp = new()
+                {
+                    ID = task.Assignee,
+                    FirstName = empTable.Rows[0]["FirstName"].ToString(),
+                    LastName = empTable.Rows[0]["LastName"].ToString(),
+                };
+                taskInfo.employee = emp;
+
+                // add project
+                DataTable projectTable = Data.getProjectID(task.ID);
+                Project project = new Project()
+                {
+                    ID = (int)projectTable.Rows[0]["ID"], 
+                    Name = projectTable.Rows[0]["Name"].ToString(),
+                };
+                taskInfo.project = project;
+
+                taskList.Add(taskInfo);
             }
 
             viewModel.Tasks = taskList;
@@ -113,6 +141,19 @@ namespace Group6Application.Controllers
         [Route("Reports/Projects")]
         public ActionResult Projects()
         {
+
+            var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            if (cookie != "Manager")
+            {
+                Response.Redirect("/Permission");
+                return RedirectToAction("PermissionError", "Permission");
+            }
 
             string viewPath = "Views/Reports/Projects.cshtml";
             ReportsProjectsView viewModel = new();

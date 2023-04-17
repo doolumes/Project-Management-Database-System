@@ -17,11 +17,10 @@
 
     $(document).ready(function () {
         $("#submit").click(function () {
-            $('#submittingModal').modal({
-                //backdrop:'static',
-                //keyboard: false
-            })
+            $('#submittingModal').modal('show');
             submit();
+            $('#submittingModal').modal('hide');
+
         });
     });
 
@@ -66,7 +65,7 @@
 <html>
 <div class="row text-center">
     <div class="col-md-12">
-        <h1>update Employee</h1>
+        <h1>Update Employee</h1>
     </div>
 
     <div class="col-md-12">

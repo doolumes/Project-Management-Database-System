@@ -377,7 +377,7 @@ namespace Group6Application
                 WHERE task."CheckpointID"=checkpoint."ID" AND checkpoint."ProjectID"=project."ID"
                  
                  */
-                string sqlQuery = "SELECT project.\"ID\" FROM \"Task\" AS task, \"Checkpoint\" AS checkpoint, \"Project\" AS project WHERE task.\"CheckpointID\"=checkpoint.\"ID\" AND checkpoint.\"ProjectID\"=project.\"ID\" AND task.\"ID\"=@taskID";
+                string sqlQuery = "SELECT project.\"ID\", project.\"Name\" FROM \"Task\" AS task, \"Checkpoint\" AS checkpoint, \"Project\" AS project WHERE task.\"CheckpointID\"=checkpoint.\"ID\" AND checkpoint.\"ProjectID\"=project.\"ID\" AND task.\"ID\"=@taskID";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;

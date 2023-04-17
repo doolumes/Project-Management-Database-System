@@ -26,7 +26,6 @@
                 submit();
             }
             $('#submittingModal').modal('hide');
-            location.reload();
         });
     });
 
@@ -88,10 +87,10 @@
             success: function (data) {
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
-                    $("#confirmationModal").modal();
+                    $("#confirmationModal").modal('show');
                 }
                 else {
-                    $("#errorModal").modal();
+                    $("#errorModal").modal('show');
                 }
             }
         });

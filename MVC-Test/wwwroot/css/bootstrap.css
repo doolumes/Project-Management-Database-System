@@ -5421,7 +5421,7 @@ button.close {
   bottom: 0;
   left: 0;
   z-index: 1040;
-  background-color: #000;
+  background-color: #fff;
 }
 
 .modal-backdrop.fade {
@@ -5460,6 +5460,7 @@ button.close {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   padding: 1rem;
+  background-color:white !important;
 }
 
 .modal-footer {
@@ -5493,6 +5494,7 @@ button.close {
   .modal-dialog {
     max-width: 500px;
     margin: 1.75rem auto;
+    background: white;
   }
   .modal-dialog-centered {
     min-height: calc(100% - (1.75rem * 2));
