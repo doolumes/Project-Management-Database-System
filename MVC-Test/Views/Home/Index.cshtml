@@ -48,7 +48,7 @@
                             <td>@datatable["ID"].ToString()</td>
                         <td><a href="Task?taskID=@datatable["ID"]">@datatable["Name"].ToString()</a></td>
                         <td>@datatable["Status"].ToString()</td>
-                        <td><a href="Task?checkpointID=@datatable["CheckpointID"]">@HomeController.CheckpointNameFromID((int)datatable["CheckpointID"])<a /></td>
+                        <td><a href="/Checkpoint?checkpointID=@datatable["CheckpointID"]">@HomeController.CheckpointNameFromID((int)datatable["CheckpointID"])<a /></td>
                         <td>@HomeController.ProjectNameFromCheckpointID((int)datatable["CheckpointID"])</td>
                         </tr>    
                     }
