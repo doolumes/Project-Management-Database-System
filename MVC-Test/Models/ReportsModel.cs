@@ -40,4 +40,11 @@ namespace Group6Application.Models
         public List<Expense> expenses = new();
     }
 
+    public class OverdueTasksView
+    {
+        public int DepartmentID { get; set; }
+        public List<TaskInformation> Tasks = new List<TaskInformation>();
+        public List<SelectListItem> Departments = new();
+    }
+
 }
