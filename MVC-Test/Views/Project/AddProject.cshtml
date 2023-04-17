@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Authorization;
+﻿<!-- No Model needed , we are passing data to backend.  Not recieving anything-->
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models;
 @model Group6Application.Models.ProjectView
@@ -10,7 +11,6 @@
     <script src="~/js/bootstrap.min.js"></script>
 
 </head>
-
 <script>
     $(document).ready(function () {
         $("#submit").click(function () {
@@ -65,7 +65,6 @@
         return pageValid;
     }
 
-
     // Use AddDepartment as example of how to build this function out
     function submit() {
 
@@ -74,26 +73,29 @@
             url: "@Url.Action("AddProjectDB")", // must match function name in controller
             data: {
                 Name: $('#Name').val(),
-                Description: $('#Description').val(),
+                SupervisorID: $('#SupervisorID').val(),
                 DepartmentID: $('#DepartmentID').val(),
-                Budget: $('#Budget').val(),
                 StartDate: $('#StartDate').val(),
                 EndDate: $('#EndDate').val(),
-                SupervisorID: $('#SupervisorID').val(),
+                Description: $('#Description').val(),
+                ClientID: $('#ClientID').val(),
+                Budget: $('#Budget').val(),
+                Cost: $('#Cost').val(),
             },
             dataType: "text",
             error: function (msg) {
-                $("#submittingModal").modal("toggle"); // for these modals, copy from very bottom of AddDepartment page
+                $("#submittingModal").modal('hide');
                 $(".modal-backdrop").remove();
                 $("#errorModal").modal();
             },
             success: function (data) {
+                $('#submittingModal').modal('hide');
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
+                    location.href = "@Url.Action("Index", "Project")";
                 }
                 else {
-                    $("#submittingModal").modal("toggle");
                     $(".modal-backdrop").remove();
                     $("#errorModal").modal();
                 }
@@ -118,9 +120,9 @@
         <form>
             <h3 class="">Project Information</h3>
 
-            <label for="ProjectTitle">Project Title</label>
-            <input type="text" id="ProjectTitle" name="ProjectTitle" required />
-            <span id="ProjectTitleRequiredAlert" class="collapse required">Required Field</span>
+            <label for="Name">Project Title</label>
+            <input type="text" id="Name" name="Name" required />
+            <span id="NameRequiredAlert" class="collapse required">Required Field</span>
             <br />
 
             <label for="Description">Description</label>
@@ -147,13 +149,32 @@
             <br />
 
             <label for="Budget">Budget</label>
-            <input type="text" id="Budget" name="Budget" required />
+            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
             <br />
 
+            <label for="Budget">Cost</label>
+            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
+            <br />
+
+            <label for="ClientID">Client</label>
+            <select id="ClientID" name="ClientID" />
+            <option value="">None</option>
+            @{
+                foreach (SelectListItem id in Model.ClientIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Text</option>
+                    }
+
+                }
+            }
+            </select>
+            <br />
 
             <label for="StartDate">Start Date</label>
             <input type="date" id="StartDate" name="StartDate" required />
-            <span id="StartDateRequiredAlert" class="collapse required">Required Field</span>
+            <span id="EndDateRequiredAlert" class="collapse required">Required Field</span>
 
             <label for="EndDate">End Date</label>
             <input type="date" id="EndDate" name="EndDate" required />
@@ -175,6 +196,7 @@
                 }
             }
             </select>
+            <span id="SupervisorIDRequiredAlert" class="collapse required">Required Field</span>
             <br />
             <div class="col-md-3">
                 <p>

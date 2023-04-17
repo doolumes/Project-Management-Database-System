@@ -79,7 +79,10 @@ namespace MVC_Test.Controllers
 
             foreach (DataRow row in Data.DepartmentID_data().Rows)
             {
-                DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString())});
+                if (row["ID"].ToString() == id.ToString())
+                {
+                    DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString()) });
+                }
             }
 
             viewModel.DepartmentIDs = DepartmentID;
@@ -94,17 +97,25 @@ namespace MVC_Test.Controllers
 
             viewModel.EmployeeIDs = employeeIDs;
 
+            List<SelectListItem> clientIDs  = new List<SelectListItem>();
+
+            foreach (DataRow row in Data.ClientIDs().Rows)
+            {
+                clientIDs.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["CompanyName"].ToString()) });
+            }
+
+            viewModel.ClientIDs = clientIDs;
             return PartialView(viewPath, viewModel);
         }
 
 
-        public ActionResult AddProjectDB(string Name, string DepartmentID, string SupervisorID, string Description, string Budget, DateTime StartDate, DateTime EndDate)
+        public ActionResult AddProjectDB(string Name, string SupervisorID, string DepartmentID, String StartDate, String EndDate, String Description, String Status, String ClientID, float Budget, float Cost, String Hours)
         {
             bool submissionResult = false;
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"INSERT INTO \"Project\"(\"Name\", \"ManagerID\", \"DepartmentID\") VALUES (@Name,@SupervisorID, @DepartmentID);";
+            string sqlQuery = $"INSERT INTO \"Project\"(\"Name\",\"SupervisorID\",\"DepartmentID\",\"Description\",\"Status\",\"ClientID\",\"Budget\",\"Cost\",\"Hours\") VALUES (@Name,@SupervisorID,@DepartmentID,@Description,@Status,@ClientID, @Budget,@Cost,@Hours);";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -118,13 +129,14 @@ namespace MVC_Test.Controllers
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@Name", Name);
-                    // Supervisor ID can be NULL, if it is replace it with DBnull
-                    command.Parameters.AddWithValue("@ManagerID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
+                    command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
                     command.Parameters.AddWithValue("@DepartmentID", (String.IsNullOrEmpty(DepartmentID)) ? (object)DBNull.Value : Int32.Parse(DepartmentID));
-                    command.Parameters.AddWithValue("@Name", Budget);
-                    command.Parameters.AddWithValue("@StartDate", StartDate);
-                    command.Parameters.AddWithValue("@EndDate", EndDate);
-                    command.Parameters.AddWithValue("@Description", Description);
+                    command.Parameters.AddWithValue("@Description", String.IsNullOrEmpty(Description) ? DBNull.Value : Description);
+                    command.Parameters.AddWithValue("@Status", "Not Started");
+                    command.Parameters.AddWithValue("@ClientID", (String.IsNullOrEmpty(ClientID)) ? (object)DBNull.Value : Int32.Parse(ClientID));
+                    command.Parameters.AddWithValue("@Budget", Budget);
+                    command.Parameters.AddWithValue("@Cost", Cost);
+                    command.Parameters.AddWithValue("@Hours", 0);
 
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 

@@ -10,8 +10,8 @@ namespace Group6Application.Models
     {
         [Key]
         public int ID { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? DueDate { get; set; }
+        public string? StartDate { get; set; }
+        public string? DueDate { get; set; }
         public int? CheckPointID { get; set; }
         public int? EmployeeID { get; set; }
         public string? Name { get; set; }
@@ -35,6 +35,7 @@ namespace Group6Application.Models
         public List<SelectListItem> CheckpointIDs { get; set; }
         public List<SelectListItem> DepartmentIDs { get; set; }
         public List<SelectListItem> EmployeeIDs { get; set; }
+        public List<SelectListItem> ClientIDs { get; set; }
     }
 
     public class UpdateProjectView
