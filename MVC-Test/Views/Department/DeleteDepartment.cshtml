@@ -95,6 +95,8 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult){ // Submission is true
                     $("#confirmationModal").modal();
+                    window.location.replace("/Department");
+
                 }
                 else {
                     $("#submittingModal").modal("toggle");
@@ -130,13 +132,13 @@
                 {
                     <table class="table">
                         <thead>
-                        <th>Project</th>
-                        <th>Project Page</th>
+                            <td>Projects</td>
                         </thead>
                         @foreach (Project project in Model.Projects)
                         {
-                            <li>@project.Name</li>
-                            <li><a href="/Project/Delete?id=@(project.ID)">Delete Project</a></li>
+                            <tr>
+                                <td><a href="/Project/Delete?id=@(project.ID)">@project.Name</a></td>
+                            </tr>
                         }
 
                     </table>

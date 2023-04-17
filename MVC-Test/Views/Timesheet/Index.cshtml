@@ -101,20 +101,21 @@
 
 <html>
 
-<div class="text-center">
+<div class="">
     <div class="row">
-        <h2>Add Timesheet Entry</h2>
+        <h2 class="text-center">Add Timesheet Entry</h2>
 
         <form>
             <div class="col-md-12">
                 <label for="date">Date</label>
                 <input type="date" id="date" name="date" required />
-                <span id="dateRequiredAlert" class="collapse required">Required Field</span>
+                <span id="dateRequiredAlert" class="collapse required">Required</span>
 
                 <label for="HoursWorked">Hours Worked</label>
                 <input type="number" id="HoursWorked" name="HoursWorked" required />
-                <span id="HoursWorkedRequiredAlert" class="collapse required">Required Field</span>
+                <span id="HoursWorkedRequiredAlert" class="collapse required">Required</span>
 
+                <br />
                 <label for="ProjectID">Project Worked on</label>
                 <select id="ProjectID" name="ProjectID" required>
                     <option value="">Please Select</option>
@@ -129,10 +130,13 @@
                         }
                     }
                 </select>
-                <span id="ProjectIDRequiredAlert" class="collapse required">Required Field</span>
+
+                <span id="ProjectIDRequiredAlert" class="collapse required">Required</span>
 
             </div>
+            <br />
             <div class="row">
+                <div class="col-md-3"></div>
                 <div class="col-md-3">
                     <p>
                         <button type="button" id="submit" name="submit" class="btn-block">Submit</button>

@@ -44,7 +44,6 @@
                 <th>Name</th>
                 <th>Supervisor ID</th>
                 <th>Number of Employees</th>
-                <th>Department Page</th>
             </tr>
 
             @{
@@ -52,7 +51,7 @@
                 {
                 <tr>
                     <td>@dept.ID</td>
-                    <td>@dept.Name</td>
+                        <td><a href="/Department/View?id=@(dept.ID)">@dept.Name</a></td>
                     @if (!String.IsNullOrEmpty(dept.SupervisorID))  
                     {
                         <a href="/Employee/View?id=@dept.SupervisorID"><td>@dept.SupervisorID</td></a>
@@ -60,7 +59,6 @@
                     else {<td>@dept.SupervisorID</td>}
 
                     <td>@dept.Number_of_Employees</td>
-                    <td><a href="/Department/View?id=@(dept.ID)">@dept.Name Department</a></td>
                 </tr>
                 }
             }

@@ -71,6 +71,8 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult){ // Submission is true
                     $("#confirmationModal").modal();
+                    window.location.replace("/Department");
+
                 }
                 else {
                     $(".modal-backdrop").remove();

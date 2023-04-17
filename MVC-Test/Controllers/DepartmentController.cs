@@ -25,6 +25,13 @@ namespace Group6Application.Controllers
         [Route("Department")]
         public ActionResult Index()
         {
+            var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
             string viewPath = "Views/Department/Index.cshtml";
             
             DepartmentView viewModel = new DepartmentView()
@@ -54,6 +61,12 @@ namespace Group6Application.Controllers
         public ActionResult AddDepartment()
         {
             var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
             if (cookie != "Manager")
             {
                 Response.Redirect("/Permission");
@@ -121,7 +134,15 @@ namespace Group6Application.Controllers
         [Route("Department/Delete")]
         public ActionResult DeleteDepartment()
         {
+
             var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            cookie = Request.Cookies["key"];
             if (cookie != "Manager")
             {
                 Response.Redirect("/Permission");
@@ -244,7 +265,15 @@ namespace Group6Application.Controllers
         [Route("Department/Update")]
         public ActionResult UpdateDepartment()
         {
+
             var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            cookie = Request.Cookies["key"];
             if (cookie != "Manager")
             {
                 Response.Redirect("/Permission");
@@ -342,7 +371,7 @@ namespace Group6Application.Controllers
         public ActionResult ViewDepartment()
         {
             var cookie = Request.Cookies["key"];
-            if (cookie == null)
+            if (String.IsNullOrEmpty(cookie))
             {
                 Response.Redirect("/Login");
                 return RedirectToAction("Login", "Login");
