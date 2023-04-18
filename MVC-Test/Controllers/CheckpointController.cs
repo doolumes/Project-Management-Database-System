@@ -108,8 +108,8 @@ namespace MVC_Test.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                //try
-                //{
+                try
+                {
                     command.CommandText = sqlCommand.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@Name", Name);
@@ -123,9 +123,8 @@ namespace MVC_Test.Controllers
 
                     sqlTransaction.Commit();
                     submissionResult = true;
-                //}
-                try { }
-                catch (Exception e)
+                }
+               catch (Exception e)
                 {
                     // error catch here
                     sqlTransaction.Rollback();
