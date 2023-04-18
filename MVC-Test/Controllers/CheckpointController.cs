@@ -108,8 +108,8 @@ namespace MVC_Test.Controllers
                 sqlTransaction = conn.BeginTransaction();
                 command.Transaction = sqlTransaction;
 
-                try
-                {
+                //try
+                //{
                     command.CommandText = sqlCommand.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@Name", Name);
@@ -117,13 +117,14 @@ namespace MVC_Test.Controllers
                     command.Parameters.AddWithValue("@StartDate", StartDate);
                     command.Parameters.AddWithValue("@DueDate", DueDate);
                     command.Parameters.AddWithValue("@ProjectID", (String.IsNullOrEmpty(ProjectID)) ? (object)DBNull.Value : Int32.Parse(ProjectID));
-                    command.Parameters.AddWithValue("@Status", "Not Started");
+                    command.Parameters.AddWithValue("@Status", "Incomplete");
 
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 
                     sqlTransaction.Commit();
                     submissionResult = true;
-                }
+                //}
+                try { }
                 catch (Exception e)
                 {
                     // error catch here
