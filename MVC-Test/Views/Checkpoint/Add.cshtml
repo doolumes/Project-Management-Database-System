@@ -1,0 +1,130 @@
+﻿@model MVC_Test.Models.CheckpointModel
+@{
+
+}
+@using MVC_Test.Controllers
+@using Group6Application.Models;
+@using System.Data;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Mvc;
+@using Group6Application;
+<HTML>
+<head>
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/site.css">
+
+    <script src="~/js/jquery-3.6.4.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        th {
+            padding: 0 15px;
+        }
+
+        td {
+            padding: 0 15px;
+        }
+
+        input {
+            display: inline;
+        }
+
+        .mainTableContainer {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .entireTableContainer {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-table {
+            flex: 3;
+        }
+
+        .side-table {
+            flex: 1;
+            margin-left: auto;
+            margin-right: 0;
+            flex-direction: column;
+        }
+
+        #checkpointDescription {
+            resize: both;
+            width: 50vw;
+            height: 30vh;
+        }
+
+        #checkpointName {
+            width: 30vw;
+        }
+    </style>
+</head>
+<script>
+    $(document).ready(function () {
+        $("#saveCheckpoint").click(function () {
+            saveCheckpoint();
+        });
+    });
+
+    function saveCheckpoint() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveChanges")", // must match function name in controller
+            data: {
+                checkpointID: @Model.ID.ToString(),
+                checkpointName: $('#checkpointName').val(),
+                checkpointDescription: $('#checkpointDescription').val(),
+            },
+            dataType: "text",
+            error: function (msg) {
+                alert(msg);
+            },
+            success: function (data) {
+                var json = $.parseJSON(data);
+                if (json.submissionResult) { // Submission is true
+                    alert('Changes were saved!');
+                    window.location.replace('/Checkpoint?checkpointID=' + json.id.toString());
+                }
+                else {
+                    alert('Changes could not be saved!');
+                }
+            }
+        });
+    }
+</script>
+<body>
+    <div class="entireTableContainer">
+        <div class="mainTableContainer">
+            <table class="main-table">
+                <tr>
+                    <th>ID</th>
+                    <th>Checkpoint Name</th>
+                </tr>
+                <tr>
+                    <td>@Model.ID</td>
+                    <td><input name="checkpointName" id="checkpointName" type="text" value="@Model.Name" required></input></td>
+                </tr>
+
+                <tr>
+                    <th colspan="2">Checkpoint Description</th>
+                </tr>
+                <tr>
+                    <td colspan="2"><textarea name="checkpointDescription" id="checkpointDescription" type="text">@Model.Description</textarea></td>
+                </tr>
+            </table>
+            <div class="side-table">
+                <h3>Status</h3>
+                <p>@Model.Status</p>
+                <h3 style="padding-top:1em;">Project</h3>
+                <p>@Data.getProjectFromCheckpointID(Model.ID).Rows[0]["Name"].ToString()</p>
+            </div>
+        </div>
+        <center>
+            <button type="button" id="saveCheckpoint" name="saveCheckpoint">Save Changes</button>
+        </center>
+    </div>
+</body>
+
+</HTML>

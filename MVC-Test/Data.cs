@@ -15,6 +15,7 @@ using MVC_Test.Models;
 using System.Threading.Tasks;
 using System.Xml;
 using Group6Application.Model;
+using Microsoft.CodeAnalysis;
 
 
 namespace Group6Application
@@ -809,7 +810,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ProjectID\" = @projectID;";
+                string sqlQuery = "SELECT * FROM \"Checkpoint\" WHERE \"ProjectID\" = @projectID ORDER BY \"StartDate\" ASC;";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -861,5 +862,88 @@ namespace Group6Application
             };
 
         }
-    }
+
+        public static DataTable getTasksFromCheckpointID(int checkpointID) {
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+            {
+                DataTable datatable = new DataTable();
+                string sqlQuery = "SELECT * FROM \"Task\" WHERE \"CheckpointID\" = @checkpointID;";
+                conn.Open();
+                NpgsqlCommand command = new NpgsqlCommand("", conn);
+                NpgsqlTransaction sqlTransaction;
+                sqlTransaction = conn.BeginTransaction();
+                command.Transaction = sqlTransaction;
+
+                try
+                {
+                    command.CommandText = sqlQuery.ToString();
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@checkpointID", checkpointID);
+                    NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+                    sqlDataAdapter.Fill(datatable);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                return datatable;
+            }
+        }
+
+		public static DataTable getCheckpoints()
+		{
+			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+			{
+				DataTable datatable = new DataTable();
+				string sqlQuery = "SELECT * FROM \"Checkpoint\";";
+				conn.Open();
+				NpgsqlCommand command = new NpgsqlCommand("", conn);
+				NpgsqlTransaction sqlTransaction;
+				sqlTransaction = conn.BeginTransaction();
+				command.Transaction = sqlTransaction;
+
+				try
+				{
+					command.CommandText = sqlQuery.ToString();
+					command.Parameters.Clear();
+					NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+					sqlDataAdapter.Fill(datatable);
+				}
+				finally
+				{
+					conn.Close();
+				}
+				return datatable;
+			}
+		}
+
+		public static DataTable getProjectFromID(int projectID)
+		{
+			using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+			{
+				DataTable datatable = new DataTable();
+				string sqlQuery = "SELECT * FROM \"Project\" WHERE \"ID\" = @projectID;";
+				conn.Open();
+				NpgsqlCommand command = new NpgsqlCommand("", conn);
+				NpgsqlTransaction sqlTransaction;
+				sqlTransaction = conn.BeginTransaction();
+				command.Transaction = sqlTransaction;
+
+				try
+				{
+					command.CommandText = sqlQuery.ToString();
+					command.Parameters.Clear();
+					command.Parameters.AddWithValue("@projectID", projectID);
+					NpgsqlDataAdapter sqlDataAdapter = new NpgsqlDataAdapter(command);
+					sqlDataAdapter.Fill(datatable);
+				}
+				finally
+				{
+					conn.Close();
+				}
+				return datatable;
+			}
+		}
+
+	}
 }

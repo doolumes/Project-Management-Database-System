@@ -74,7 +74,8 @@ namespace Group6Application.Controllers
         }
 
         public static DataTable AssignedTasks(int employeeID) {
-            return Data.AssignedTasks(employeeID);
+            DataTable dt = Data.AssignedTasks(employeeID);
+            return dt;
         }
         public static string CheckpointNameFromID(int checkpointID) {
             return Data.getCheckpointFromID(checkpointID).Rows[0]["Name"].ToString();
