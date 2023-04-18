@@ -33,7 +33,7 @@
                 @foreach (TaskInformation task in Model.Tasks)
                 {
                     <tr>
-                        <td>@task.task.ID</td>
+                        <td><a href="/Task?taskID=@task.task.ID">@task.task.ID</a></td>
                         <td>@task.task.Name</td>
                         <td>@task.task.Description</td>
                         <td><a href="/Employee/View?id=@task.employee.ID">@task.employee.FirstName @task.employee.LastName</a></td>

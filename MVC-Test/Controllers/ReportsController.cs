@@ -74,6 +74,10 @@ namespace Group6Application.Controllers
             List<TaskInformation> taskList = new ();
             foreach (DataRow row in tasks.Rows)
             {
+                if (row["Status"].ToString() != "Incomplete")
+                {
+                    continue;
+                }
                 TaskInformation taskInfo = new();
 
                 // add task 
