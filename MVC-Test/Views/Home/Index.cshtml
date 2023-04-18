@@ -40,10 +40,7 @@
                 @{
                     foreach (DataRow datatable in HomeController.AssignedTasks(Model.ID).Rows)
                     {
-                        if (datatable["Status"].ToString() == "Complete")
-                        {
-                            continue;
-                        }
+                   
                         <tr>
                             <td>@datatable["ID"].ToString()</td>
                         <td><a href="Task?taskID=@datatable["ID"]">@datatable["Name"].ToString()</a></td>
