@@ -244,6 +244,23 @@ namespace MVC_Test.Controllers
             {
                 viewModel.Status = datatable.Rows[0]["Status"].ToString();
             }
+
+            DataTable Checkpoints = Data.getCheckpointsFromProjectID(viewModel.ID);
+            foreach (DataRow row in Checkpoints.Rows)
+            {
+                CheckpointModel checkpoints = new()
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Name = row["Name"].ToString(),
+                    Description = row["Description"].ToString(),
+                    Status = row["Status"].ToString(),
+                    //StartDate = Convert.ToDateTime(row["StartDate"]),
+                    //EndDate = Convert.ToDateTime(row["EndDate"]),
+
+                };
+
+                viewModel.Checkpoints.Add(checkpoints);
+            }
             return View(viewPath, viewModel);
         }
 

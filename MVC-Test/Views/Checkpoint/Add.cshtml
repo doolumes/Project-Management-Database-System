@@ -68,6 +68,27 @@
         });
     });
 
+    function goBack() {
+        function goBack() {
+            // Get the current query string
+            var queryString = window.location.search;
+
+            // Create a URLSearchParams object from the query string
+            var searchParams = new URLSearchParams(queryString);
+
+            // Set the desired ID in the search params
+            searchParams.set('id', json.id.toString());
+
+            // Build a new URL with the updated search params
+            var newUrl = window.location.pathname + '?' + searchParams.toString();
+
+            // Navigate back to the previous page with the updated URL
+            window.history.back();
+            window.history.replaceState(null, '', newUrl);
+        }
+    }
+
+
     function saveCheckpoint() {
         $.ajax({
             type: "POST",
@@ -87,7 +108,7 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     alert('Changes were saved!');
-                    window.location.replace('/Checkpoint?checkpointID=' + json.id.toString());
+                    window.location.replace('/Department/ViewProject?id=' + json.ProjectID.toString());
                 }
                 else {
                     alert('Changes could not be saved!');
@@ -147,6 +168,7 @@
         </div>
         <center>
             <button type="button" id="saveCheckpoint" name="saveCheckpoint">Save Changes</button>
+            <a href="/Department"><button>Return</button></a>
         </center>
     </div>
 </body>
