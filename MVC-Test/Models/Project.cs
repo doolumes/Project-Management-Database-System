@@ -40,7 +40,7 @@ namespace Group6Application.Models
 
     public class UpdateProjectView
     {
-        public Project Project = new();
+        public Project Project_up = new();
         public List<SelectListItem> ExpenseIDs { get; set; }
         public List<SelectListItem> CheckpointIDs { get; set; }
         public List<SelectListItem> DepartmentIDs { get; set; }

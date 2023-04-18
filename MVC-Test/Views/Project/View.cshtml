@@ -89,7 +89,7 @@
                             <td>@cp.Name</td>
                             <td>@cp.Status</td>
                             <td>@cp.Description</td>
-                            <td><a href="/Checkpoint/View?id=@(cp.ID)">View @cp.Name</a></td>
+                            <td><a href="/Checkpoint?checkpointID=@(cp.ID)">View @cp.Name</a></td>
                         </tr>
 
                         }
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <a href="/Department/Update?id=@Model.ID"><button>Update Project</button></a>
+                    <a href="/Department/UpdateProject?projID=@Model.ID"><button>Update Project</button></a>
                 </div>
 
                 <div class="col-md-4">
