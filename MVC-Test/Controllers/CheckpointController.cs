@@ -20,6 +20,7 @@ namespace MVC_Test.Controllers
             if (checkpointID is null)
             {
                 DataTable datatable = Data.getCheckpointsFromProjectID((int)projectID);
+                DataTable datatable2 = Data.getProjectFromID((int)projectID);
                 List<CheckpointModel> checkpoints = new List<CheckpointModel>();
                 foreach (DataRow row in datatable.Rows)
                 {
@@ -33,6 +34,8 @@ namespace MVC_Test.Controllers
                     checkpoints.Add(model);
                 }
                 Project project = new Project {
+                    Name = datatable2.Rows[0]["Name"].ToString(),
+                    ID = int.Parse(datatable2.Rows[0]["ID"].ToString()),
                     Checkpoints = checkpoints,
                 };
                 return View("~/Views/Checkpoint/CheckpointList.cshtml", project);
