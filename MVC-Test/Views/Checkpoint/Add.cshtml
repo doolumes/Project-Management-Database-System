@@ -1,4 +1,4 @@
-﻿@model MVC_Test.Models.CheckpointModel
+﻿@model MVC_Test.Models.CheckpointViewModel
 @{
 
 }
@@ -71,11 +71,13 @@
     function saveCheckpoint() {
         $.ajax({
             type: "POST",
-            url: "@Url.Action("SaveChanges")", // must match function name in controller
+            url: "@Url.Action("AddCheckpointDB")", // must match function name in controller
             data: {
-                checkpointID: @Model.ID.ToString(),
-                checkpointName: $('#checkpointName').val(),
-                checkpointDescription: $('#checkpointDescription').val(),
+                Name: $('#checkpointName').val(),
+                Description: $('#checkpointDescription').val(),
+                ProjectID: $('#ProjectID').val(),
+                StartDate: $('#StartDate').val(),
+                DueDate: $('#DueDate').val(),
             },
             dataType: "text",
             error: function (msg) {
@@ -99,26 +101,48 @@
         <div class="mainTableContainer">
             <table class="main-table">
                 <tr>
-                    <th>ID</th>
                     <th>Checkpoint Name</th>
                 </tr>
                 <tr>
-                    <td>@Model.ID</td>
-                    <td><input name="checkpointName" id="checkpointName" type="text" value="@Model.Name" required></input></td>
+                    <td><input name="checkpointName" id="checkpointName" type="text" value="" required></input></td>
                 </tr>
 
                 <tr>
                     <th colspan="2">Checkpoint Description</th>
                 </tr>
                 <tr>
-                    <td colspan="2"><textarea name="checkpointDescription" id="checkpointDescription" type="text">@Model.Description</textarea></td>
+                    <td colspan="2"><textarea name="checkpointDescription" id="checkpointDescription" type="text"></textarea></td>
                 </tr>
             </table>
             <div class="side-table">
                 <h3>Status</h3>
-                <p>@Model.Status</p>
-                <h3 style="padding-top:1em;">Project</h3>
-                <p>@Data.getProjectFromCheckpointID(Model.ID).Rows[0]["Name"].ToString()</p>
+                <p>Not Started</p>
+
+                <label for="ProjectID">Project</label>
+                <select id="ProjectID" name="ProjectID" required />
+
+                <option value="">Select Project</option>
+                @{
+                    foreach (SelectListItem id in Model.ProjectIDs)
+                    {
+                        if (!String.IsNullOrEmpty(id.Text))
+                        {
+                            <option value="@id.Value">@id.Text</option>
+                        }
+
+                    }
+                }
+                </select>
+
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate" required />
+                <span id="StartDateRequiredAlert" class="collapse required">Required Field</span>
+
+                <label for="DueDate">End Date</label>
+                <input type="date" id="DueDate" name="DueDate" required />
+                <span id="DueDateRequiredAlert" class="collapse required">Required Field</span>
+
+                <br />
             </div>
         </div>
         <center>

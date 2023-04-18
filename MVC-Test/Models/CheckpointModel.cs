@@ -1,4 +1,10 @@
-﻿namespace MVC_Test.Models
+﻿using Group6Application.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MVC_Test.Models;
+using System.ComponentModel.DataAnnotations;
+using Group6Application.Model;
+
+namespace MVC_Test.Models
 {
     public class CheckpointModel
     {
@@ -11,5 +17,9 @@
         public string Status { get; set; }
 
         public List<TaskModel> Tasks { get; set; }
+    }
+
+    public class CheckpointViewModel {
+        public List<SelectListItem> ProjectIDs = new();
     }
 }

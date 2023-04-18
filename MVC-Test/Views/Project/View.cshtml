@@ -36,17 +36,17 @@
     <div class="row">
         <div class="col-4 text-start">
             <h4><strong>Project Statisitcs:</strong> </h4>
-            <h4>ID @(Model.ID)</h4>
-            <h4>Combined Hours: @(Model.TotalHours)</h4>
-            <h4>Total Cost: @(Model.Cost)</h4>
-            <h4>Client: @(Model.ClientID)</h4>
-            <h4>Budget: @(Model.Budget)</h4>
-            <h4>DepartmentID: @(Model.DepartmentID)</h4>
-            <h4>SupervisorID: @(Model.SupervisorID)</h4>
-            <h4>Project Status: @(Model.Status)</h4
-            <h4>Project Description: @(Model.Description)</h4>
-            <h4>Project Start Date: @(Model.StartDate)</h4>
-            <h4>Project End Date: @(Model.EndDate)</h4>
+            <div><h4>ID: </h4><p><strong>@(Model.ID)</strong><p></div>
+            <div><h4>Combined Hours: </h4><p><strong>@(Model.TotalHours)</strong><p></div>
+            <div><h4>Total Cost: </h4><p><strong>@(Model.Cost)</strong><p></div>
+            <div><h4>Client: </h4><p><strong>@(Model.ClientID)</strong><p></div>
+            <div><h4>Budget: </h4><p><strong>@(Model.Budget)</strong><p></div>
+            <div><h4>DepartmentID: </h4><p><strong>@(Model.DepartmentID)</strong><p></div>
+            <div><h4>SupervisorID: </h4><p><strong>@(Model.SupervisorID)</strong><p></div>
+            <div><h4>Status: </h4><p><strong>@(Model.Status)</strong><p></div>
+            <div><h4>Description: </h4><p><strong>@(Model.Description)</strong><p></div>
+            <div><h4>Start Date: </h4><p><strong>@(Model.StartDate)</strong><p></div>
+            <div><h4>End Date: </h4><p><strong>@(Model.EndDate)</strong><p></div>
         </div>
         <div class="col-8">
             <div class="row">
@@ -108,7 +108,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <a class="text-center" href="/Task/AddTask?projID=@Model.ID"><button>Add Task</button></a>
+                    <a class="text-center" href="/Department/Project/AddCheckpoint?projID=@Model.ID"><button>Add Checkpoint</button></a>
                 </div>
 
                 <div class="col-md-4">
