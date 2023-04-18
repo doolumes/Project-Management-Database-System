@@ -59,7 +59,7 @@ namespace Group6Application
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 DataTable datatable = new DataTable();
-                string sqlQuery = "SELECT \"ID\", \"Name\" FROM \"Project\" WHERE \"ID\"=@projectID AND \"deleted\"=@deleted";
+                string sqlQuery = "SELECT * FROM \"Project\" WHERE \"ID\"=@projectID AND \"deleted\"=@deleted";
                 conn.Open();
                 NpgsqlCommand command = new NpgsqlCommand("", conn);
                 NpgsqlTransaction sqlTransaction;
@@ -436,6 +436,7 @@ namespace Group6Application
                 return datatable;
             };
         }
+
         // returns all expenses
         public static DataTable Expenses()
         {

@@ -30,7 +30,9 @@
                 foreach (EmployeeTemplate employee in Model.Employee)
                 {
                 <tr>
-                    <td><a href="/Employee/View?id=@employee.ID">@employee.ID</a></td>
+                    <td><a href="/Employee/View?id=@employee.ID">@employee.ID</a>
+
+                    </td>
                     <td>@employee.FirstName</td>
                     <td>@employee.LastName</td>
                     <td>@employee.Supervisor_ID</td>

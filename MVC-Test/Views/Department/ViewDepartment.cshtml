@@ -7,20 +7,6 @@
 @model Group6Application.Models.DepartmentTemplate
 
 <script>
-
-    ready(function () {
-        $("#addDepartmentRedirect").click(function () {
-            $('#submittingModal').modal({
-                backdrop: 'static',
-                keyboard: false
-            })
-            addDepartmentRedirect();
-        });
-    });
-
-    function addDepartmentRedirect() {
-        Response.Redirect(@Url.Action("AddDepartment", "Department"))
-    }
 </script>
 
 
@@ -94,7 +80,7 @@
                                 <td>@project.Status</td>
                                 <td>@project.Description</td>
 
-                                <td><a href="/Project/View?id=@(project.ID)">View @project.Name</a></td>
+                                <td><a href="/Department/ViewProject?id=@(project.ID)">View @project.Name</a></td>
                             </tr>
 
                         }

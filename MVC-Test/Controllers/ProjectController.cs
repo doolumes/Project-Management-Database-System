@@ -14,6 +14,8 @@ using Npgsql;
 using MVC_Test.Models;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
+using Microsoft.Extensions.Hosting;
 
 namespace MVC_Test.Controllers
 {
@@ -111,13 +113,13 @@ namespace MVC_Test.Controllers
         }
 
 
-        public ActionResult AddProjectDB(string Name, string SupervisorID, string DepartmentID, String StartDate, String EndDate, String Description, String Status, String ClientID, float Budget, float Cost, String Hours)
+        public ActionResult AddProjectDB(string Name, string SupervisorID, string DepartmentID, DateTime StartDate, DateTime EndDate, String Description, String Status, String ClientID, double Budget, double Cost, String Hours)
         {
             bool submissionResult = false;
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"INSERT INTO \"Project\"(\"Name\",\"SupervisorID\",\"DepartmentID\",\"Description\",\"Status\",\"ClientID\",\"Budget\",\"Cost\",\"Hours\") VALUES (@Name,@SupervisorID,@DepartmentID,@Description,@Status,@ClientID, @Budget,@Cost,@Hours);";
+            string sqlQuery = $"INSERT INTO \"Project\"(\"Name\",\"SupervisorID\",\"DepartmentID\",\"Description\",\"Status\",\"ClientID\",\"Budget\",\"Cost\",\"Hours\",\"StartDate\",\"EndDate\") VALUES (@Name,@SupervisorID,@DepartmentID,@Description,@Status,@ClientID, @Budget,@Cost,@Hours,@StartDate,@EndDate);";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -133,12 +135,14 @@ namespace MVC_Test.Controllers
                     command.Parameters.AddWithValue("@Name", Name);
                     command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
                     command.Parameters.AddWithValue("@DepartmentID", (String.IsNullOrEmpty(DepartmentID)) ? (object)DBNull.Value : Int32.Parse(DepartmentID));
-                    command.Parameters.AddWithValue("@Description", String.IsNullOrEmpty(Description) ? DBNull.Value : Description);
+                    command.Parameters.AddWithValue("@Description", String.IsNullOrEmpty(Description) ? (object)DBNull.Value : Description);
                     command.Parameters.AddWithValue("@Status", "Not Started");
                     command.Parameters.AddWithValue("@ClientID", (String.IsNullOrEmpty(ClientID)) ? (object)DBNull.Value : Int32.Parse(ClientID));
                     command.Parameters.AddWithValue("@Budget", Budget);
                     command.Parameters.AddWithValue("@Cost", Cost);
                     command.Parameters.AddWithValue("@Hours", 0);
+                    command.Parameters.AddWithValue("@StartDate", StartDate);
+                    command.Parameters.AddWithValue("@EndDate", EndDate);
 
                     command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
 
@@ -158,6 +162,89 @@ namespace MVC_Test.Controllers
             };
 
             return Json(new { submissionResult = submissionResult, message = errorMessage });
+        }
+
+        [Route("Department/ViewProject")]
+        public ActionResult ViewProject()
+        {
+            var cookie = Request.Cookies["key"];
+            if (String.IsNullOrEmpty(cookie))
+            {
+                Response.Redirect("/Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            string viewPath = "Views/Project/View.cshtml";
+
+            if (string.IsNullOrEmpty(Request.Query["id"]))
+            {
+                Response.Redirect("/Project"); // if no id passed, redirect back to department
+                return RedirectToAction("ViewProject", "Project");
+
+
+            }
+            string id_temp = Request.Query["id"].ToString();
+            int id = Convert.ToInt32(id_temp);
+
+            DataTable datatable = Data.ProjectName(id);
+
+            if (datatable.Rows.Count == 0)
+            {
+                Response.Redirect("/Department"); // if not found in database, redirect back to department
+                return RedirectToAction("Index", "Department");
+
+            }
+
+            Project viewModel = new Project(){
+            };
+
+            if (datatable.Rows[0]["ID"] != null && datatable.Rows[0]["ID"] != DBNull.Value)
+            {
+                viewModel.ID = (int)datatable.Rows[0]["ID"];
+            }
+            if (datatable.Rows[0]["Name"] != null && datatable.Rows[0]["Name"] != DBNull.Value)
+            {
+                viewModel.Name = datatable.Rows[0]["Name"].ToString();
+            }
+            if (datatable.Rows[0]["SupervisorID"] != null && datatable.Rows[0]["SupervisorID"] != DBNull.Value)
+            {
+                viewModel.SupervisorID = (int)datatable.Rows[0]["SupervisorID"]; // doesn't matter if this can be null or not
+            }
+            if (datatable.Rows[0]["DepartmentID"] != null && datatable.Rows[0]["DepartmentID"] != DBNull.Value)
+            {
+                viewModel.DepartmentID = (int)datatable.Rows[0]["DepartmentID"];
+            }
+
+            if (datatable.Rows[0]["StartDate"] != null && datatable.Rows[0]["StartDate"] != DBNull.Value)
+            {
+                //viewModel.StartDate = (DateTime)datatable.Rows[0]["StartDate"];
+                viewModel.StartDate = Convert.ToDateTime(datatable.Rows[0]["StartDate"]);
+            }
+            if (datatable.Rows[0]["EndDate"] != null && datatable.Rows[0]["EndDate"] != DBNull.Value)
+            {
+                viewModel.EndDate = Convert.ToDateTime(datatable.Rows[0]["EndDate"]);
+            }
+            if (datatable.Rows[0]["ClientID"] != null && datatable.Rows[0]["ClientID"] != DBNull.Value)
+            {
+                viewModel.ClientID = (int)datatable.Rows[0]["ClientID"];
+            }
+            if (datatable.Rows[0]["Budget"] != null && datatable.Rows[0]["Budget"] != DBNull.Value)
+            {
+                viewModel.Budget = (double)datatable.Rows[0]["Budget"];
+            }
+            if (datatable.Rows[0]["Cost"] != null && datatable.Rows[0]["Cost"] != DBNull.Value)
+            {
+                viewModel.Cost = (double)datatable.Rows[0]["Cost"];
+            }
+            if (datatable.Rows[0]["Description"] != null && datatable.Rows[0]["Description"] != DBNull.Value)
+            {
+                viewModel.Description = datatable.Rows[0]["Description"].ToString();
+            }
+            if (datatable.Rows[0]["Status"] != null && datatable.Rows[0]["Status"] != DBNull.Value)
+            {
+                viewModel.Status = datatable.Rows[0]["Status"].ToString();
+            }
+            return View(viewPath, viewModel);
         }
 
     }

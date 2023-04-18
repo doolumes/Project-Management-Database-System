@@ -1,8 +1,7 @@
-﻿<!-- No Model needed , we are passing data to backend.  Not recieving anything-->
-@using Microsoft.AspNetCore.Authorization;
+﻿@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Mvc;
 @using Group6Application.Models;
-@model Group6Application.Models.ProjectView
+@model Group6Application.Models.UpdateProjectView
 <head>
     <link rel="stylesheet" href="~/css/bootstrap.css">
     <link rel="stylesheet" href="~/css/site.css">
@@ -70,7 +69,7 @@
 
         $.ajax({
             type: "POST",
-            url: "@Url.Action("AddProjectDB")", // must match function name in controller
+            url: "@Url.Action("UpdateProjectDB")", // must match function name in controller
             data: {
                 Name: $('#Name').val(),
                 SupervisorID: $('#SupervisorID').val(),
@@ -105,16 +104,16 @@
 </script>
 
 <html>
-    <div class="row text-center">
-        <div class="col-md-12">
-            <h1>Create a new Project</h1>
-        </div>
-
-        <div class="col-md-12">
-        </div>
+<div class="row text-center">
+    <div class="col-md-12">
+        <h1>Create a new Project</h1>
     </div>
-    <div class="row">
-        <div class="col-md-8 offset-md-2 ">
+
+    <div class="col-md-12">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-md-2 ">
 
         <span id="current-url"></span>
         <form>
@@ -149,11 +148,11 @@
             <br />
 
             <label for="Budget">Budget</label>
-            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
+            <input type="number" min="0" max="100000" id="Cost" name="Cost" step="1000" required>
             <br />
 
             <label for="Budget">Cost</label>
-            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
+            <input type="number" min="0" max="100000" id="Cost" name="Cost" step="1000" required>
             <br />
 
             <label for="ClientID">Client</label>
@@ -204,53 +203,53 @@
                 </p>
             </div>
         </form>
-            <div class="col-md-3">
-                <a href="/Department"><button class="btn-block">Return</button></a>
-            </div>
+        <div class="col-md-3">
+            <a href="/Department"><button class="btn-block">Return</button></a>
         </div>
     </div>
+</div>
 
-    <div id="submittingModal" class="modal" tabindex="-1">
+<div id="submittingModal" class="modal" tabindex="-1">
 
-        <div class="modal-dialog" role="document">
-            <div class="modal-header">
-                <h2>Submitting</h2>
-            </div>
-            <div class="modal-body">
-                <p>Form is being submitted</p>
-            </div>
-
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Submitting</h2>
+        </div>
+        <div class="modal-body">
+            <p>Form is being submitted</p>
         </div>
 
     </div>
 
-    <div id="errorModal" class="modal" tabindex="-1">
+</div>
 
-        <div class="modal-dialog" role="document">
-            <div class="modal-header">
-                <h2>Error</h2>
-            </div>
-            <div class="modal-body">
-                <p>An error has occurred while submitting.</p>
-            </div>
-            <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+<div id="errorModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Error</h2>
         </div>
-
+        <div class="modal-body">
+            <p>An error has occurred while submitting.</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
     </div>
 
-    <div id="confirmationModal" class="modal" tabindex="-1">
+</div>
 
-        <div class="modal-dialog" role="document">
-            <div class="modal-header">
-                <h2>Confirmation</h2>
-            </div>
-            <div class="modal-body">
-                <p>The form has been sucessfully submitted</p>
-            </div>
-            <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
+<div id="confirmationModal" class="modal" tabindex="-1">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-header">
+            <h2>Confirmation</h2>
         </div>
-
+        <div class="modal-body">
+            <p>The form has been sucessfully submitted</p>
+        </div>
+        <button type="button" data-dismiss="modal" class="btn-block">Okay</button>
     </div>
+
+</div>
 
 
 
