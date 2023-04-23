@@ -1,0 +1,26 @@
+## Table of Contents
+- Requirments
+- Installation
+
+## Requirments
+
+Application Requirments
+---------------
+- .NET 6.0 SDK (Should include .NET Runtime & ASP.NET Core Runtime)
+- Microsoft.AspNetCore.Mvc.Core (Package)
+- Microsoft.VisualStudio.Web.CodeGeneration.Design (Package Dependency)
+- Npgsql Package (Package Dependency)
+- System.Data.SqlClient Package (Package Dependency)
+
+Database Requirments
+---------------
+- PostgreSQL 12.14
+- Postgres User account with the ability to SELECT, UPDATE, DELETE, and ALTER
+
+## Installation
+The best way to ensure a full installation with minimal errors is to use the Visual Studio Installer
+
+1. Launch Visual Studio Installer
+2. Click "Modify"
+3. Under the "Workloads" tab, select "ASP.NET and web development" & ".NET desktop development"
+4. Click "Install"
