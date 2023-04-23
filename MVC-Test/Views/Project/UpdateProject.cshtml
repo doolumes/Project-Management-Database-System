@@ -79,6 +79,9 @@
                 Budget: $('#Budget').val(),
                 Status: $('#Status').val(),
                 Cost: $('#Cost').val(),
+                SupervisorID: $('#SupervisorID').val(),
+                DepartmentID: $('#SupervisorID').val(),
+                ClientID: $('#SupervisorID').val(),
             },
             dataType: "text",
             error: function (msg) {
@@ -126,6 +129,23 @@
             <label for="Description">Description</label>
             <input type="text" id="Description" name="Description" value="@Model.Project_up.Description" required />
             <br />
+             
+            <label for="DepartmentID">Department</label>
+            <select id="DepartmentID" name="DepartmentID" required />
+
+            <option value="@Model.Project_up.DepartmentID">@Model.Project_up.DepartmentID</option>
+            @{
+                foreach (SelectListItem id in Model.DepartmentIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Value @id.Text</option>
+                    }
+
+                }
+            }
+            </select>
+            <span id="DepartmentIDRequiredAlert" class="collapse required">Required Field</span>
 
             <br />
 
@@ -134,11 +154,27 @@
             <br />
 
             <label for="Cost">Cost</label>
-            <input type="number" min="0" max="100000" id="Cost" name="Cost" step="1000" value=" @Model.Project_up.Cost" required>
+            <input type="number" min="0" max="100000" id="Cost" name="Cost" step="1000" value="@Model.Project_up.Cost" required>
+            <br />
+
+            <label for="ClientID">Client</label>
+            <select id="ClientID" name="ClientID" />
+            <option value="">None</option>
+            @{
+                foreach (SelectListItem id in Model.ClientIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Value @id.Text</option>
+                    }
+
+                }
+            }
+            </select>
             <br />
 
             <label for="Status">Status</label>
-            <input type="number" min="0" max="100000" id="Status" name="Status" step="1000" value="@Model.Project_up.Status" required>
+            <input type="text" min="0" max="100000" id="Status" name="Status" step="1000" value="@Model.Project_up.Status" required>
             <br />
 
             <label for="StartDate">Start Date</label>
@@ -150,6 +186,23 @@
             <span id="EndDateRequiredAlert" class="collapse required">Required Field</span>
 
             <br />
+
+            <label for="SupervisorID">Supervisor</label>
+            <select id="SupervisorID" name="SupervisorID" value="@Model.Project_up.SupervisorID" required />
+            <option value="">@Model.Project_up.SupervisorID</option>
+            @{
+                foreach (SelectListItem id in Model.EmployeeIDs)
+                {
+                    if (!String.IsNullOrEmpty(id.Text))
+                    {
+                        <option value="@id.Value">@id.Value @id.Text</option>
+                    }
+
+                }
+            }
+            </select>
+            <span id="SupervisorIDRequiredAlert" class="collapse required">Required Field</span>
+
             <div class="col-md-3">
                 <p>
                     <button type="button" id="submit" name="submit" class="btn-block">Submit</button>

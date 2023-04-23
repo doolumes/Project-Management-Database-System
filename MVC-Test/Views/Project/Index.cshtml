@@ -62,12 +62,13 @@
                         <td>@dept.Name</td>
                         <td>@dept.Description</td>
                         <td>@dept.Status</td>
+                        <td>@dept.SupervisorID</td>
                         <td>@dept.TotalHours</td>
                         <td>@dept.Cost</td>
                         <td>@dept.Budget</td>
                         <td>@dept.ClientID</td>
                         <td>@dept.DepartmentID</td>
-                        <td><a href="/Project/View?id=@(dept.ID)">@dept.Name Project</a></td>
+                        <td><a href="/Department/ViewProject?id=@(dept.ID)">@dept.Name Project</a></td>
                     </tr>
                     }
                 }

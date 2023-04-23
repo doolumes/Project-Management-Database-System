@@ -356,11 +356,10 @@ namespace MVC_Test.Controllers
 
             foreach (DataRow row in Data.DepartmentID_data().Rows)
             {
-                if (row["ID"].ToString() == id.ToString())
-                {
-                    DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString()) });
-                }
+                DepartmentID.Add(new SelectListItem() { Value = row["ID"].ToString(), Text = (row["Name"].ToString()) });
+                
             }
+
 
             viewModel2.DepartmentIDs = DepartmentID;
 
@@ -392,7 +391,7 @@ namespace MVC_Test.Controllers
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"UPDATE \"Project\" SET \"Name\"=@Name,\"StartDate\"=@StartDate,\"EndDate\"=@EndDate,\"Description\"=@Description,\"Status\"=@Status,\"Budget\"=@Budget,\"Cost\"=@Cost WHERE \"ID\"=@ID;";
+            string sqlQuery = $"UPDATE \"Project\" SET \"Name\"=@Name,\"StartDate\"=@StartDate,\"EndDate\"=@EndDate,\"Description\"=@Description,\"Status\"=@Status,\"Budget\"=@Budget,\"Cost\"=@Cost WHERE \"ID\"=@ID;;";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -405,11 +404,11 @@ namespace MVC_Test.Controllers
                 {
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
-                    command.Parameters.AddWithValue("@ID", (String.IsNullOrEmpty(ID.ToString())) ? (object)DBNull.Value : Int32.Parse(ID.ToString())); // check for null
+                    command.Parameters.AddWithValue("@ID", ID); // check for null
                     command.Parameters.AddWithValue("@Name", Name);
                     command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
                     command.Parameters.AddWithValue("@DepartmentID", (String.IsNullOrEmpty(DepartmentID)) ? (object)DBNull.Value : Int32.Parse(DepartmentID));
-                    command.Parameters.AddWithValue("@Description", String.IsNullOrEmpty(Description) ? (object)DBNull.Value : Description);
+                    command.Parameters.AddWithValue("@Description", Description);
                     command.Parameters.AddWithValue("@Status", Status);
                     command.Parameters.AddWithValue("@ClientID", (String.IsNullOrEmpty(ClientID)) ? (object)DBNull.Value : Int32.Parse(ClientID));
                     command.Parameters.AddWithValue("@Budget", Budget);
@@ -417,8 +416,7 @@ namespace MVC_Test.Controllers
                     command.Parameters.AddWithValue("@Hours", 0);
                     command.Parameters.AddWithValue("@StartDate", StartDate);
                     command.Parameters.AddWithValue("@EndDate", EndDate);
-
-                    command.ExecuteScalar(); // Automatically creates primary key, must set constraint on primary key to "Identity"
+                    command.ExecuteNonQuery();
 
                     sqlTransaction.Commit();
                     submissionResult = true;

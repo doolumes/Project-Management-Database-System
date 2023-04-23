@@ -46,6 +46,7 @@ namespace Group6Application.Models
         public List<SelectListItem> DepartmentIDs { get; set; }
         public List<SelectListItem> EmployeeIDs { get; set; }
         public List<SelectListItem> ClientIDs { get; set; }
+        public string getDeptName { get; set; }
     }
 
 }
