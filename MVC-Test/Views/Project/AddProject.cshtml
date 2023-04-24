@@ -57,7 +57,35 @@
             $(inputID + "RequiredAlert").hide();
         }
 
+        inputID = "#Budget";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
 
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#StartDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#EndDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
         if (invalidObjects == 0) {
             pageValid = true;
         }
@@ -130,7 +158,7 @@
             <br />
 
             <label for="DepartmentID">Department</label>
-            <select id="DepartmentID" name="DepartmentID" required />
+            <select type = "number" id="DepartmentID" name="DepartmentID" required />
 
             <option value="">Select Department</option>
             @{
@@ -149,15 +177,12 @@
             <br />
 
             <label for="Budget">Budget</label>
-            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
-            <br />
-
-            <label for="Cost">Cost</label>
-            <input type="number" min="0" max="100000" id = "Cost" name = "Cost" step="1000" required>
+            <input type="number" min="0" max="100000" id="Budget" name="Budget" step="1000" required>
+            <span id="BudgetRequiredAlert" class="collapse required">Required Field</span>
             <br />
 
             <label for="ClientID">Client</label>
-            <select id="ClientID" name="ClientID" />
+            <select type = "number" id="ClientID" name="ClientID" />
             <option value="">None</option>
             @{
                 foreach (SelectListItem id in Model.ClientIDs)
@@ -183,7 +208,7 @@
             <br />
 
             <label for="SupervisorID">Supervisor</label>
-            <select id="SupervisorID" name="SupervisorID" required />
+            <select type = "number" id="SupervisorID" name="SupervisorID" required />
             <option value="">Unassigned</option>
             @{
                 foreach (SelectListItem id in Model.EmployeeIDs)

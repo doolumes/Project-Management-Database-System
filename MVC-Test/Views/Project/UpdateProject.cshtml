@@ -56,6 +56,33 @@
             $(inputID + "RequiredAlert").hide();
         }
 
+        inputID = "#Budget";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#StartDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#EndDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
 
         if (invalidObjects == 0) {
             pageValid = true;
@@ -131,7 +158,7 @@
             <br />
              
             <label for="DepartmentID">Department</label>
-            <select id="DepartmentID" name="DepartmentID" required />
+            <select id="DepartmentID" name="DepartmentID" type = "number" required />
 
             <option value="@Model.Project_up.DepartmentID">@Model.Project_up.DepartmentID</option>
             @{
@@ -151,15 +178,12 @@
 
             <label for="Budget">Budget</label>
             <input type="number" min="0" max="100000" id="Budget" name="Budget" step="1000" value="@Model.Project_up.Budget" required>
-            <br />
-
-            <label for="Cost">Cost</label>
-            <input type="number" min="0" max="100000" id="Cost" name="Cost" step="1000" value="@Model.Project_up.Cost" required>
+            <span id="BudgetRequiredAlert" class="collapse required">Required Field</span>
             <br />
 
             <label for="ClientID">Client</label>
             <select id="ClientID" name="ClientID" />
-            <option value="">None</option>
+            <option value="@Model.Project_up.ClientID">None</option>
             @{
                 foreach (SelectListItem id in Model.ClientIDs)
                 {
@@ -178,18 +202,18 @@
             <br />
 
             <label for="StartDate">Start Date</label>
-            <input type="date" id="StartDate" name="StartDate" required />
+            <input type="date" id="StartDate" name="StartDate" value="@Model.Project_up.StartDate" required />
             <span id="StartDateRequiredAlert" class="collapse required">Required Field</span>
 
             <label for="EndDate">End Date</label>
-            <input type="date" id="EndDate" name="EndDate" required />
+            <input type="date" id="EndDate" name="EndDate" value="@Model.Project_up.EndDate" required />
             <span id="EndDateRequiredAlert" class="collapse required">Required Field</span>
 
             <br />
 
             <label for="SupervisorID">Supervisor</label>
-            <select id="SupervisorID" name="SupervisorID" value="@Model.Project_up.SupervisorID" required />
-            <option value="">@Model.Project_up.SupervisorID</option>
+            <select type="number" id="SupervisorID" name="SupervisorID" value="@Model.Project_up.SupervisorID" required />
+            <option value="@Model.Project_up.SupervisorID">@Model.Project_up.SupervisorID</option>
             @{
                 foreach (SelectListItem id in Model.EmployeeIDs)
                 {

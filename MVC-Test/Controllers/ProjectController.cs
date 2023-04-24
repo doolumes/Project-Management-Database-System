@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.Hosting;
+using MVC_Test.Views.Project;
 
 namespace MVC_Test.Controllers
 {
@@ -38,13 +39,55 @@ namespace MVC_Test.Controllers
             foreach (DataRow row in datatable.Rows) {
                 Project project = new Project()
                 {
-                    ID = (int)row["ID"],
-                    Name = row["Name"].ToString(),
-                    Status = row["Status"].ToString(),
-                    Description = row["Description"].ToString(),
+                    
                 };
-                project.CheckPointID = 0;
-                project.EmployeeID = 0;
+
+                if (row["ID"] != null && row["ID"] != DBNull.Value)
+                {
+                    project.ID = (int)row["ID"];
+                }
+                if (row["Name"] != null && row["Name"] != DBNull.Value)
+                {
+                    project.Name = row["Name"].ToString();
+                }
+                if (row["SupervisorID"] != null && row["SupervisorID"] != DBNull.Value)
+                {
+                    project.SupervisorID = (int)row["SupervisorID"]; // doesn't matter if this can be null or not
+                }
+                if (row["DepartmentID"] != null && row["DepartmentID"] != DBNull.Value)
+                {
+                    project.DepartmentID = (int)row["DepartmentID"];
+                }
+
+                if (row["StartDate"] != null && row["StartDate"] != DBNull.Value)
+                {
+                    //viewModel.StartDate = (DateTime)datatable.Rows[0]["StartDate"];
+                    project.StartDate = Convert.ToDateTime(row["StartDate"]);
+                }
+                if (row["EndDate"] != null && row["EndDate"] != DBNull.Value)
+                {
+                    project.EndDate = Convert.ToDateTime(row["EndDate"]);
+                }
+                if (row["ClientID"] != null && row["ClientID"] != DBNull.Value)
+                {
+                    project.ClientID = (int)row["ClientID"];
+                }
+                if (row["Budget"] != null && row["Budget"] != DBNull.Value)
+                {
+                    project.Budget = (double)row["Budget"];
+                }
+                if (row["Cost"] != null && row["Cost"] != DBNull.Value)
+                {
+                    project.Cost = (double)row["Cost"];
+                }
+                if (row["Description"] != null && row["Description"] != DBNull.Value)
+                {
+                    project.Description = row["Description"].ToString();
+                }
+                if (row["Status"] != null && row["Status"] != DBNull.Value)
+                {
+                    project.Status = row["Status"].ToString();
+                }
 
                 viewModel.Projects.Add(project);
             }
@@ -113,7 +156,7 @@ namespace MVC_Test.Controllers
         }
 
 
-        public ActionResult AddProjectDB(string Name, string SupervisorID, string DepartmentID, DateTime StartDate, DateTime EndDate, String Description, String Status, String ClientID, double Budget, double Cost, String Hours)
+        public ActionResult AddProjectDB(string Name, int SupervisorID, int DepartmentID, DateTime StartDate, DateTime EndDate, String Description, String Status, String ClientID, double Budget, double Cost, String Hours)
         {
             bool submissionResult = false;
             string errorMessage = "";
@@ -133,8 +176,8 @@ namespace MVC_Test.Controllers
                     command.CommandText = sqlQuery.ToString();
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@Name", Name);
-                    command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
-                    command.Parameters.AddWithValue("@DepartmentID", (String.IsNullOrEmpty(DepartmentID)) ? (object)DBNull.Value : Int32.Parse(DepartmentID));
+                    command.Parameters.AddWithValue("@SupervisorID", SupervisorID);
+                    command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
                     command.Parameters.AddWithValue("@Description", String.IsNullOrEmpty(Description) ? (object)DBNull.Value : Description);
                     command.Parameters.AddWithValue("@Status", "Incomplete");
                     command.Parameters.AddWithValue("@ClientID", (String.IsNullOrEmpty(ClientID)) ? (object)DBNull.Value : Int32.Parse(ClientID));
@@ -385,7 +428,7 @@ namespace MVC_Test.Controllers
         }
 
 
-        public ActionResult UpdateProjectDB(int ID, string Name, string SupervisorID, string DepartmentID, DateTime StartDate, DateTime EndDate, String Description, String Status, String ClientID, double Budget, double Cost, String Hours)
+        public ActionResult UpdateProjectDB(int ID, string Name, int SupervisorID, int DepartmentID, DateTime StartDate, DateTime EndDate, string Description, string Status, int ClientID, double Budget, double Cost, double Hours)
         {
             bool submissionResult = false;
             string errorMessage = "";
@@ -406,13 +449,13 @@ namespace MVC_Test.Controllers
                     command.Parameters.Clear();
                     command.Parameters.AddWithValue("@ID", ID); // check for null
                     command.Parameters.AddWithValue("@Name", Name);
-                    command.Parameters.AddWithValue("@SupervisorID", (String.IsNullOrEmpty(SupervisorID)) ? (object)DBNull.Value : Int32.Parse(SupervisorID));
-                    command.Parameters.AddWithValue("@DepartmentID", (String.IsNullOrEmpty(DepartmentID)) ? (object)DBNull.Value : Int32.Parse(DepartmentID));
+                    command.Parameters.AddWithValue("@SupervisorID", SupervisorID);
+                    command.Parameters.AddWithValue("@DepartmentID", DepartmentID);
                     command.Parameters.AddWithValue("@Description", Description);
                     command.Parameters.AddWithValue("@Status", Status);
-                    command.Parameters.AddWithValue("@ClientID", (String.IsNullOrEmpty(ClientID)) ? (object)DBNull.Value : Int32.Parse(ClientID));
+                    command.Parameters.AddWithValue("@ClientID", ClientID);
                     command.Parameters.AddWithValue("@Budget", Budget);
-                    command.Parameters.AddWithValue("@Cost", Cost);
+                    command.Parameters.AddWithValue("@Cost", 0);
                     command.Parameters.AddWithValue("@Hours", 0);
                     command.Parameters.AddWithValue("@StartDate", StartDate);
                     command.Parameters.AddWithValue("@EndDate", EndDate);
