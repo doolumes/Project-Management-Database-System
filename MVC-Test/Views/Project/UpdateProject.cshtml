@@ -132,7 +132,7 @@
              
             <label for="DepartmentID">Department</label>
             <select id="DepartmentID" name="DepartmentID" required />
-            @{
+            @{  
                 foreach (SelectListItem id in Model.DepartmentIDs)
                 {
                     if (!String.IsNullOrEmpty(id.Text))
@@ -191,13 +191,20 @@
 
             <label for="SupervisorID">Supervisor</label>
             <select id="SupervisorID" name="SupervisorID" value="@Model.Project_up.SupervisorID" required />
-            <option value="">@Model.Project_up.SupervisorID</option>
             @{
                 foreach (SelectListItem id in Model.EmployeeIDs)
                 {
                     if (!String.IsNullOrEmpty(id.Text))
                     {
-                        <option value="@id.Value">@id.Value @id.Text</option>
+                        if (Convert.ToInt32(id.Value) == Model.Project_up.SupervisorID)
+                        {
+                            <option value="@id.Value" selected>@id.Value @id.Text</option>
+
+                        }
+                        else
+                        {
+                            <option value="@id.Value">@id.Value @id.Text</option>
+                        }
                     }
 
                 }
