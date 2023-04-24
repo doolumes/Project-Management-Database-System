@@ -165,7 +165,7 @@
                     <th>Timesheet Entry ID</th>
                     <th>Date</th>
                     <th>Hours Worked</th>
-                    <th>Project ID</th>
+                    <th>Project</th>
                 </tr>
 
                 @{
@@ -175,7 +175,7 @@
                         <td><a href="/Timesheet/View?id=@timesheet.EntryID">@timesheet.EntryID</a></td>
                         <td>@timesheet.Date.ToShortDateString()</td>
                         <td>@timesheet.HoursWorked</td>
-                        <td>@timesheet.ProjectID</td>
+                        <td><a href="/Department/ViewProject?id=@timesheet.ProjectID">@timesheet.Project</a></td>
                     </tr>
                     }
                 }

@@ -9,6 +9,7 @@ namespace Group6Application.Models
         public DateTime Date { get; set; }
         public double HoursWorked { get; set; }
         public int ProjectID { get; set; }
+        public string? Project { get; set; }
         public int WorkerID { get; set; }
 
         public EmployeeTemplate employee = new();
