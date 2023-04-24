@@ -1,9 +1,11 @@
-## Table of Contents
+## Table of Contents ##
 - Requirments
 - Installation
+- File Overview
 
-## Requirments
+## Requirments ##
 
+---------------
 Application Requirments
 ---------------
 - .NET 6.0 SDK (Should include .NET Runtime & ASP.NET Core Runtime)
@@ -12,15 +14,40 @@ Application Requirments
 - Npgsql Package (Package Dependency)
 - System.Data.SqlClient Package (Package Dependency)
 
+---------------
 Database Requirments
 ---------------
 - PostgreSQL 12.14
 - Postgres User account with the ability to SELECT, UPDATE, DELETE, and ALTER
 
-## Installation
+## Installation ##
 The best way to ensure a full installation with minimal errors is to use the Visual Studio Installer
 
 1. Launch Visual Studio Installer
 2. Click "Modify"
 3. Under the "Workloads" tab, select "ASP.NET and web development" & ".NET desktop development"
 4. Click "Install"
+
+## File Overview ##
+The files here are broken into the following categories:
+- Views
+- Controllers
+- Models
+
+------
+Views
+------
+Views are the frontend code, these usually communicate with the controllers (Which are the backend code) to pull data across and display various different componenets and data.
+Views are written in the Standard HTML, CSS, and Javascript
+
+------
+Controllers
+------
+Controllers are the backend code that comunicate with the views to help deliver data to the end user. Here you will find calls to the PostgreSQL server and various calculations.
+Controllers are written in C#
+
+------
+Models
+------
+Models are used to help organize the data being recieved from the database. They are a class that is used by both the Controller and View to access various information that was obtained from the SQL server about a particular table or row.
+Models are written in C#
