@@ -213,23 +213,6 @@ namespace Group6Application.Controllers
                 viewModel.totalWages += projectCost.cost;
             }
 
-            DataTable expenses = Data.Expenses(projectID);
-
-            foreach (DataRow row in expenses.Rows)
-            {
-                Expense expense = new Expense()
-                {
-                    ExpenseID = (int)row["ExpenseID"],
-                    Name = row["Name"].ToString(),
-                    Description = row["Description"].ToString(),
-                    Cost = row["Cost"].ToString(),
-                    ProjectID = projectID,
-                };
-
-                viewModel.expenses.Add(expense);
-                viewModel.totalExpenses += Convert.ToDouble(expense.Cost);
-            }
-
             return PartialView(viewPath, viewModel);
 
 

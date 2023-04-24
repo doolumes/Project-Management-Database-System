@@ -96,6 +96,10 @@ namespace MVC_Test.Controllers
 
         public ActionResult AddCheckpointDB(string Name, string Description, DateTime StartDate, DateTime DueDate, string ProjectID, string Status) 
         {
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(ProjectID))
+            {
+                return Json(new { submissionResult = false, message = "Checkpoint Name/Project is required!" });
+            }
             bool submissionResult = false;
             string errorMessage = "";
 

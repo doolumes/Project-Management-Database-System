@@ -79,6 +79,9 @@ namespace Group6Application.Controllers
                     HoursWorked = (double)row["HoursWorked"],
                     WorkerID = (int)row["WorkerID"],
                 };
+                DataTable projectName = Data.ProjectName(timesheet.ProjectID);
+
+                timesheet.Project = projectName.Rows[0]["Name"].ToString();
                 viewModel.Timesheets.Add(timesheet);
             }
 
