@@ -94,7 +94,7 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
-                    //location.href = "@Url.Action("Index", "Project")";
+                    location.href = "@Url.Action("Index", "Project")";
                 }
                 else {
                     $(".modal-backdrop").remove();
