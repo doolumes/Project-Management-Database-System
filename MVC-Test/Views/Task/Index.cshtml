@@ -215,7 +215,7 @@
             </tr>
             <tr>
                 @{
-                    if (Model.Start.Value != null)
+                    if (Model.Start != null)
                     {
                         <td><input name="taskStart" id="taskStart" type="date" value="@Model.Start.Value.ToString("yyyy-MM-dd")"></input></td>
 
@@ -234,7 +234,7 @@
             </tr>
             <tr>
                 @{
-                    if (Model.Due.Value != null)
+                    if (Model.Due != null)
                     {
                         <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
 
