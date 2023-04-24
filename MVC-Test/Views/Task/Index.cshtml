@@ -65,7 +65,6 @@
     });
 
     function deleteTask() {
-        alert("test");
         var result = confirm("Are you sure you want to Delete this Task?");
         if (result == true) {
             $.ajax({
@@ -85,7 +84,7 @@
                         window.history.back();
                     }
                     else {
-                        alert('Task could not be deleted!');
+                        alert(json.message);
                     }
                 }
             });
@@ -120,7 +119,7 @@
                     window.location.replace('/Task?taskID=' + json.id.toString());
                 }
                 else {
-                    alert('Changes could not be saved!');
+                    alert(json.message);
                 }
             }
         });
