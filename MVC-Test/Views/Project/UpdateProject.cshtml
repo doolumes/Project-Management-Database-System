@@ -132,13 +132,15 @@
              
             <label for="DepartmentID">Department</label>
             <select id="DepartmentID" name="DepartmentID" required />
-
-            <option value="@Model.Project_up.DepartmentID">@Model.Project_up.DepartmentID</option>
             @{
                 foreach (SelectListItem id in Model.DepartmentIDs)
                 {
                     if (!String.IsNullOrEmpty(id.Text))
                     {
+                        if (Convert.ToInt32(id.Value) == Model.Project_up.DepartmentID)
+                        {
+                            <option value="@id.Value" selected>@id.Value @id.Text</option>
+                        }
                         <option value="@id.Value">@id.Value @id.Text</option>
                     }
 
