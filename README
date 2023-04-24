@@ -9,7 +9,7 @@
 Application Requirments
 ---------------
 - .NET 6.0 SDK (Should include .NET Runtime & ASP.NET Core Runtime)
-- Microsoft.AspNetCore.Mvc.Core (Package)
+- Microsoft.AspNetCore.Mvc.Core (Package Dependency)
 - Microsoft.VisualStudio.Web.CodeGeneration.Design (Package Dependency)
 - Npgsql Package (Package Dependency)
 - System.Data.SqlClient Package (Package Dependency)
