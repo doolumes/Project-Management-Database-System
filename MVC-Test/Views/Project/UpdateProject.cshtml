@@ -66,7 +66,7 @@
 
     // Use AddDepartment as example of how to build this function out
     function submit() {
-
+        
         $.ajax({
             type: "POST",
             url: "@Url.Action("UpdateProjectDB")", // must match function name in controller
@@ -80,7 +80,7 @@
                 Status: $('#Status').val(),
                 Cost: $('#Cost').val(),
                 SupervisorID: $('#SupervisorID').val(),
-                DepartmentID: $('#SupervisorID').val(),
+                DepartmentID: $('#DepartmentID').val(),
                 ClientID: $('#SupervisorID').val(),
             },
             dataType: "text",
@@ -94,7 +94,7 @@
                 var json = $.parseJSON(data);
                 if (json.submissionResult) { // Submission is true
                     $("#confirmationModal").modal();
-                    location.href = "@Url.Action("Index", "Project")";
+                    //location.href = "@Url.Action("Index", "Project")";
                 }
                 else {
                     $(".modal-backdrop").remove();

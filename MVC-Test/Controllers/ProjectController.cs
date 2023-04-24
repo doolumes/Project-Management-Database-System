@@ -391,7 +391,7 @@ namespace MVC_Test.Controllers
             string errorMessage = "";
 
             // SQL
-            string sqlQuery = $"UPDATE \"Project\" SET \"Name\"=@Name,\"StartDate\"=@StartDate,\"EndDate\"=@EndDate,\"Description\"=@Description,\"Status\"=@Status,\"Budget\"=@Budget,\"Cost\"=@Cost WHERE \"ID\"=@ID;;";
+            string sqlQuery = $"UPDATE \"Project\" SET \"Name\"=@Name,\"DepartmentID\"=@DepartmentID,\"SupervisorID\"=@SupervisorID,\"StartDate\"=@StartDate,\"EndDate\"=@EndDate,\"Description\"=@Description,\"Status\"=@Status,\"Budget\"=@Budget,\"Cost\"=@Cost WHERE \"ID\"=@ID;";
             using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
