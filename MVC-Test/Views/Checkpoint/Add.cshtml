@@ -111,7 +111,7 @@
                     window.location.replace('/Department/ViewProject?id=' + json.ProjectID.toString());
                 }
                 else {
-                    alert('Changes could not be saved!');
+                    alert(json.message);
                 }
             }
         });
