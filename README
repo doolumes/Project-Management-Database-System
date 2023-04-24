@@ -18,7 +18,7 @@ Application Requirments
 Database Requirments
 ---------------
 - PostgreSQL 12.14
-- Postgres User account with the ability to SELECT, UPDATE, DELETE, and ALTER
+- Postgres User account with the ability to SELECT, UPDATE, DELETE, ALTER, CREATE, and DROP
 
 ## Installation ##
 The best way to ensure a full installation with minimal errors is to use the Visual Studio Installer
