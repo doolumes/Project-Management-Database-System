@@ -56,6 +56,33 @@
             $(inputID + "RequiredAlert").hide();
         }
 
+        inputID = "#Budget";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#StartDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
+
+        inputID = "#EndDate";
+        if ($(inputID).val().length == 0) {
+            invalidObjects++;
+            $(inputID + "RequiredAlert").show();
+        }
+        else {
+            $(inputID + "RequiredAlert").hide();
+        }
 
         if (invalidObjects == 0) {
             pageValid = true;
