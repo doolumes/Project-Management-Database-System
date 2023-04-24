@@ -214,14 +214,38 @@
                 <th>Start Date</th>
             </tr>
             <tr>
-                <td><input name="taskStart" id="taskStart" type="date" value="@Model.Start.Value.ToString("yyyy-MM-dd")"></input></td>
+                @{
+                    if (Model.Start.Value != null)
+                    {
+                        <td><input name="taskStart" id="taskStart" type="date" value="@Model.Start.Value.ToString("yyyy-MM-dd")"></input></td>
+
+                    }
+                    else
+                    {
+                        <td><input name="taskStart" id="taskStart" type="date" value=""></input></td>
+                        
+                    }
+                }
+                
             </tr>
 
             <tr>
                 <th>Due Date</th>
             </tr>
             <tr>
-                <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
+                @{
+                    if (Model.Due.Value != null)
+                    {
+                        <td><input name="taskDue" id="taskDue" type="date" value="@Model.Due.Value.ToString("yyyy-MM-dd")"></input></td>
+
+                    }
+                    else
+                    {
+                        <td><input name="taskDue" id="taskDue" type="date" value=""></input></td>
+
+                    }
+                }
+                
             </tr>
             <tr>
                 <th>Project</th>
