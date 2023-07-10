@@ -51,4 +51,5 @@ Models
 ------
 Models are used to help organize the data being recieved from the database. They are a class that is used by both the Controller and View to access various information that was obtained from the SQL server about a particular table or row.
 Models are written in C#
-![Alt Text]("Screenshot (281)".png)
+![Alt Text](Screenshot (281).png)
+
